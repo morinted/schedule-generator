@@ -184,10 +184,11 @@ public class Course
 
   public String toString()
   {
-	  String outputString = "";
-    return super.toString() + "["+
-            "description" + ":" + getDescription()+ "]"
-     + outputString;
+	  String outputString = description + System.getProperty("line.separator");
+	  for (Section s : sections) {
+		  outputString = new String(outputString + s);
+	  }
+    return outputString;
   }
   
   

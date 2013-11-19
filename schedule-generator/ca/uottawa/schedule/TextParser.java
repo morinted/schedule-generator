@@ -111,9 +111,10 @@ public static void main(String[] args) {
 			   String prof = items[8];
 			   //Create activity. The activity is automatically added to the active section.
 			   Activity currentActivity = new Activity(aType, aNum, dayOfWeek, startTime, endTime, place, prof, true, activeSection);
+			   activeCourse.addSection(activeSection);
 		   }
 		}
-		//Add final activity to list
+		//Add final course to list
 		courses.add(activeCourse);
 		br.close();
 	} catch (FileNotFoundException e) {
@@ -122,21 +123,24 @@ public static void main(String[] args) {
 	} catch (IOException e) {
 		e.printStackTrace();
 	}
-	
 	//Let's practice generating some schedules!
-	Course[] selectedCourses = new Course[5];
+	Course[] selectedCourses = new Course[3];
 	selectedCourses[0] = courses.get(3616); //SEG
 	selectedCourses[1] = courses.get(1616); //ECO
+	
 	selectedCourses[2] = courses.get(1200); //CSI
-	selectedCourses[3] = courses.get(604); //CEG
-	selectedCourses[4] = courses.get(2240); //GEO
+	
+	Course[] optionalCourses = new Course[2];
+	optionalCourses[0] = courses.get(604); //CEG
+	optionalCourses[1] = courses.get(2240); //GEO
 	
 	List<Schedule> test = Schedule.generateSchedules(selectedCourses);
-	
+	//List<Schedule> test = Schedule.generateSchedules(selectedCourses, optionalCourses, 2);
 	for (Schedule s : test) {
 		System.out.println(s);
 	}
 	System.out.println(test.size());
+	
 	
 	
 	

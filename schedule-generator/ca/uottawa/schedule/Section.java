@@ -311,15 +311,11 @@ public class Section
   public String toString()
   {
 	  String outputString = "";
-    return super.toString() + "["+
-            "name" + ":" + getName()+ "," +
-            "semester" + ":" + getSemester()+ "," +
-            "requiredDGD" + ":" + getRequiredDGD()+ "," +
-            "requiredTUT" + ":" + getRequiredTUT()+ "," +
-            "requiredLAB" + ":" + getRequiredLAB()+ "," +
-            "selected" + ":" + getSelected()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "course = "+(getCourse()!=null?Integer.toHexString(System.identityHashCode(getCourse())):"null")
-     + outputString;
+	  for (Activity a : activities) {
+		  outputString = new String(outputString + "     " + semester + " " + a.getType() + a.getNumber() + " " + a.getPlace() + " " + a.getProfessor() + System.getProperty("line.separator"));
+	
+	  }
+	  return outputString;
   }
 
   //------------------------
