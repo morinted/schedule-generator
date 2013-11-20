@@ -32,7 +32,20 @@ public static void main(String[] args) {
 			   if (!activeCourse.getDescription().equals("Initializing")) { //We don't want to add the dummy course.
 				   courses.add(activeCourse);
 			   }
-			   activeCourse = new Course(items[0]);
+
+               String courseTitle = items[0];
+               if (courseTitle.startsWith("\"")) {
+                    courseTitle = new String(courseTitle.substring(1));
+
+                   int title = 1;
+                   while (!items[title].endsWith("\"")) {
+                       courseTitle = new String(courseTitle + ", " + items[title]);
+                       title++;
+                   }
+                   courseTitle = new String(courseTitle + "," + items[title]);
+                   courseTitle.substring(0, courseTitle.length()-1);
+               }
+			   activeCourse = new Course(courseTitle);
 			   //We are done with this line.
 		   } else {
 			   //Process new SEMESTER
@@ -125,29 +138,37 @@ public static void main(String[] args) {
 	}
 	
 	//Let's practice generating some schedules!
-	Course[] selectedCourses = new Course[3];
-	selectedCourses[0] = courses.get(3616); //SEG
-	selectedCourses[1] = courses.get(1616); //ECO
+	List<Course> selectedCourses = new ArrayList<Course>();
+
+	selectedCourses.add(courses.get(3616)); //SEG
+	selectedCourses.add(courses.get(1616)); //ECO
 	
-	selectedCourses[2] = courses.get(1200); //CSI
-	
-	/*
-	selectedCourses[3] = courses.get(604); //CEG
-	selectedCourses[4] = courses.get(2240); //GEO
-	*/
-	Course[] optionalCourses = new Course[2];
-	optionalCourses[0] = courses.get(604); //CEG
-	optionalCourses[1] = courses.get(2240); //GEO
-	
+	selectedCourses.add(courses.get(1200)); //CSI
+
+
+    selectedCourses.add(courses.get(604)); //CEG
+    selectedCourses.add(courses.get(2240)); //GEO
+	  /*
+    List<Course> optionalCourses = new ArrayList<Course>();
+	optionalCourses.add(courses.get(604)); //CEG
+	optionalCourses.add(courses.get(2240)); //GEO
+    */
 	
 	//List<Schedule> test = Schedule.generateSchedules(selectedCourses);
-	List<Schedule> test = Schedule.generateSchedules(selectedCourses, optionalCourses, 2);
-	
-	for (Schedule s : test) {
-		s.updateStats();
-		System.out.println(s);
-	}
-	System.out.println(test.size());
+	/*
+    List<Schedule> test = Schedule.generateSchedules(selectedCourses);
+    for (Schedule s : test) {
+        s.updateStats();
+    }
+    test = Schedule.sort("shortestDay", test, true);
+*/
+
+
+    List<String> searchResults = CourseSearch.search("c", courses);
+    for (String s : searchResults) {
+        System.out.println(s);
+    }
+	//System.out.println(test.size());
 	
 	
 	
