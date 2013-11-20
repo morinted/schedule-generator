@@ -4,7 +4,6 @@ package ca.uottawa.schedule;
 /*This code was generated using the UMPLE 1.18.0.3209 modeling language!*/
 
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 // line 18 "model.ump"
@@ -210,30 +209,18 @@ public class Activity
 
   public String toString()
   {
-	  String day = null;
-	  switch (getDay()) {
-	  case 1: day = "Sunday";
-	  break;
-	  case 2: day = "Monday";
-	  break;
-	  case 3: day = "Tuesday";
-	  break;
-	  case 4: day = "Wednesday";
-	  break;
-	  case 5: day = "Thursday";
-	  break;
-	  case 6: day = "Friday";
-	  break;
-	  case 7: day = "Saturday";
-	  break;
-	  default:
-		  day = "None";
-	  }
-	  SimpleDateFormat date_format = new SimpleDateFormat("HH:mm");
-	  String outputString = "\t" + getType() + " " + getNumber() + ". " + day + " " + date_format.format(getStartTime()) + "-" + date_format.format(getEndTime()) + ". " + getPlace() + ". Prof: " + getProfessor() + ". Selected: " + isSelected() + System.getProperty("line.separator");
-	  
-	  
-    return outputString;
+	  String outputString = "";
+    return super.toString() + "["+
+            "type" + ":" + getType()+ "," +
+            "number" + ":" + getNumber()+ "," +
+            "day" + ":" + getDay()+ "," +
+            "place" + ":" + getPlace()+ "," +
+            "professor" + ":" + getProfessor()+ "," +
+            "selected" + ":" + getSelected()+ "]" + System.getProperties().getProperty("line.separator") +
+            "  " + "startTime" + "=" + (getStartTime() != null ? !getStartTime().equals(this)  ? getStartTime().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
+            "  " + "endTime" + "=" + (getEndTime() != null ? !getEndTime().equals(this)  ? getEndTime().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
+            "  " + "section = "+(getSection()!=null?Integer.toHexString(System.identityHashCode(getSection())):"null")
+     + outputString;
   }
   
   //------------------------
