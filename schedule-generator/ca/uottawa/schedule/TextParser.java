@@ -123,6 +123,7 @@ public static void main(String[] args) {
 	} catch (IOException e) {
 		e.printStackTrace();
 	}
+	
 	//Let's practice generating some schedules!
 	Course[] selectedCourses = new Course[3];
 	selectedCourses[0] = courses.get(3616); //SEG
@@ -130,13 +131,20 @@ public static void main(String[] args) {
 	
 	selectedCourses[2] = courses.get(1200); //CSI
 	
+	/*
+	selectedCourses[3] = courses.get(604); //CEG
+	selectedCourses[4] = courses.get(2240); //GEO
+	*/
 	Course[] optionalCourses = new Course[2];
 	optionalCourses[0] = courses.get(604); //CEG
 	optionalCourses[1] = courses.get(2240); //GEO
 	
-	List<Schedule> test = Schedule.generateSchedules(selectedCourses);
-	//List<Schedule> test = Schedule.generateSchedules(selectedCourses, optionalCourses, 2);
+	
+	//List<Schedule> test = Schedule.generateSchedules(selectedCourses);
+	List<Schedule> test = Schedule.generateSchedules(selectedCourses, optionalCourses, 2);
+	
 	for (Schedule s : test) {
+		s.updateStats();
 		System.out.println(s);
 	}
 	System.out.println(test.size());

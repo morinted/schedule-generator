@@ -4,6 +4,7 @@ package ca.uottawa.schedule;
 /*This code was generated using the UMPLE 1.18.0.3214 modeling language!*/
 
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 // line 35 "model.ump"
@@ -281,23 +282,25 @@ public class Schedule
 
   public String toString()
   {
-	  String outputString = "";
+	  
+	  String outputString = (System.getProperty("line.separator") + System.getProperty("line.separator") + "Schedule: " + courseSelections.size() + " classes. ID: " + super.toString());
+	  SimpleDateFormat date_format = new SimpleDateFormat("HH:mm");
+	  outputString = new String(outputString + System.getProperty("line.separator") + "Statistics:\t\tAvg Start: " + date_format.format(avgStartingTime) + ", Avg End: " + date_format.format(avgEndingTime)) +
+			  ", Avg Length: " + (avgLengthOfDay.getTime()/1000/60/60) + " hours, Days off: " + numOfDaysOff;
+	  
+	  outputString = new String(outputString + System.getProperty("line.separator") + "Ignoring DGDs/TUTs:\tAvg Start: " + date_format.format(ignoreExtrasAvgStartingTime) + ", Avg End: " + date_format.format(ignoreExtrasAvgEndingTime)) +
+			  ", Avg Length: " + (ignoreExtrasAvgLengthOfDay.getTime()/1000/60/60) + " hours, Days off: " + ignoreExtrasNumOfDaysOff + System.getProperty("line.separator");
+	  
+	  
 	  for (CourseSelection cs : courseSelections) {
+		   outputString = new String(outputString + cs.getActivity(0).getSection().getName() + System.getProperty("line.separator"));
 		  for (Activity a : cs.getActivities()){
 			outputString = new String(outputString + a.toString());
 		  }
 	  }
 	  
-    return super.toString() + "["+
-            "numOfDaysOff" + ":" + getNumOfDaysOff()+ "," +
-            "ignoreExtrasNumOfDaysOff" + ":" + getIgnoreExtrasNumOfDaysOff()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "avgStartingTime" + "=" + (getAvgStartingTime() != null ? !getAvgStartingTime().equals(this)  ? getAvgStartingTime().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "avgEndingTime" + "=" + (getAvgEndingTime() != null ? !getAvgEndingTime().equals(this)  ? getAvgEndingTime().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "avgLengthOfDay" + "=" + (getAvgLengthOfDay() != null ? !getAvgLengthOfDay().equals(this)  ? getAvgLengthOfDay().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "ignoreExtrasAvgStartingTime" + "=" + (getIgnoreExtrasAvgStartingTime() != null ? !getIgnoreExtrasAvgStartingTime().equals(this)  ? getIgnoreExtrasAvgStartingTime().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "ignoreExtrasAvgEndingTime" + "=" + (getIgnoreExtrasAvgEndingTime() != null ? !getIgnoreExtrasAvgEndingTime().equals(this)  ? getIgnoreExtrasAvgEndingTime().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "ignoreExtrasAvgLengthOfDay" + "=" + (getIgnoreExtrasAvgLengthOfDay() != null ? !getIgnoreExtrasAvgLengthOfDay().equals(this)  ? getIgnoreExtrasAvgLengthOfDay().toString().replaceAll("  ","    ") : "this" : "null")
-     + outputString;
+	  
+    return  outputString;
   }
 
   
@@ -318,7 +321,6 @@ public class Schedule
 	  Long ieTotalLengthOfDay= (long) 0;
 	  
 	  for (int i = 1; i <= 7; i++) {
-		  System.out.println("Looking for day " + i);
 		  Date earliestStartTime = null;
 	  	  Date latestEndTime = null;
 	  	  
@@ -331,9 +333,7 @@ public class Schedule
 		  for (CourseSelection cs : courseSelections) {
 			  for (Activity a : cs.getActivities()) {
 				  if (a.getDay()==i) {
-					  System.out.println(a.getDay() + " i: " + i);
 					  if (dayOff) {
-						  //System.out.println("Day of week: " + i);
 						  dayOff = false;
 						  earliestStartTime = a.getStartTime();
 						  latestEndTime = a.getEndTime();
@@ -366,7 +366,6 @@ public class Schedule
 		  
 		  if (dayOff) {
 			  numOfDaysOff++;
-			  System.out.println("numOfDaysOff = " + numOfDaysOff);
 		  } else {
 			  totalStartTime += earliestStartTime.getTime();
 			  totalEndTime += latestEndTime.getTime();
@@ -427,14 +426,16 @@ public class Schedule
 		  }
 		  tempSchedules = generateSchedules(selections, requiredOptional-1);
 		  //Now we must merge tempSchedules with original schedules into final schedules.
-		  boolean valid = true;
+		  
 		  for (Schedule s1 : originalSchedules) { //For every schedule generated previously,
 			  for (Schedule s2 : tempSchedules) {
+				  boolean valid = true;
 				  for (CourseSelection cs : s2.getCourseSelections()) {
 					  if (s1.collidesWith(cs)) {
 						  valid=false;
 					  }
 				  }
+				  if (valid) {
 				  //We found a valid match. Let's add them to the final list.
 				  List<CourseSelection> temp1 = s1.getCourseSelections();
 				  List<CourseSelection> temp2 = s2.getCourseSelections();
@@ -450,6 +451,7 @@ public class Schedule
 					  result.addCourseSelection(cs);
 				  }
 				  finalSchedules.add(result);
+				  }
 			  }
 			  
 		  }
@@ -477,9 +479,7 @@ public static List<Schedule> generateSchedules(Course[] selectedCourses) {
 		selections.add((ArrayList<CourseSelection>) selectedCourses[i].getCourseSelections());
 	}
 	List<Schedule> schedules = generateSchedules(selections, count-1);
-	for (Schedule s : schedules) {
-		s.updateStats(); //Load all stats for sorting.
-	}
+	
 	return schedules;
 }
 
