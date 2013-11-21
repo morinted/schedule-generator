@@ -40,6 +40,9 @@ public class CourseSearch {
             while(list.get(m).getDescription().substring(0, q).toUpperCase().equals(query)) {
                 result.add(list.get(m).getDescription());
                 m++;
+                if (m >= list.size()) {
+                	break;
+                }
             }
 
             return result;

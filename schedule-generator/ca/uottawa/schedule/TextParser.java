@@ -8,11 +8,8 @@ import java.util.Date;
 import java.util.List;
 
 public class TextParser {
-	
-	
-public static void main(String[] args) {
+public static List<Course> getCoursesFromDatabase(File courseCodes) {
 	List<Course> courses = new ArrayList<Course>();
-	File courseCodes = new File("ca/uottawa/schedule/courseCodes.csv");
 	BufferedReader br;
 	try {
 		br = new BufferedReader(new FileReader(courseCodes));
@@ -136,44 +133,6 @@ public static void main(String[] args) {
 	} catch (IOException e) {
 		e.printStackTrace();
 	}
-	
-	//Let's practice generating some schedules!
-	List<Course> selectedCourses = new ArrayList<Course>();
-
-	selectedCourses.add(courses.get(3616)); //SEG
-	selectedCourses.add(courses.get(1616)); //ECO
-	
-	selectedCourses.add(courses.get(1200)); //CSI
-
-
-    selectedCourses.add(courses.get(604)); //CEG
-    selectedCourses.add(courses.get(2240)); //GEO
-	  /*
-    List<Course> optionalCourses = new ArrayList<Course>();
-	optionalCourses.add(courses.get(604)); //CEG
-	optionalCourses.add(courses.get(2240)); //GEO
-    */
-	
-	//List<Schedule> test = Schedule.generateSchedules(selectedCourses);
-	/*
-    List<Schedule> test = Schedule.generateSchedules(selectedCourses);
-    for (Schedule s : test) {
-        s.updateStats();
-    }
-    test = Schedule.sort("shortestDay", test, true);
-*/
-
-
-    List<String> searchResults = CourseSearch.search("c", courses);
-    for (String s : searchResults) {
-        System.out.println(s);
-    }
-	//System.out.println(test.size());
-	
-	
-	
-	
-	
+	return courses;
 }
-	
 }
