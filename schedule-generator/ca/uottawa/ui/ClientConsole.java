@@ -3,8 +3,9 @@ package ca.uottawa.ui;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 
-public class ClientConsole {
+public class ClientConsole implements ClientIF {
 	  /**
 	   * The default port to connect on.
 	   */
@@ -52,7 +53,7 @@ public class ClientConsole {
 	  
 	  
 
-		  public void display(String message) 
+		  private void display(String message) 
 		  {
 		    System.out.println(message);
 		  }
@@ -93,4 +94,23 @@ public class ClientConsole {
 		    ClientConsole chat= new ClientConsole(studentNumber, host, port);
 		    chat.accept();  //Wait for console data
 		  }
+
+		public void sendSearchResults(List<String> results) {
+			//Receiving search results. We must display them:
+			for (String s : results) {
+				display(s);
+			}
+		}
+
+		@Override
+		public void sendInfo(String msg) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public String getSemester(List<String> semesters) {
+			//go through available semesters and get user choice.
+			return semesters.get(0);
+		}
 }

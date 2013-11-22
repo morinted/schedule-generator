@@ -1,6 +1,7 @@
 package ca.uottawa.ui;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import com.lloseng.ocsf.server.AbstractServer;
@@ -28,7 +29,25 @@ public class ScheduleGeneratorServer extends AbstractServer {
 	}
 	
 	protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
-		// TODO Auto-generated method stub
+		ScheduleMessage message = (ScheduleMessage) msg;
+		String command = message.getCommand();
+		
+		switch(command.toUpperCase()) {
+		case "SEARCH":
+			String query = message.getStrings().get(0);
+			List<String> results = CourseSearch.search(query, courses);
+			ScheduleMessage reply = new ScheduleMessage();
+			reply.setCommand("SEARCHRESULTS");
+			reply.setStrings(results);
+			try {
+				client.sendToClient(reply);
+			} catch (IOException e) {
+				System.err.println("Error sending search results to client. Possible connection lost.");
+				System.out.println(client);
+			}
+			break;
+			default:;
+		}
 
 	}
 
