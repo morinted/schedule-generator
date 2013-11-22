@@ -7,6 +7,7 @@ import com.lloseng.ocsf.client.AbstractClient;
 public class ScheduleGeneratorClient extends AbstractClient {
 
 	private String studentNumber;
+	private String semester;
 	private ClientConsole clientUI;
 	
 
