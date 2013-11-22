@@ -11,4 +11,9 @@ public interface ClientIF {
 	
 	//Client is requesting semester.
 	public abstract String getSemester(List<String> semesters);
+
+    //Server is done action.
+    public abstract void done();
+
+    public abstract String getSortOrder();
 }

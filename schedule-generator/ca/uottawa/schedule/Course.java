@@ -4,11 +4,13 @@ package ca.uottawa.schedule;
 /*This code was generated using the UMPLE 1.18.0.3209 modeling language!*/
 
 
+import java.io.Serializable;
 import java.util.*;
 
 // line 1 "model.ump"
-public class Course
+public class Course implements Serializable
 {
+
   @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
   public @interface umplesourcefile{int[] line();String[] file();int[] javaline();int[] length();}
 
@@ -21,6 +23,8 @@ public class Course
 
   //Course Associations
   private List<Section> sections;
+
+  private static final long serialVersionUID = 1L;
 
   //------------------------
   // CONSTRUCTOR
@@ -190,6 +194,25 @@ public class Course
 	  }
     return outputString;
   }
+
+    public List<String> getSemesters() {
+        List<String> semesters = new ArrayList<String>();
+        semesters.add(sections.get(0).getSemester());
+        int sectionSize = sections.size();
+        for (int i = 1; i < sectionSize; i++) {
+            String sem = sections.get(i).getSemester();
+            boolean exists = false;
+            for (String uniqueSemester : semesters) {
+                if (sem.equals(uniqueSemester)) {
+                    exists = true;
+                }
+            }
+            if (!exists) {
+                semesters.add(sem);
+            }
+        }
+        return semesters;
+    }
   
   
   //------------------------

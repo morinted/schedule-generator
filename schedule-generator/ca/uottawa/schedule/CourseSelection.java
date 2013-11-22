@@ -4,11 +4,12 @@ package ca.uottawa.schedule;
 /*This code was generated using the UMPLE 1.18.0.3209 modeling language!*/
 
 
+import java.io.Serializable;
 import java.util.*;
 
 // line 30 "model.ump"
 // line 60 "model.ump"
-public class CourseSelection
+public class CourseSelection implements Serializable
 {
   @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
   public @interface umplesourcefile{int[] line();String[] file();int[] javaline();int[] length();}
@@ -16,6 +17,8 @@ public class CourseSelection
   //------------------------
   // MEMBER VARIABLES
   //------------------------
+
+  private static final long serialVersionUID = 1L;
 
   //CourseSelection Associations
   private List<Activity> activities;

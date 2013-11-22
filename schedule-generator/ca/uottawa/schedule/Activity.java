@@ -4,13 +4,15 @@ package ca.uottawa.schedule;
 /*This code was generated using the UMPLE 1.18.0.3209 modeling language!*/
 
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 // line 18 "model.ump"
 // line 50 "model.ump"
-public class Activity
+public class Activity implements Serializable
 {
+    private static final long serialVersionUID = 1L;
   @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
   public @interface umplesourcefile{int[] line();String[] file();int[] javaline();int[] length();}
 

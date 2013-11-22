@@ -2,6 +2,7 @@ package ca.uottawa.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.lloseng.ocsf.server.AbstractServer;
@@ -19,6 +20,7 @@ public class ScheduleGeneratorServer extends AbstractServer {
 		this.serverUI = serverUI;
 		courseCodes = new File("ca/uottawa/schedule/courseCodes.csv");
 		refreshCourses();
+
 	}
 
 	
@@ -26,16 +28,19 @@ public class ScheduleGeneratorServer extends AbstractServer {
 		serverUI.display("Refreshing courses from " + courseCodes);
 		courses = TextParser.getCoursesFromDatabase(courseCodes);
 		serverUI.display("Courses updated.");
+
 	}
 	
 	protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
 		ScheduleMessage message = (ScheduleMessage) msg;
 		String command = message.getCommand();
-		
+		boolean internal = message.isInternal();
+
 		switch(command.toUpperCase()) {
 		case "SEARCH":
 			String query = message.getStrings().get(0);
-			List<String> results = CourseSearch.search(query, courses);
+            String semester = message.getSemester();
+			List<String> results = CourseSearch.search(query, semester, courses);
 			ScheduleMessage reply = new ScheduleMessage();
 			reply.setCommand("SEARCHRESULTS");
 			reply.setStrings(results);
@@ -46,6 +51,70 @@ public class ScheduleGeneratorServer extends AbstractServer {
 				System.out.println(client);
 			}
 			break;
+            case "SEMESTERS":
+                if (internal) {
+                ScheduleMessage semesters = new ScheduleMessage();
+                    semesters.setCommand("SEMESTERLIST");
+                    List<String> semesterList = new ArrayList<String>();
+                    for (Course c : courses) {
+                        List<String> tempList = c.getSemesters();
+                        int tmpLstSize = tempList.size();
+                        for (int i = 0; i < tmpLstSize; i++) {
+                            String sem = tempList.get(i);
+                            boolean exists = false;
+                            for (String uniqueSemester : semesterList) {
+                                if (sem.equals(uniqueSemester)) {
+                                    exists = true;
+                                }
+                            }
+                            if (!exists) {
+                                semesterList.add(sem);
+                            }
+                        }
+                    }
+                    semesters.setStrings(semesterList);
+                    try {
+                        client.sendToClient(semesters);
+                    } catch (IOException e) {
+                        System.err.println("Error sending list of semesters to client. Possible connection lost.");
+                        System.out.println(client);
+                    }
+                }
+                break;
+            case "ADD":
+                //We are adding a course, assuming that the string list contains the course to add.
+                String courseCode = message.getStrings().get(0).toUpperCase();
+                if (CourseSearch.search(courseCode, message.getSemester(), courses).size() == 1) {
+                    ScheduleMessage courseMsg = new ScheduleMessage();
+                    courseMsg.setCommand("ADDCOURSE");
+                    int courseIndex = CourseSearch.indexOf(courseCode, message.getSemester(), courses);
+                    List<Course> courseList = new ArrayList<Course>();
+                    courseList.add(courses.get(courseIndex));
+                    courseMsg.setCourses(courseList);
+                    try {
+                        client.sendToClient(courseMsg);
+                    } catch (IOException e) {
+                        System.err.println("Error sending course back to client. Possible connection lost.");
+                        System.out.println(client);
+                    }
+                } else {
+                    ScheduleMessage failureMsg = new ScheduleMessage();
+                    failureMsg.setCommand("ADDCOURSE-MULTIPLECOURSES");
+                    List<String> failedQuery = new ArrayList<String>();
+                    failedQuery.add(message.getStrings().get(0));
+                    failureMsg.setStrings(failedQuery);
+                    try {
+                        client.sendToClient(failureMsg);
+                    } catch (IOException e) {
+                        System.err.println("Unable to report back add course action to client. Possible connection lost.");
+                        System.out.println(client);
+                    }
+                }
+                break;
+
+            case "SORTORDER":
+
+
 			default:;
 		}
 
@@ -60,10 +129,7 @@ public class ScheduleGeneratorServer extends AbstractServer {
 		String[] args = message.split(" ");
 		
 		switch (args[0].toUpperCase()) {
-		case "SEARCH": List<String> searchResults = CourseSearch.search(args[1], courses);
-		for (String s : searchResults) {
-			serverUI.display(s);
-		}
+		case "SEARCH":
 			break;
 			default:
 				
