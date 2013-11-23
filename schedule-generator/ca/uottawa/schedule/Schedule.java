@@ -290,7 +290,7 @@ public class Schedule implements Serializable
     //------------------------
 
 
-    public static List<Schedule> sort(String sortType, List<Schedule> unsorted, boolean ignoreExtras) {
+    public static List<Schedule> sort(String sortOrder, List<Schedule> unsorted, boolean ignoreExtras) {
         int n = unsorted.size();
 
         Schedule[] anArray = new Schedule[n];
@@ -301,7 +301,7 @@ public class Schedule implements Serializable
 
         List<Schedule> result = new ArrayList<Schedule>();
         Schedule[] arrResult;
-        arrResult = sort(sortType, anArray, ignoreExtras);
+        arrResult = sort(sortOrder, anArray, ignoreExtras);
         for (int i = 0; i < n; i++) {
             result.add(arrResult[i]);
             SimpleDateFormat df = new SimpleDateFormat("HH:mm");
@@ -310,7 +310,7 @@ public class Schedule implements Serializable
         return result;
     }
 
-    private static Schedule[] sort(String sortType, Schedule[] unsorted, boolean ignoreExtras) {
+    private static Schedule[] sort(String sortOrder, Schedule[] unsorted, boolean ignoreExtras) {
         int n = unsorted.length;
         int m = n / 2;
 
@@ -318,8 +318,8 @@ public class Schedule implements Serializable
             return unsorted;
         } else {
 
-            Schedule[] a = sort(sortType, Arrays.copyOfRange(unsorted, 0, m), ignoreExtras);
-            Schedule[] b = sort(sortType, Arrays.copyOfRange(unsorted, m, n), ignoreExtras);
+            Schedule[] a = sort(sortOrder, Arrays.copyOfRange(unsorted, 0, m), ignoreExtras);
+            Schedule[] b = sort(sortOrder, Arrays.copyOfRange(unsorted, m, n), ignoreExtras);
 
 
             int i = 0;
@@ -331,7 +331,7 @@ public class Schedule implements Serializable
             while ((j < a.length) && (i < b.length)) {
                 Date aValue;
                 Date bValue;
-                switch (sortType) {
+                switch (sortOrder) {
 
                     case "earliestStart":
                         if (ignoreExtras) {
@@ -388,17 +388,17 @@ public class Schedule implements Serializable
                         }
                         break;
                     default:
-                        System.err.println("Invalid sortType");
+                        System.err.println("Invalid sortOrder");
                         return(null);
                 }
 
-                if (sortType.equals("days")) {
+                if (sortOrder.equals("days")) {
                     if (ignoreExtras) {
                         c[k++] = a[j].getNumOfDaysOff() < b[i].getIgnoreExtrasNumOfDaysOff() ? a[j++] : b[i++];
                     } else {
                         c[k++] = a[j].getNumOfDaysOff() < b[i].getNumOfDaysOff() ? a[j++] : b[i++];
                     }
-                } else if (sortType.equals("daysOff")) {
+                } else if (sortOrder.equals("daysOff")) {
                     if (ignoreExtras) {
                         c[k++] = a[j].getNumOfDaysOff() > b[i].getIgnoreExtrasNumOfDaysOff() ? a[j++] : b[i++];
                     } else {

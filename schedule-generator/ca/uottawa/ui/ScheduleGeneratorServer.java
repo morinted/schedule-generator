@@ -47,8 +47,8 @@ public class ScheduleGeneratorServer extends AbstractServer {
 			try {
 				client.sendToClient(reply);
 			} catch (IOException e) {
-				System.err.println("Error sending search results to client. Possible connection lost.");
-				System.out.println(client);
+				serverUI.display("Error sending search results to client. Possible connection lost.");
+				serverUI.display(client.toString());
 			}
 			break;
             case "SEMESTERS":
@@ -76,8 +76,8 @@ public class ScheduleGeneratorServer extends AbstractServer {
                     try {
                         client.sendToClient(semesters);
                     } catch (IOException e) {
-                        System.err.println("Error sending list of semesters to client. Possible connection lost.");
-                        System.out.println(client);
+                    	serverUI.display("Error sending list of semesters to client. Possible connection lost.");
+                        serverUI.display(client.toString());
                     }
                 }
                 break;
@@ -94,8 +94,8 @@ public class ScheduleGeneratorServer extends AbstractServer {
                     try {
                         client.sendToClient(courseMsg);
                     } catch (IOException e) {
-                        System.err.println("Error sending course back to client. Possible connection lost.");
-                        System.out.println(client);
+                    	serverUI.display("Error sending course back to client. Possible connection lost.");
+                    	serverUI.display(client.toString());
                     }
                 } else {
                     ScheduleMessage failureMsg = new ScheduleMessage();
@@ -106,15 +106,27 @@ public class ScheduleGeneratorServer extends AbstractServer {
                     try {
                         client.sendToClient(failureMsg);
                     } catch (IOException e) {
-                        System.err.println("Unable to report back add course action to client. Possible connection lost.");
-                        System.out.println(client);
+                    	serverUI.display("Unable to report back add course action to client. Possible connection lost.");
+                    	serverUI.display(client.toString());
                     }
                 }
                 break;
-
-            case "SORTORDER":
-
-
+            case "GENERATE":
+            	//User is generating schedules with no nChooseK option. Easy to do.
+            	List<Course> mandatoryCourses = message.getCourses();
+            	String sortOrder = message.getSortOrder();
+            	boolean ignoreExtras = message.isIgnoreExtras();
+            	List<Schedule> result = Schedule.generateSchedules(mandatoryCourses);
+            	result = Schedule.sort(sortOrder, result, ignoreExtras);
+            	ScheduleMessage schedulesMsg = new ScheduleMessage();
+            	schedulesMsg.setCommand("SCHEDULES");
+            	schedulesMsg.setSchedules(result);
+			try {
+				client.sendToClient(schedulesMsg);
+			} catch (IOException e) {
+				serverUI.display("Unable to report back generated schedules. Possible connection lost.");
+				serverUI.display(client.toString());
+			}
 			default:;
 		}
 

@@ -2,6 +2,8 @@ package ca.uottawa.ui;
 
 import java.util.List;
 
+import ca.uottawa.schedule.Schedule;
+
 public interface ClientIF {
 	//Client must display search results.
 	public abstract void sendSearchResults(List<String> results);
@@ -16,4 +18,9 @@ public interface ClientIF {
     public abstract void done();
 
     public abstract String getSortOrder();
+    
+    //the client can use this method to show the user schedules.
+    //In the GUI, the schedules are always visible, so this won't be used.
+    //In the console, it is actually useful.
+    public abstract void displaySchedules(List<Schedule> schedules);
 }

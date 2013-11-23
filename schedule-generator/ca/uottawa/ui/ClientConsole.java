@@ -6,12 +6,13 @@ import java.io.InputStreamReader;
 import java.text.DateFormatSymbols;
 import java.util.List;
 
+import ca.uottawa.schedule.Schedule;
+
 public class ClientConsole implements ClientIF {
 	  /**
 	   * The default port to connect on.
 	   */
 	  final public static int DEFAULT_PORT = 5555;
-    boolean internalUserInput;
 	  
 	  /**
 	   * The instance of the client that created this ConsoleChat.
@@ -22,7 +23,6 @@ public class ClientConsole implements ClientIF {
 	  {
 	    try 
 	    {
-          internalUserInput = false;
 	      client= new ScheduleGeneratorClient(studentNumber, host, port, this);
 	    } 
 	    catch(IOException exception) 
@@ -55,7 +55,7 @@ public class ClientConsole implements ClientIF {
 
 		  private void display(String message) 
 		  {
-		    System.out.println(message);
+		    System.out.println(">  " + message);
 		  }
 		  
 		  public static void main(String[] args) 
@@ -114,12 +114,13 @@ public class ClientConsole implements ClientIF {
 
 		@Override
 		public String getSemester(List<String> semesters) {
-			//go through available semesters and get user choice.
+			//go through available semesters and get user choice.j
+            String year;
+            String month;
             int choice = 0;
             display("What semester would you like to build schedules for?");
             for (int i = 0; i < semesters.size(); i++) {
-                String year;
-                String month;
+
                 year = semesters.get(i).substring(0, 4);
                 month = new DateFormatSymbols().getMonths()[Integer.parseInt(semesters.get(i).substring(4))-1];
                 display((i+1) + ". " + month + " " + year);
@@ -145,8 +146,9 @@ public class ClientConsole implements ClientIF {
                 response = readFromConsole();
             }
             }
-
-            display("sending back " + semesters.get(choice - 1));
+            year = semesters.get(choice-1).substring(0, 4);
+            month = new DateFormatSymbols().getMonths()[Integer.parseInt(semesters.get(choice-1).substring(4))-1];
+            display("You have selected semester: " + month + " " + year);
             return semesters.get(choice-1);
 		}
 
@@ -228,4 +230,47 @@ public class ClientConsole implements ClientIF {
             }
             return message;
         }
+
+	@Override
+	public void displaySchedules(List<Schedule> schedules) {
+		//It's time to display schedules.
+		//We'll start by displaying the first, then offering the user to go to the NEXT,
+		//the PREV, the FIRST, the LAST, and to EXIT.
+		boolean valid = false; //used to determine if the user input is valid.
+		boolean stop = false; //used to determine if we should stop displaying schedules.
+		String response; //holds user's input for next action.
+		
+		//Displaying the first schedule.
+		int index = 0;
+		int size = schedules.size();
+
+		while(!stop) {
+			display(schedules.get(index).toString());
+			display("Showing schedule " + (index+1) + "/" + size + ". NEXT to see next, PREV to go back, FIRST to see first, LAST to see last, or EXIT to stop.");
+			response = readFromConsole();
+			if (response == null) {
+			} else if (response.equals("NEXT") || response.equals("PREV") || response.equals("FIRST") || response.equals("LAST") || response.equals("EXIT")) {
+				valid = true;
+			}
+			while (!valid) {
+				display("Sorry, I didn't quite get that. Use NEXT to see next, PREV to go back, FIRST to see first, LAST to see last, or EXIT to stop.");
+				response = readFromConsole();
+				if (response == null) {
+				} else if (response.equals("NEXT") || response.equals("PREV") || response.equals("FIRST") || response.equals("LAST") || response.equals("EXIT")) {
+					valid = true;
+				}
+			}
+			//We have a valid response.
+			switch(response) {
+			case "NEXT":
+				index = (index+2)
+			case "PREV":
+			case "FIRST":
+			case "LAST":
+			case "EXIT":
+			}
+		}
+		
+		
+	}
 }
