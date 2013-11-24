@@ -98,6 +98,10 @@ public class Section implements Serializable
 
   public boolean setSelected(boolean aSelected)
   {
+	  //Apply change to activities as well.
+	  for (Activity a : activities) {
+		  a.setSelected(aSelected);
+	  }
     boolean wasSet = false;
     selected = aSelected;
     wasSet = true;
@@ -375,10 +379,12 @@ public List<CourseSelection> getCourseSelections() {
 		if (skipDGDs && skipTUTs && skipLABs) {
 			for (Activity d : DGDs) {
 				for (Activity t : TUTs) {
+					if (d.isSelected() && t.isSelected()) {
 					//Check if TUT and DGD overlap
 					if (!t.overlaps(d)) {
 						//No overlap! Just one more!
 						for (Activity l : LABs) {
+							if (l.isSelected()) {
 							if (!t.overlaps(l) && !l.overlaps(d)) {
 									//We have check D against T, T against L, and L against D. Since NONE of them overlap, we almost have a selection.
 								
@@ -410,13 +416,16 @@ public List<CourseSelection> getCourseSelections() {
 									//And now we have a good result, pretty much guaranteed.
 									//The only exception is if mandatory courses overlap, but that's the school's stupid problem.
 							}
+							}
 						}
+					}
 					}
 				}
 			}
 		} else if (skipDGDs && skipTUTs) {
 			for (Activity d : DGDs) {
 				for (Activity t : TUTs) {
+					if (d.isSelected() && t.isSelected()) {
 					//Check if TUT and DGD overlap
 					if (!t.overlaps(d)) {
 						//No overlap!
@@ -439,10 +448,12 @@ public List<CourseSelection> getCourseSelections() {
 					}
 						
 				}
+				}
 			}
 		} else if (skipTUTs && skipLABs) {
 			for (Activity l : LABs) {
 				for (Activity t : TUTs) {
+					if (l.isSelected() && t.isSelected()) {
 					//Check if TUT and LAB overlap
 					if (!t.overlaps(l)) {
 						//No overlap!
@@ -465,11 +476,13 @@ public List<CourseSelection> getCourseSelections() {
 									
 						}
 					}
+					}
 				}
 			}
 		} else if (skipDGDs && skipLABs) {
 			for (Activity d : DGDs) {
 				for (Activity l : LABs) {
+					if (d.isSelected() && l.isSelected()) {
 					//Check if LAB and DGD overlap
 					if (!l.overlaps(d)) {
 						//No overlap!
@@ -492,10 +505,12 @@ public List<CourseSelection> getCourseSelections() {
 									
 						}
 					}
+					}
 				}
 			}
 		} else if (skipDGDs) {
 			for (Activity d : DGDs) {
+				if (d.isSelected()) {
 						//No overlap!
 				boolean valid = true;
 				for (Activity a : reqActArray) {
@@ -514,9 +529,11 @@ public List<CourseSelection> getCourseSelections() {
 					
 									
 				}
+				}
 			}
 		} else if (skipTUTs) {
 			for (Activity t : TUTs) {
+				if (t.isSelected()) {
 				//No overlap!
 				boolean valid = true;
 				for (Activity a : reqActArray) {
@@ -533,9 +550,11 @@ public List<CourseSelection> getCourseSelections() {
 					selections.add(new CourseSelection(new Activity[]{t}));
 				}
 				}
+				}
 			}
 		} else if (skipLABs) {
 			for (Activity l : LABs) {
+				if (l.isSelected()) {
 				//No overlap!
 				boolean valid = true;
 				for (Activity a : reqActArray) {
@@ -551,6 +570,7 @@ public List<CourseSelection> getCourseSelections() {
 						selections.add(result);
 				} else {
 					selections.add(new CourseSelection(new Activity[]{l}));
+				}
 				}
 				}
 			}

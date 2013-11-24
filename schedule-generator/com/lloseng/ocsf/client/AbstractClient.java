@@ -171,9 +171,10 @@ public abstract class AbstractClient implements Runnable
     if (clientSocket == null || output == null) {
       throw new SocketException("socket does not exist");
     }
-
     output.writeObject(msg);
+    output.reset();
   }
+  
 
   /**
    * Closes the connection to the server.
@@ -272,7 +273,6 @@ public abstract class AbstractClient implements Runnable
         // statement until something is received from the server
         
         try { // added in version 2.31
-        
           msg = input.readObject();
 
           // Concrete subclasses do what they want with the

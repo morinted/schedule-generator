@@ -2,6 +2,7 @@ package ca.uottawa.ui;
 
 import java.util.List;
 
+import ca.uottawa.schedule.Course;
 import ca.uottawa.schedule.Schedule;
 
 public interface ClientIF {
@@ -23,4 +24,13 @@ public interface ClientIF {
     //In the GUI, the schedules are always visible, so this won't be used.
     //In the console, it is actually useful.
     public abstract void displaySchedules(List<Schedule> schedules);
+
+    //Sends a list of courses to the user.
+	public abstract void setCourses(List<Course> courses, List<Course> nCourses);
+
+	//A course to be edited
+	public abstract void editCourse(Course edit, String semester);
+
+	//Client confirms that the program want to change semesters.
+	public abstract boolean confirmSemester();
 }

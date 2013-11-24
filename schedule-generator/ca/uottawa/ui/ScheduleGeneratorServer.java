@@ -34,7 +34,6 @@ public class ScheduleGeneratorServer extends AbstractServer {
 	protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
 		ScheduleMessage message = (ScheduleMessage) msg;
 		String command = message.getCommand();
-		boolean internal = message.isInternal();
 
 		switch(command.toUpperCase()) {
 		case "SEARCH":
@@ -52,7 +51,6 @@ public class ScheduleGeneratorServer extends AbstractServer {
 			}
 			break;
             case "SEMESTERS":
-                if (internal) {
                 ScheduleMessage semesters = new ScheduleMessage();
                     semesters.setCommand("SEMESTERLIST");
                     List<String> semesterList = new ArrayList<String>();
@@ -79,14 +77,19 @@ public class ScheduleGeneratorServer extends AbstractServer {
                     	serverUI.display("Error sending list of semesters to client. Possible connection lost.");
                         serverUI.display(client.toString());
                     }
-                }
                 break;
+            case "ADDOPTIONAL":
             case "ADD":
                 //We are adding a course, assuming that the string list contains the course to add.
                 String courseCode = message.getStrings().get(0).toUpperCase();
                 if (CourseSearch.search(courseCode, message.getSemester(), courses).size() == 1) {
                     ScheduleMessage courseMsg = new ScheduleMessage();
-                    courseMsg.setCommand("ADDCOURSE");
+                    if (command.toUpperCase().equals("ADDOPTIONAL")) {
+                    	courseMsg.setCommand("ADDOPTIONAL"); //If this is supposed to be an optional course as opposed to a normal one.
+                    } else {
+                    	courseMsg.setCommand("ADDCOURSE");
+                    }
+                    
                     int courseIndex = CourseSearch.indexOf(courseCode, message.getSemester(), courses);
                     List<Course> courseList = new ArrayList<Course>();
                     courseList.add(courses.get(courseIndex));
@@ -114,10 +117,24 @@ public class ScheduleGeneratorServer extends AbstractServer {
             case "GENERATE":
             	//User is generating schedules with no nChooseK option. Easy to do.
             	List<Course> mandatoryCourses = message.getCourses();
+                serverUI.display("Received " + message.getCourses().size() + " courses.");
             	String sortOrder = message.getSortOrder();
             	boolean ignoreExtras = message.isIgnoreExtras();
-            	List<Schedule> result = Schedule.generateSchedules(mandatoryCourses);
+            	int k = message.getK();
+            	List<Schedule> result;
+            	if (k>0) {
+            		List<Course> optional = message.getOptionalCourses();
+            		result = Schedule.generateSchedules(mandatoryCourses, optional, k);
+            	} else {
+            		result = Schedule.generateSchedules(mandatoryCourses);
+            	}
+            	if (result.size() > 0) {
+            	//We should update the schedule stats in preperation of sorting.
+            	for (Schedule s: result) {
+            		s.updateStats();
+            	}
             	result = Schedule.sort(sortOrder, result, ignoreExtras);
+            	}
             	ScheduleMessage schedulesMsg = new ScheduleMessage();
             	schedulesMsg.setCommand("SCHEDULES");
             	schedulesMsg.setSchedules(result);

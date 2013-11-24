@@ -387,6 +387,11 @@ public class Schedule implements Serializable
                             aValue = b[i].getAvgLengthOfDay();
                         }
                         break;
+                    case "days":
+                    case "daysOff":
+                    	aValue=null;
+                        bValue=null;
+                    	break;
                     default:
                         System.err.println("Invalid sortOrder");
                         return(null);

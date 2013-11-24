@@ -13,9 +13,10 @@ public class ScheduleMessage implements Serializable {
 	String command;
 	String sortOrder;
 	String semester;
-    boolean internal;
 	boolean ignoreExtras;
 	List<Course> courses;
+	List<Course> optionalCourses;
+	int k;
 	List<String> strings;
 	List<Schedule> schedules;
 
@@ -27,27 +28,36 @@ public class ScheduleMessage implements Serializable {
         this.semester = semester;
     }
 
-    public boolean isInternal() {
-        return internal;
-    }
 
-    public void setInternal(boolean internal) {
-        this.internal = internal;
-    }
 
-    public ScheduleMessage(String command, String sortOrder, String semester, boolean ignoreExtras, List<Course> courses, List<String> strings, List<Schedule> schedules) {
+    public ScheduleMessage(String command, String sortOrder, String semester, boolean ignoreExtras, List<Course> courses, List<String> strings, List<Schedule> schedules, List<Course> optionalCourses, int k) {
         this.command = command;
 		this.sortOrder = sortOrder;
 		this.ignoreExtras = ignoreExtras;
 		this.courses = courses;
 		this.strings = strings;
 		this.schedules = schedules;
-        this.internal = internal;
-
+        this.optionalCourses = optionalCourses;
+        
 	}
 	
+	public List<Course> getOptionalCourses() {
+		return optionalCourses;
+	}
+
+	public void setOptionalCourses(List<Course> optionalCourses) {
+		this.optionalCourses = optionalCourses;
+	}
+
+	public int getK() {
+		return k;
+	}
+
+	public void setK(int k) {
+		this.k = k;
+	}
+
 	public ScheduleMessage() {
-    this.internal = false;
 	this.command = null;
 	this.sortOrder = null;
 	this.semester = null;

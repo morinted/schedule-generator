@@ -158,9 +158,10 @@ public class ConnectionToClient extends Thread
   {
     if (clientSocket == null || output == null)
       throw new SocketException("socket does not exist");
-
     output.writeObject(msg);
+    output.reset();
   }
+  
 
   /**
    * Closes the client.
@@ -247,7 +248,6 @@ public class ConnectionToClient extends Thread
         // and then sends it for handling by the server
         
         try { // Added in version 2.31
-        
           // wait to receive an object
           msg = input.readObject();
                   
