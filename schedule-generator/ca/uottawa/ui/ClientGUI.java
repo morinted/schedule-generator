@@ -41,7 +41,7 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 	//Selecting the semester and the sort order with a combobox
 	JComboBox<String> cboSemester, cboSortOrder;
 	//Buttons. These are pretty telling of what actions will occur.
-	JButton btnAdd, btnRemove, btnClearAll, btnIncK, btnDecK, btnGenerate, btnNext, btnPrev, btnFirst, btnLast;
+	JButton btnAdd, btnRemove, btnEdit, btnClearAll, btnIncK, btnDecK, btnGenerate, btnNext, btnPrev, btnFirst, btnLast;
 	//Areas to write text
 	JTextField txtSearch;
 	//To hold lists (like search results)
@@ -88,6 +88,7 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 		btnAdd.addActionListener(this);
 		btnRemove.addActionListener(this);
 		btnClearAll.addActionListener(this);
+		btnEdit.addActionListener(this);
 		btnIncK.addActionListener(this);
 		btnDecK.addActionListener(this);
 		btnGenerate.addActionListener(this);
@@ -207,14 +208,15 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 		scrOptionalCourses = new JScrollPane(lstOptionalCourses);
 		
 		//Create remove and clear button
-		btnRemove = new JButton("Remove Selected Course");
-		btnClearAll = new JButton("Clear all courses");
+		btnRemove = new JButton("Remove");
+		btnClearAll = new JButton("Clear");
+		btnEdit = new JButton("Edit");
 		
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 0.5;
 		c.weighty = 0.5;
 		c.gridheight = 1;
-		c.gridwidth = 2;
+		c.gridwidth = 3;
 		c.gridx = 0;
 		c.gridy = 0;
 		paneList.add(lblCourses, c);
@@ -234,6 +236,9 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 		c.gridx = 1;
 		c.gridy = 4;
 		paneList.add(btnRemove, c);
+		c.gridx = 2;
+		c.gridy = 4;
+		paneList.add(btnEdit, c);
 		
 		/*
 		 * Create options pane
@@ -311,9 +316,6 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 	}
 
 
-
-
-
 	public static void main(String[] args) {
 		//Start the GUI.
 		//For now, use default host/port
@@ -371,17 +373,30 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 			removeAllCourses();
 		} else if (sender.equals(chkIgnoreExtras)) {
 			int ie = chkIgnoreExtras.isSelected() ? 1 : 0;
-			try {
-				client.handleMessageFromClientUI("IGNOREEXTRAS " + ie);
-			} catch (IOException e1) {
-				display("Error communicating with client while change IE");
-			}
+				send("IGNOREEXTRAS " + ie);
 		} else if (sender.equals(btnGenerate)) {
-			try {
-				client.handleMessageFromClientUI("GENERATE");
-			} catch (IOException e1) {
-				display("Error signaling to generate schedules.");
-			}
+			send("GENERATE");
+		} else if (sender.equals(btnEdit)) {
+				String toEdit;
+				toEdit = lstCourses.getSelectedValue();
+				if (toEdit == null) {
+					toEdit = lstOptionalCourses.getSelectedValue();
+				}
+				if (toEdit == null) {
+					display("Can't edit: No course selected.");
+				} else {
+					toEdit = toEdit.split(" ")[0];
+					send("EDIT " + toEdit);
+				}
+				
+		}
+	}
+	
+	private void send(String msg) {
+		try {
+			client.handleMessageFromClientUI(msg);
+		} catch (IOException e) {
+			display("Error communicating with client.");
 		}
 	}
 
@@ -391,19 +406,11 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 		String toRemove;
 		for (int i = 0; i < courses.getSize(); i++) {
 			toRemove = courses.getElementAt(i).split(" ")[0];
-			try {
-				client.handleMessageFromClientUI("REMOVE " + toRemove);
-			} catch (IOException e) {
-				display("Error removing course.");
-			}
+			send("REMOVE " + toRemove);
 		}
 		for (int i = 0; i < nCourses.getSize(); i++) {
 			toRemove = nCourses.getElementAt(i).split(" ")[0];
-			try {
-				client.handleMessageFromClientUI("REMOVE " + toRemove);
-			} catch (IOException e) {
-				display("Error removing course.");
-			}
+			send("REMOVE " + toRemove);
 		}
 		
 	}
@@ -419,11 +426,7 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 				courseCode = lstOptionalCourses.getSelectedValue().split(" ")[0];
 			}
 			System.out.println("Sending message: " + "REMOVE " + courseCode);
-			try {
-				client.handleMessageFromClientUI("REMOVE " + courseCode);
-			} catch (IOException e) {
-				display("Error removing course.");
-			}
+				send("REMOVE " + courseCode);
 		}
 	}
 
@@ -431,15 +434,11 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 		if (lstSearchResults.getSelectedValue() == null) {
 			display("No course selected!");
 		} else {
-			try {
 				String courseCode = lstSearchResults.getSelectedValue().split(" ")[0];
 				//Determine if we're sending an optional or mandatory course.
 				String optional = chkOptional.isSelected() ? "OPTIONAL " : "";
 				System.out.println("Sending message: " + "ADD " + optional + courseCode);
-				client.handleMessageFromClientUI("ADD " + optional + courseCode);
-			} catch (IOException e1) {
-				display("Error sending course selected to server.");
-			}
+				send("ADD " + optional + courseCode);
 		}
 	}
 
@@ -490,11 +489,8 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 			cboSortOrder.setEnabled(true);
 			btnGenerate.setEnabled(true);
 		} 
-		try {  //refresh the list in case we have just changed semesters.
-			client.handleMessageFromClientUI("LIST");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		//refresh the list in case we have just changed semesters.
+		send("LIST");
 		return semesters.get(cboSemester.getSelectedIndex());
 	}
 
@@ -562,16 +558,10 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 	}
 	
 	private void setK() {
-		try {
-			client.handleMessageFromClientUI("SETK " + k);
-		} catch (IOException e) {
-			display("Error setting k on Client");
-		}
+		send("SETK " + k);
 	}
 
-	@Override
 	public void editCourse(Course edit, String semester) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -610,25 +600,17 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 	}
 	//Updates the search list box below
 	private void updateSearch() {
-		try {
 			String query = txtSearch.getText().toUpperCase();
 			if (query.length() > 0) {
-				client.handleMessageFromClientUI("SEARCH " + query.toUpperCase());
+				send("SEARCH " + query.toUpperCase());
 			} else {
 				lstSearchResults.setListData(new String[0]);
 			}
-		} catch (IOException e1) {
-			display("Error sending search query to client.");
-		}
 	}
 
 	public void courseAdded(String description) {
 		//A course was added, so we want to list.
-		try {
-			client.handleMessageFromClientUI("LIST");
-		} catch (IOException e) {
-			display("Error requesting list of courses from client.");
-		}
+		send("LIST");
 	}
 
 	public void courseExists(String description) {
@@ -638,37 +620,21 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 
 	public void courseNotExists(String description) {
 		display("Course " + description + " is not in the list of courses and can't be removed.");
-		try {
-			client.handleMessageFromClientUI("LIST");
-		} catch (IOException e) {
-			display("Error requesting list of courses from client.");
-		}
+		send("LIST");
 	}
 
 	public void courseRemoved(String description) {
 		//course was removed, relist them.
-		try {
-			client.handleMessageFromClientUI("LIST");
-		} catch (IOException e) {
-			display("Error requesting list of courses from client.");
-		}
+		send("LIST");
 	}
 
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getStateChange() == ItemEvent.SELECTED) {
 			Object sender = e.getSource();
 			if (sender.equals(cboSortOrder)) {
-				try {
-					client.handleMessageFromClientUI("SORTORDER");
-				} catch (IOException e1) {
-					display("Please reselect sort order! Error communicating with client.");
-				}
+				send("SORTORDER");
 			} else if (sender.equals(cboSemester)) {
-				try {
-					client.handleMessageFromClientUI("SEMESTER");
-				} catch (IOException e1) {
-					display("Please reselect sort order! Error communicating with client.");
-				}
+					send("SEMESTER");
 			}
 		}
 	}
@@ -676,11 +642,7 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 	public void schedulesGenerated(int count) {
 		//Schedules were generated. We want to display right away.
 		System.out.println(count + " schedules were generated.");
-		try {
-			client.handleMessageFromClientUI("DISPLAY");
-		} catch (IOException e) {
-			display("Error asking client to display schedules.");
-		}
+			send("DISPLAY");
 	}
 
 }
