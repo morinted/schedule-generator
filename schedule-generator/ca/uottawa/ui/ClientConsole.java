@@ -95,7 +95,7 @@ public class ClientConsole implements ClientIF {
 		    	port = DEFAULT_PORT; //Else default to the default port.
 		    } 
 		    
-		    ClientConsole chat= new ClientConsole(studentNumber, host, port);
+		    new ClientConsole(studentNumber, host, port);
 		  }
 
 		public void sendSearchResults(List<String> results) {
@@ -111,7 +111,6 @@ public class ClientConsole implements ClientIF {
 
 		}
 
-		@Override
 		public void sendInfo(String msg) {
 			display(msg);
 		}
@@ -484,5 +483,25 @@ break;
 	   	}
 	   	display("Canceled changing semester.");
 		return false;
+	}
+
+	public void courseAdded(String description) {
+		display(description + " added to list of courses.");
+	}
+
+	public void courseExists(String description) {
+		display("Cannot add course " + description + ". It is already in the list of courses.");
+	}
+
+	public void courseNotExists(String description) {
+		display("Can't remove " + description + " because it is not in the list of courses.");
+	}
+
+	public void courseRemoved(String description) {
+		display("Course " + description + " removed.");
+	}
+
+	public void schedulesGenerated(int count) {
+		display(count + " schedules generated.");
 	}
 }

@@ -34,7 +34,7 @@ public class ScheduleGeneratorClient extends AbstractClient {
 	}
 
 	public ScheduleGeneratorClient(String studentNumber, String host, int port,
-			ClientConsole clientUI) throws IOException {
+			ClientIF clientUI) throws IOException {
 		super(host, port); // Call the superclass constructor
 		this.clientUI = clientUI;
 		this.ignoreExtras = false;
@@ -73,7 +73,6 @@ public class ScheduleGeneratorClient extends AbstractClient {
 			Course result = message.getCourses().get(0);
 
 			boolean exists = false;
-			
 			//Check if courses exists in either course list. If it does, cancel the add.
 			for (Course c : courses) {
 				if (c.getDescription().equals(result.getDescription())) {
@@ -103,10 +102,11 @@ public class ScheduleGeneratorClient extends AbstractClient {
 				} else {
 				courses.add(result);
 				}
-				clientUI.sendInfo(result.getDescription() + " added.");
+				clientUI.courseAdded(result.getDescription());
+			} else {
+				clientUI.courseExists(result.getDescription());
 			}
 			break;
-
 		case "ADDCOURSE-MULTIPLECOURSES":
 			clientUI.sendInfo("No single course matches that course code. Type the course code exactly. If you can't remember it, use SEARCH");
 			break;
@@ -114,7 +114,7 @@ public class ScheduleGeneratorClient extends AbstractClient {
 			// The server has provided us with a generated list of schedules,
 			// sorted in sortOrder
 			schedules = message.getSchedules();
-			clientUI.sendInfo(schedules.size() + " schedules generated.");
+			clientUI.schedulesGenerated(schedules.size());
 			break;
 		default:
 			;
@@ -218,13 +218,20 @@ public class ScheduleGeneratorClient extends AbstractClient {
 						removeMe = c;
 					}
 				}
+				for (Course c : nCourses) {
+					String courseCode = c.getDescription().split(" ")[0];
+					if (courseCode.equals(toRemove)) {
+						removeMe = c;
+					}
+				}
 				if (removeMe == null) {
-					clientUI.sendInfo("You do not have a course called "
-							+ toRemove);
+					clientUI.courseExists(toRemove);
 					clientUI.sendInfo("Use LIST to see your active courses.");
 				} else {
+					//Remove it from both, JUST IN CASE (?)
 					courses.remove(removeMe);
-					clientUI.sendInfo("Removed " + removeMe.getDescription());
+					nCourses.remove(removeMe);
+					clientUI.courseRemoved(removeMe.getDescription());
 				}
 				clientUI.done();
 			}
@@ -248,7 +255,6 @@ public class ScheduleGeneratorClient extends AbstractClient {
 			// Awww yeeah. We get to generate courses now.
 			// First, check for n choose k option:
 			int nCourseSize = nCourses.size();
-			
 			if ((nCourseSize > 0) || (k > 1)) {
 				if ((k<1) || (k>nCourseSize)) {
 					clientUI.sendInfo("k, value " + k + ", is not a valid number of courses to choose from your optional set, which is size " + nCourseSize);
@@ -259,9 +265,9 @@ public class ScheduleGeneratorClient extends AbstractClient {
 			} 
 			//The we make sure that there's a sort order selected.
 			if (sortOrder == null) {
-				clientUI.sendInfo("You haven't specified a sort order yet. To choose one, use: SORTORDER");
-				clientUI.done();
-			} else {
+				sortOrder = clientUI.getSortOrder();
+				clientUI.sendInfo("Sort order set to: " + sortOrder);
+			}
 				ScheduleMessage generateMsg = new ScheduleMessage();
 				generateMsg.setOptionalCourses(nCourses);
 				generateMsg.setK(k);
@@ -270,9 +276,8 @@ public class ScheduleGeneratorClient extends AbstractClient {
 				generateMsg.setIgnoreExtras(ignoreExtras);
 				generateMsg.setSortOrder(sortOrder);
 				sendToServer(generateMsg);
-			}
+			
 			break;
-
 		case "SORTORDER":
 			sortOrder = clientUI.getSortOrder();
 			clientUI.sendInfo("Sort order set to: " + sortOrder);
@@ -310,12 +315,13 @@ public class ScheduleGeneratorClient extends AbstractClient {
 					ignoreExtras = true;
 				} else if (input == 0) {
 					ignoreExtras = false;
+				} else {
+					throw new NumberFormatException();
 				}
 				clientUI.sendInfo("Ignore Extras set to " + ignoreExtras);
 				} catch (NumberFormatException e) {
-					clientUI.sendInfo("You have not specified a valid value for k. " + k + " is not understood.");
-					clientUI.sendInfo("To set K, which is the number of courses you'd like to have out of your optional courses, use: SETK [int]");
-				} finally {
+					clientUI.sendInfo("You have not specified 1 or 0.");
+					} finally {
 					clientUI.done();
 				}
 			}

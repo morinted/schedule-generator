@@ -33,4 +33,19 @@ public interface ClientIF {
 
 	//Client confirms that the program want to change semesters.
 	public abstract boolean confirmSemester();
+
+	//Client lets the UI know that a course was added.
+	public abstract void courseAdded(String description);
+
+	//Client lets the UI know that a course was not added because it already exists.
+	public abstract void courseExists(String description);
+
+	//Client lets the UI know that a course was not removed because it doesn't exist.
+	public abstract void courseNotExists(String description);
+	
+	//Client lets the UI know that a course was removed.
+	public abstract void courseRemoved(String description);
+
+	//Client lets the UI know that schedules were genearated.
+	public abstract void schedulesGenerated(int count);
 }
