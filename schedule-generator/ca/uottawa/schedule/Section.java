@@ -98,10 +98,6 @@ public class Section implements Serializable
 
   public boolean setSelected(boolean aSelected)
   {
-	  //Apply change to activities as well.
-	  for (Activity a : activities) {
-		  a.setSelected(aSelected);
-	  }
     boolean wasSet = false;
     selected = aSelected;
     wasSet = true;

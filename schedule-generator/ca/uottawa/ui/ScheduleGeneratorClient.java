@@ -264,10 +264,12 @@ public class ScheduleGeneratorClient extends AbstractClient {
 				}
 			} 
 			//The we make sure that there's a sort order selected.
+			
 			if (sortOrder == null) {
 				sortOrder = clientUI.getSortOrder();
-				clientUI.sendInfo("Sort order set to: " + sortOrder);
 			}
+			clientUI.sendInfo("IgnoringExtras: " + ignoreExtras);
+			clientUI.sendInfo("Sort order is set to: " + sortOrder);
 				ScheduleMessage generateMsg = new ScheduleMessage();
 				generateMsg.setOptionalCourses(nCourses);
 				generateMsg.setK(k);
@@ -336,7 +338,14 @@ public class ScheduleGeneratorClient extends AbstractClient {
 				toEdit = toEdit.substring(0, 8);
 			}
 			Course editMe = null;
+			//Check for the course in both regular and nCourses.
 			for (Course c : courses) {
+				String courseCode = c.getDescription().split(" ")[0];
+				if (courseCode.equals(toEdit)) {
+					editMe = c;
+				}
+			}
+			for (Course c : nCourses) {
 				String courseCode = c.getDescription().split(" ")[0];
 				if (courseCode.equals(toEdit)) {
 					editMe = c;

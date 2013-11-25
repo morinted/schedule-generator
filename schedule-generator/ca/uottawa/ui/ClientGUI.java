@@ -2,18 +2,23 @@ package ca.uottawa.ui;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
+import ca.uottawa.schedule.Activity;
 import ca.uottawa.schedule.Course;
 import ca.uottawa.schedule.Schedule;
+import ca.uottawa.schedule.Section;
 
 import java.awt.event.*;
 import java.awt.*;
 import java.io.IOException;
 import java.text.DateFormatSymbols;
+import java.util.ArrayList;
 import java.util.List;
 
 
-public class ClientGUI implements ActionListener, ClientIF, DocumentListener, ItemListener {
+public class ClientGUI implements ClientIF, ActionListener, DocumentListener, ItemListener, WindowListener, ListSelectionListener {
 	
 	final public static int DEFAULT_PORT = 5555;
 	ScheduleGeneratorClient client;
@@ -22,6 +27,9 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 	int currSchedule;
 	int k;
 	int n;
+	Course courseEditing;
+	List<JCheckBox> chkSections = new ArrayList<JCheckBox>();
+	List<ArrayList<JCheckBox>> chkActivities = new ArrayList<ArrayList<JCheckBox>>();
 	
 	//Constants
 	private static final int SIDEBAR_WIDTH = 390;
@@ -58,7 +66,7 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 		k = 0; //We start by chosing 0 of 0 optional courses
 		n = 0;
 		createComponents();
-		addActionListeners();
+		addListeners();
 		
 		
 		//Display the frame:
@@ -77,12 +85,8 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 	    }
 	}
 
-	private void addActionListeners() {
+	private void addListeners() {
 		//We will listen for actions on the following items:
-		//BUTTONS
-		//TEXT BOXES
-		//SEMESTER COMBOBOX
-		//Ignore extras checkbox
 		
 		//Buttons
 		btnAdd.addActionListener(this);
@@ -102,6 +106,10 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 		
 		//Checkboxes
 		chkIgnoreExtras.addActionListener(this);
+		
+		//Lists
+		lstCourses.addListSelectionListener(this);
+		lstOptionalCourses.addListSelectionListener(this);
 	}
 
 	private void createComponents() {
@@ -204,6 +212,8 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 		//Create lists and scroll panes
 		lstCourses = new JList<String>();
 		lstOptionalCourses = new JList<String>();
+		lstCourses.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		lstOptionalCourses.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		scrCourses = new JScrollPane(lstCourses);
 		scrOptionalCourses = new JScrollPane(lstOptionalCourses);
 		
@@ -475,6 +485,7 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 			chkIgnoreExtras.setEnabled(false);
 			cboSortOrder.setEnabled(false);
 			btnGenerate.setEnabled(false);
+			btnEdit.setEnabled(false);
 			while (cboSemester.getSelectedIndex() == -1) {
 				//wait.
 			}
@@ -488,6 +499,8 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 			chkIgnoreExtras.setEnabled(true);
 			cboSortOrder.setEnabled(true);
 			btnGenerate.setEnabled(true);
+			btnEdit.setEnabled(true);
+
 		} 
 		//refresh the list in case we have just changed semesters.
 		send("LIST");
@@ -562,7 +575,167 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 	}
 
 	public void editCourse(Course edit, String semester) {
+		//Editing a course. Let's make a list, similar to how we do on the client console.
+		List<Section> editSections = new ArrayList<Section>();
+		for (Section s : edit.getSections()) {
+			if (s.getSemester().equals(semester)) {
+				editSections.add(s);
+			}
+		}
+		courseEditing = edit;
 		
+		//Now edit sections contains the current semester's lists.
+		JFrame editFrame = new JFrame("Edit Course");
+		editFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		Container pane = (editFrame.getContentPane());
+		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
+
+		cboSemester.setEnabled(false);
+		btnAdd.setEnabled(false);
+		txtSearch.setEditable(false);
+		chkOptional.setEnabled(false);
+		btnClearAll.setEnabled(false);
+		btnRemove.setEnabled(false);
+		btnIncK.setEnabled(false);
+		btnDecK.setEnabled(false);
+		chkIgnoreExtras.setEnabled(false);
+		cboSortOrder.setEnabled(false);
+		btnGenerate.setEnabled(false);
+		btnEdit.setEnabled(false);
+		lstCourses.setEnabled(false);
+		lstOptionalCourses.setEnabled(false);
+		lstSearchResults.setEnabled(false);
+		
+		//Let's think of the cases.
+		//1. Course has only one section and no optional courses. All checkboxes will be disabled.
+		//2. Course has multiple sections with no optional courses. You may choose down to only 1 sections.
+		//3. Course has DONTCARE sections, and optional courses. You may choose down to 1 activity of that type.
+		
+		//So we need to make a checkbox for each section.
+		chkSections = new ArrayList<JCheckBox>();
+		chkActivities = new ArrayList<ArrayList<JCheckBox>>();
+		int i=0;
+		for (Section s : editSections) {
+			JCheckBox currentChk = new JCheckBox(s.getName());
+			if (s.isSelected()) {
+				currentChk.setSelected(true);
+			}
+			currentChk.setName(new String(Integer.toString(i)));
+			chkSections.add(currentChk);
+			int requiredDGD = s.getRequiredDGD();
+			int requiredLAB = s.getRequiredLAB();
+			int requiredTUT = s.getRequiredTUT();
+			
+			ArrayList<JCheckBox> activities = new ArrayList<JCheckBox>();
+			int j = 0;
+			for (Activity a : s.getActivities()) {
+				//Set the name of tempChk to the full activity name, minus its selected status.
+				JCheckBox tempChk = new JCheckBox(a.toString().split(" Selected")[0]);
+				tempChk.setEnabled(false);
+				tempChk.setSelected(a.getSelected());
+				switch (a.getType()) {
+				case "DGD":
+					if (requiredDGD>0) {
+						tempChk.setEnabled(true);
+					}
+					break;
+				case "LAB":
+					if (requiredLAB>0) {
+						tempChk.setEnabled(true);
+					}
+					break;
+				case "TUT":
+					if (requiredTUT>0) {
+						tempChk.setEnabled(true);
+					}
+					break;
+				}
+				tempChk.setName(i+","+j);
+				activities.add(tempChk);
+				j++;
+			}
+			chkActivities.add(activities);
+			i++;
+		}
+		
+		//So now we have two lists of checkboxes. One of each section, and one of each of their activities.
+		for (int i1=0; i1<chkSections.size(); i1++){
+			pane.add(Box.createRigidArea(new Dimension(15, 15))); //Gives us some margins.
+			pane.add(chkSections.get(i1));
+			chkSections.get(i1).addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					editCheckBox(e, true);
+				}
+			});
+			for (int j=0; j<chkActivities.get(i1).size(); j++) {
+				pane.add(chkActivities.get(i1).get(j));
+				chkActivities.get(i1).get(j).addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						editCheckBox(e, false);
+					}
+				});
+			}
+		}
+		pane.add(Box.createRigidArea(new Dimension(15, 15))); //Gives us some margins.
+
+		editFrame.pack();
+		editFrame.setVisible(true);
+		editFrame.addWindowListener(this);
+	}
+
+	protected void editCheckBox(ActionEvent e, boolean section) {
+		JCheckBox sender = (JCheckBox) e.getSource();
+		if (section) { //If it's a section, we just need to make sure that there are enough enabled sections.
+			//Find the index of the course
+			//We set the name of the sender to an integer
+			//while iterating through the loop.
+			int i = Integer.parseInt(sender.getName());
+			Section currSection = courseEditing.getSection(i);
+			int enabledSections = 0;
+			for (JCheckBox chk : chkSections) {
+				if (chk.isSelected()) {
+					enabledSections++;
+				}
+			}
+			if (enabledSections == 0) {
+				display("You must have at least one section enabled.");
+				sender.setSelected(true);
+			} else {
+				currSection.setSelected(!currSection.isSelected());
+			}
+		} else {
+			//So we've got an activity selected.
+			int i, j;
+			String[] args = sender.getName().split(",");
+			//It should be the case where [0] is the
+			//index of the section, and [1] is the index
+			//of the activity.
+			i = Integer.parseInt(args[0]);
+			j = Integer.parseInt(args[1]);
+			
+			//Lets check to see what kind of activity this is.
+			//We are assuming that if this checkbox is being toggled,
+			//it is because it is enabled. For it to be enabled,
+			//it must be an OPTION (ie. DGD, LAB, TUT!)
+			Section currSection = courseEditing.getSection(i);
+			Activity currActivity = currSection.getActivity(j);
+			String type = currActivity.getType();
+			int count = 0;
+			for (Activity a : currSection.getActivities()) {
+				if (a.isSelected() && a.getType().equals(type)) {
+					count++;
+				}
+			}
+			//Now we know how many activities are enabled.
+			boolean disabling; //We have to check if the user is disabling the box.
+			disabling = !sender.isSelected();
+			if ((count == 1) && disabling) {
+				display("You must have at least one " + type + " enabled.");
+				sender.setSelected(true);
+			} else {
+				currActivity.setSelected(!currActivity.isSelected());
+			}
+		}
 	}
 
 	@Override
@@ -643,6 +816,45 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 		//Schedules were generated. We want to display right away.
 		System.out.println(count + " schedules were generated.");
 			send("DISPLAY");
+	}
+
+	public void windowClosing(WindowEvent e) {
+		cboSemester.setEnabled(true);
+		btnAdd.setEnabled(true);
+		txtSearch.setEditable(true);
+		chkOptional.setEnabled(true);
+		btnClearAll.setEnabled(true);
+		btnRemove.setEnabled(true);
+		btnIncK.setEnabled(true);
+		btnDecK.setEnabled(true);
+		chkIgnoreExtras.setEnabled(true);
+		cboSortOrder.setEnabled(true);
+		btnGenerate.setEnabled(true);
+		btnEdit.setEnabled(true);
+		lstCourses.setEnabled(true);
+		lstOptionalCourses.setEnabled(true);
+		lstSearchResults.setEnabled(true);
+	}
+	public void windowActivated(WindowEvent arg0) {
+	}
+	public void windowClosed(WindowEvent e) {
+	}
+	public void windowDeactivated(WindowEvent arg0) {
+	}
+	public void windowDeiconified(WindowEvent arg0) {
+	}
+	public void windowIconified(WindowEvent arg0) {
+	}
+	public void windowOpened(WindowEvent arg0) {
+	}
+
+	public void valueChanged(ListSelectionEvent e) {
+		JList<String> sender = (JList<String>)e.getSource();
+		if (sender.equals(lstCourses) && (lstCourses.getSelectedIndex() > -1)) {
+			lstOptionalCourses.clearSelection();
+		} else if (sender.equals(lstOptionalCourses) && (lstOptionalCourses.getSelectedIndex() > -1)) {
+			lstCourses.clearSelection();
+		}
 	}
 
 }
