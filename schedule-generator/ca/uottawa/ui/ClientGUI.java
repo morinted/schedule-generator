@@ -473,7 +473,6 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 			for (String s : semesters) {
 				year = s.substring(0, 4);
                 month = new DateFormatSymbols().getMonths()[Integer.parseInt(s.substring(4))-1];
-				System.out.println("Adding " + s);
 				cboSemester.addItem(month + " " + year);
 			}
 			cboSemester.setSelectedIndex(-1);
