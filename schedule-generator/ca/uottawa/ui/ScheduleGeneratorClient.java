@@ -380,6 +380,7 @@ public class ScheduleGeneratorClient extends AbstractClient {
 			clientUI.sendInfo("     SEARCH <PREFIX> - displays a list of course codes with that prefix");
 			clientUI.sendInfo("     SEMESTER - lose all settings to change semester");
 			clientUI.sendInfo("     SORTORDER - set the sort order for generating a schedule");
+			clientUI.done();
 			break;
 		default:
 			clientUI.sendInfo("Unknown command: " + msg);
