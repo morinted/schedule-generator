@@ -131,6 +131,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		btnPrev.addActionListener(this);
 		btnLast.addActionListener(this);
 		btnFirst.addActionListener(this);
+		btnPrint.addActionListener(this);
 		
 		//Text boxes
 		txtSearch.getDocument().addDocumentListener(this);
@@ -375,12 +376,17 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		btnFirst.setEnabled(false);
 		btnLast = new JButton("Last >>|");
 		btnLast.setEnabled(false);
+		btnPrint = new JButton("Text-Formatted Schedule");
+		btnPrint.setEnabled(false);
 		lblCurrSchedule = new JLabel("  Displaying Schedule 0 / 0  ");
+		paneSchedule.add(Box.createRigidArea(new Dimension(245, 0)));
 		paneSchedule.add(btnFirst);
 		paneSchedule.add(btnPrev);
 		paneSchedule.add(lblCurrSchedule);
 		paneSchedule.add(btnNext);
 		paneSchedule.add(btnLast);
+		paneSchedule.add(Box.createRigidArea(new Dimension(110, 0)));
+		paneSchedule.add(btnPrint);
 
 		
 		/*
@@ -565,6 +571,11 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 			btnFirst.setEnabled(false);
 			btnPrev.setEnabled(false);
 			drawSchedule();
+		} else if (sender.equals(btnPrint)) {
+			System.out.println("Heyyo");
+			JTextArea text = new JTextArea(currSchedules.get(currSchedule-1).toString());
+			text.setEditable(false);
+			JOptionPane.showMessageDialog(null,text);
 		}
 	}
 	
@@ -698,9 +709,11 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		if (schedules.size() < 1) {
 			display("There are no possible schedules for your current selection.");
 			clear();
+			btnPrint.setEnabled(false);
 			System.out.println("Clearing");
 		} else {
 			currSchedule = 1;
+			btnPrint.setEnabled(true);
 			if (schedules.size()>1) {
 			btnNext.setEnabled(true);
 			btnLast.setEnabled(true);
