@@ -504,4 +504,9 @@ break;
 	public void schedulesGenerated(int count) {
 		display(count + " schedules generated.");
 	}
+
+	@Override
+	public void courseNone() {
+		display("No courses selected - can't generate until you ADD some.");
+	}
 }

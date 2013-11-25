@@ -263,8 +263,8 @@ public class Schedule implements Serializable
 
 
     public String toString() {
-
-        String outputString = (System.getProperty("line.separator") + System.getProperty("line.separator") + "Schedule: " + courseSelections.size() + " classes. ID: " + super.toString());
+    	String plural = courseSelections.size() > 1 ? "es" : "";
+        String outputString = (System.getProperty("line.separator") + System.getProperty("line.separator") + "Schedule: " + courseSelections.size() + " class" + plural + ".");
         SimpleDateFormat date_format = new SimpleDateFormat("HH:mm");
         outputString = new String(outputString + System.getProperty("line.separator") + "Statistics:\t\tAvg Start: " + date_format.format(avgStartingTime) + ", Avg End: " + date_format.format(avgEndingTime)) +
                 ", Avg Length: " + (avgLengthOfDay.getTime() / 1000 / 60 / 60) + " hours, Days off: " + numOfDaysOff;
