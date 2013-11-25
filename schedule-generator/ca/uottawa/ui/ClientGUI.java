@@ -70,6 +70,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		
 		
 		//Display the frame:
+		frame.setResizable(false);
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -422,7 +423,6 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 			toRemove = nCourses.getElementAt(i).split(" ")[0];
 			send("REMOVE " + toRemove);
 		}
-		
 	}
 
 	private void removeCourse() {
@@ -587,6 +587,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		//Now edit sections contains the current semester's lists.
 		JFrame editFrame = new JFrame("Edit Course");
 		editFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		editFrame.setResizable(false);
 		Container pane = (editFrame.getContentPane());
 		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
 
@@ -617,8 +618,12 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		int i=0;
 		for (Section s : editSections) {
 			JCheckBox currentChk = new JCheckBox(s.getName());
+			boolean sectionSelected;
 			if (s.isSelected()) {
+				sectionSelected = true;
 				currentChk.setSelected(true);
+			} else {
+				sectionSelected = false;
 			}
 			currentChk.setName(new String(Integer.toString(i)));
 			chkSections.add(currentChk);
@@ -633,6 +638,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 				JCheckBox tempChk = new JCheckBox(a.toString().split(" Selected")[0]);
 				tempChk.setEnabled(false);
 				tempChk.setSelected(a.getSelected());
+				if (sectionSelected) {
 				switch (a.getType()) {
 				case "DGD":
 					if (requiredDGD>0) {
@@ -649,6 +655,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 						tempChk.setEnabled(true);
 					}
 					break;
+				}
 				}
 				tempChk.setName(i+","+j);
 				activities.add(tempChk);
@@ -701,7 +708,35 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 				display("You must have at least one section enabled.");
 				sender.setSelected(true);
 			} else {
-				currSection.setSelected(!currSection.isSelected());
+				boolean sectionSelected = !currSection.isSelected(); //The new state of the selection.
+				currSection.setSelected(sectionSelected);
+				//We are now to check for optionals to enable:
+				int j = 0;
+				int requiredDGD = currSection.getRequiredDGD();
+				int requiredLAB = currSection.getRequiredLAB();
+				int requiredTUT = currSection.getRequiredTUT();
+
+				for (Activity a : currSection.getActivities()) {
+					switch (a.getType()) {
+					case "DGD":
+						if (requiredDGD>0) {
+							chkActivities.get(i).get(j).setEnabled(sectionSelected);
+						}
+						break;
+					case "LAB":
+						if (requiredLAB>0) {
+							chkActivities.get(i).get(j).setEnabled(sectionSelected);
+						}
+						break;
+					case "TUT":
+						if (requiredTUT>0) {
+							chkActivities.get(i).get(j).setEnabled(sectionSelected);
+						}
+						break;
+					}
+					j++;
+				}
+				
 			}
 		} else {
 			//So we've got an activity selected.
