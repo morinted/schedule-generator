@@ -572,7 +572,6 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 			btnPrev.setEnabled(false);
 			drawSchedule();
 		} else if (sender.equals(btnPrint)) {
-			System.out.println("Heyyo");
 			JTextArea text = new JTextArea(currSchedules.get(currSchedule-1).toString());
 			text.setEditable(false);
 			JOptionPane.showMessageDialog(null,text);
