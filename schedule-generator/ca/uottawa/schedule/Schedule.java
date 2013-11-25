@@ -305,7 +305,6 @@ public class Schedule implements Serializable
         for (int i = 0; i < n; i++) {
             result.add(arrResult[i]);
             SimpleDateFormat df = new SimpleDateFormat("HH:mm");
-            System.out.println(arrResult[i].getIgnoreExtrasAvgLengthOfDay().getTime()/1000/60/60 + " dOff: " + arrResult[i].getIgnoreExtrasNumOfDaysOff());
         }
         return result;
     }

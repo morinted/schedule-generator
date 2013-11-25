@@ -25,6 +25,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	
 	//Instance variables.
 	int currSchedule;
+	int currSemester;
 	int k;
 	int n;
 	Course courseEditing;
@@ -165,6 +166,8 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		txtSearch = new JTextField();
 		//And a list box to display the search results
 		lstSearchResults = new JList<String>();
+		lstSearchResults.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		lstSearchResults.setPrototypeCellValue("Prototype Cell Value");
 		scrSearchResults = new JScrollPane(lstSearchResults);
 		//We'll now have the option to add optional.
 		chkOptional = new JCheckBox("Optional?");
@@ -215,6 +218,9 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		lstOptionalCourses = new JList<String>();
 		lstCourses.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		lstOptionalCourses.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		lstCourses.setPrototypeCellValue("Prototype Cell Value");
+		lstOptionalCourses.setPrototypeCellValue("Prototype Cell Value");
+
 		scrCourses = new JScrollPane(lstCourses);
 		scrOptionalCourses = new JScrollPane(lstOptionalCourses);
 		
@@ -435,7 +441,6 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 			} else {
 				courseCode = lstOptionalCourses.getSelectedValue().split(" ")[0];
 			}
-			System.out.println("Sending message: " + "REMOVE " + courseCode);
 				send("REMOVE " + courseCode);
 		}
 	}
@@ -447,7 +452,6 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 				String courseCode = lstSearchResults.getSelectedValue().split(" ")[0];
 				//Determine if we're sending an optional or mandatory course.
 				String optional = chkOptional.isSelected() ? "OPTIONAL " : "";
-				System.out.println("Sending message: " + "ADD " + optional + courseCode);
 				send("ADD " + optional + courseCode);
 		}
 	}
@@ -463,9 +467,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	}
 
 	public String getSemester(List<String> semesters) {
-		System.out.println("Getting semester");
 		String currentSelection = (String) cboSemester.getSelectedItem();
-		System.out.println("Currently selected: " + currentSelection);
 		if (currentSelection == null) {
 			String month, year;
 			for (String s : semesters) {
@@ -504,6 +506,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		} 
 		//refresh the list in case we have just changed semesters.
 		send("LIST");
+		currSemester = cboSemester.getSelectedIndex();
 		return semesters.get(cboSemester.getSelectedIndex());
 	}
 
@@ -538,7 +541,6 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	}
 
 	public void setCourses(List<Course> courses, List<Course> nCourses) {
-		System.out.println("Setting courses");
 		//This is the display courses section.
 		
 		String[] manCourses = new String[courses.size()];
@@ -684,7 +686,6 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 			}
 		}
 		pane.add(Box.createRigidArea(new Dimension(15, 15))); //Gives us some margins.
-
 		editFrame.pack();
 		editFrame.setVisible(true);
 		editFrame.addWindowListener(this);
@@ -776,11 +777,17 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	@Override
 	public boolean confirmSemester() {
 		//We are changing semesters. Let's set things back to how they should be.
-		txtSearch.setText("");
-		chkOptional.setSelected(false);
-		chkIgnoreExtras.setSelected(false);
+	    int reply = JOptionPane.showConfirmDialog(null, "Are you sure you want to change semesters? You will lose all settings so far.", "Confirm Change Semester", JOptionPane.YES_NO_OPTION);
+        if (reply == JOptionPane.YES_OPTION) {
+        	txtSearch.setText("");
+    		chkOptional.setSelected(false);
+    		chkIgnoreExtras.setSelected(false);
+    		return true;
+        } else {
+        	cboSemester.setSelectedIndex(currSemester);
+        	return false;
+        }
 		
-		return true;
 	}
 	
 	private void display(String msg) {
@@ -842,7 +849,9 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 			if (sender.equals(cboSortOrder)) {
 				send("SORTORDER");
 			} else if (sender.equals(cboSemester)) {
+				if (cboSemester.getSelectedIndex() != currSemester) {
 					send("SEMESTER");
+				}
 			}
 		}
 	}

@@ -242,7 +242,6 @@ public class ScheduleGeneratorClient extends AbstractClient {
 			} else {
 				try {
 				k = Integer.parseInt(command[1]);
-				clientUI.sendInfo("k set to " + k);
 				} catch (NumberFormatException e) {
 					clientUI.sendInfo("You have not specified a valid value for k. " + k + " is not understood.");
 					clientUI.sendInfo("To set K, which is the number of courses you'd like to have out of your optional courses, use: SETK [int]");
@@ -287,13 +286,7 @@ public class ScheduleGeneratorClient extends AbstractClient {
 			break;
 		case "DISPLAY":
 			if (schedules.size() < 1) {
-				clientUI.sendInfo("Cannot display schedules as none have been generated.");
-				clientUI.sendInfo("To generate a schedule, first use SEARCH to find out what courses are offered this semester.");
-				clientUI.sendInfo("Then use ADD to build a list of courses.");
-				clientUI.sendInfo("You may EDIT the courses to exclude certain sections or activities.");
-				clientUI.sendInfo("You can select a SORTORDER for your courses, to prioritize your schedule");
-				clientUI.sendInfo("Finally, use the keyword GENERATE to make your schedules.");
-				clientUI.sendInfo("Then you can use DISPLAY to sift through your schedules.");
+				clientUI.sendInfo("Cannot display schedules, as none have been generated.");
 			} else {
 				// There are schedules to be displayed.
 				// We will let the client display the schedules.
