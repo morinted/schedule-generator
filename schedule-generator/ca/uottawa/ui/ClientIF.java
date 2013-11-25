@@ -48,4 +48,7 @@ public interface ClientIF {
 
 	//Client lets the UI know that schedules were genearated.
 	public abstract void schedulesGenerated(int count);
+
+	//Client lets the UI know that you can't generate without courses.
+	public abstract void courseNone();
 }

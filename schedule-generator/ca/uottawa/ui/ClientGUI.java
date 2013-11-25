@@ -7,14 +7,17 @@ import javax.swing.event.ListSelectionListener;
 
 import ca.uottawa.schedule.Activity;
 import ca.uottawa.schedule.Course;
+import ca.uottawa.schedule.CourseSelection;
 import ca.uottawa.schedule.Schedule;
 import ca.uottawa.schedule.Section;
 
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.awt.*;
 import java.io.IOException;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -28,14 +31,21 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	int currSemester;
 	int k;
 	int n;
+	List<Schedule> currSchedules;
 	Course courseEditing;
 	List<JCheckBox> chkSections = new ArrayList<JCheckBox>();
 	List<ArrayList<JCheckBox>> chkActivities = new ArrayList<ArrayList<JCheckBox>>();
 	
 	//Constants
 	private static final int SIDEBAR_WIDTH = 390;
-	private static final int HEIGHT = 850;
-
+	private static final int HEIGHT = 900;
+	private static final int CANVAS_HEIGHT = 840;
+	private static final int CANVAS_WIDTH = 1040;
+	private static final int WIDTH = 1430;
+	private static final int HALF_HOUR = 30;
+	private static final int HALF_HOUR_MARGIN = 10;
+	private static final int DAY = 130;
+	private static final int DAY_MARGIN = 30;
 	
 	//GUI variables
 	//The top-level frame
@@ -44,36 +54,55 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	Container paneMain;
 	JPanel paneLeftSideBar, paneRightSideBar, paneSemester, paneSearch, paneList, paneOptions, paneDisplay, paneSchedule, paneIncDec;
 	//Some labels that will go into those components above.
-	JLabel lblSearch, lblSemester, lblCourses, lblOptionalCourses, lblOptions, lblNChooseK, lblSortOrder;
+	JLabel lblSearch, lblSemester, lblCourses, lblOptionalCourses, lblOptions, lblNChooseK, lblSortOrder, lblCurrSchedule;
 	//Options please?
 	JCheckBox chkOptional, chkIgnoreExtras;
 	//Selecting the semester and the sort order with a combobox
 	JComboBox<String> cboSemester, cboSortOrder;
 	//Buttons. These are pretty telling of what actions will occur.
-	JButton btnAdd, btnRemove, btnEdit, btnClearAll, btnIncK, btnDecK, btnGenerate, btnNext, btnPrev, btnFirst, btnLast;
+	JButton btnAdd, btnRemove, btnEdit, btnClearAll, btnIncK, btnDecK, btnGenerate, btnNext, btnPrev, btnFirst, btnLast, btnPrint;
 	//Areas to write text
 	JTextField txtSearch;
 	//To hold lists (like search results)
 	JList<String> lstSearchResults, lstCourses, lstOptionalCourses;
 	JScrollPane scrSearchResults, scrCourses, scrOptionalCourses;
-	
+	//To draw schedules
+	BufferedImage biSchedule;
+	JLabel lblDisplay; //to hold the BI
+	Color bg = Color.WHITE; //default background color.
+	RenderingHints renderingHints; 
+	Font fntMain;
+	Font fntActivity;
+	Color labColor;
+	Color lecColor;
+	Color othColor;
 	
 	
 	public ClientGUI(String title, String studentNumber, String host, int port) {
 		//Create the main frame.
 		JFrame frame = new JFrame(title);
 		paneMain = frame.getContentPane();
-		frame.setSize(new Dimension(SIDEBAR_WIDTH, HEIGHT));
+		frame.setSize(new Dimension(WIDTH, HEIGHT));
 		k = 0; //We start by chosing 0 of 0 optional courses
 		n = 0;
 		createComponents();
 		addListeners();
 		
+		//Some settings
+		currSchedule = 0;
+		currSchedules = new ArrayList<Schedule>();
+		labColor = new Color(255, 210, 210);
+		lecColor = new Color(255, 250, 180);
+		othColor = new Color(216, 212, 255);
+		fntMain = new Font("SansSerif", Font.BOLD, 15);
+		fntActivity = new Font("SansSerif", Font.BOLD, 13);
 		
 		//Display the frame:
 		frame.setResizable(false);
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		clear();
 		
 		try 
 	    {
@@ -98,6 +127,10 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		btnIncK.addActionListener(this);
 		btnDecK.addActionListener(this);
 		btnGenerate.addActionListener(this);
+		btnNext.addActionListener(this);
+		btnPrev.addActionListener(this);
+		btnLast.addActionListener(this);
+		btnFirst.addActionListener(this);
 		
 		//Text boxes
 		txtSearch.getDocument().addDocumentListener(this);
@@ -318,7 +351,37 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		c.gridwidth = 2;
 		paneOptions.add(btnGenerate, c);
 		
+		/*
+		 * Creating the display pane.
+		 */
+		paneDisplay = new JPanel();
+		paneDisplay.setLayout(new BoxLayout(paneDisplay, BoxLayout.X_AXIS));
+		biSchedule = new BufferedImage(CANVAS_WIDTH, CANVAS_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+		lblDisplay = new JLabel(new ImageIcon(biSchedule));
+		lblDisplay.setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
+		paneDisplay.setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
+		paneDisplay.add(lblDisplay);
 		
+		/*
+		 * Creating the navigation pane for schedules
+		 */
+		paneSchedule = new JPanel();
+		paneSchedule.setLayout(new BoxLayout(paneSchedule, BoxLayout.X_AXIS));
+		btnNext = new JButton("Next >");
+		btnNext.setEnabled(false);
+		btnPrev = new JButton("< Prev");
+		btnPrev.setEnabled(false);
+		btnFirst = new JButton("|<< First");
+		btnFirst.setEnabled(false);
+		btnLast = new JButton("Last >>|");
+		btnLast.setEnabled(false);
+		lblCurrSchedule = new JLabel("  Displaying Schedule 0 / 0  ");
+		paneSchedule.add(btnFirst);
+		paneSchedule.add(btnPrev);
+		paneSchedule.add(lblCurrSchedule);
+		paneSchedule.add(btnNext);
+		paneSchedule.add(btnLast);
+
 		
 		/*
 		 * Adding all panes to main layout.
@@ -327,9 +390,61 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		paneLeftSideBar.add(paneSearch);
 		paneLeftSideBar.add(paneList);
 		paneLeftSideBar.add(paneOptions);
+		paneRightSideBar.add(paneDisplay);
+		paneRightSideBar.add(paneSchedule);
 		paneMain.add(paneLeftSideBar);
-		//paneMain.add(paneRightSideBar);
+		paneMain.add(paneRightSideBar);
 
+	}
+	
+	public void clear() {
+		//Clears the canvas
+		Graphics2D g = biSchedule.createGraphics();
+		g.setFont(fntMain);
+		g.setBackground(new Color(255,255,255,0));
+		g.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+		
+		
+		//Drawing time-lines (haha)
+		for (int i=0; i<27; i++) {
+			if (i>0) {
+			//Let's make a label saying the time.
+			g.setColor(Color.BLACK);
+			//Draw time:
+			String time = new String(((i/2)+8)+ ":00");
+			g.drawString(time, (int)(0.5*DAY-DAY_MARGIN), HALF_HOUR*i-HALF_HOUR_MARGIN+(int)(fntMain.getSize()/2));
+			
+			g.drawLine(DAY-DAY_MARGIN, HALF_HOUR*i-HALF_HOUR_MARGIN, DAY*8-DAY_MARGIN, HALF_HOUR*i-HALF_HOUR_MARGIN);
+			}
+			g.setColor(Color.LIGHT_GRAY);
+			g.drawLine(DAY-DAY_MARGIN, HALF_HOUR*(i+1)-HALF_HOUR_MARGIN, DAY*8-DAY_MARGIN, HALF_HOUR*(i+1)-HALF_HOUR_MARGIN);
+			i++;
+		}
+		g.setColor(Color.BLACK);
+		String time = new String("22:00");
+		g.drawString(time, (int)(0.5*DAY-DAY_MARGIN), HALF_HOUR*28-HALF_HOUR_MARGIN+(int)(fntMain.getSize()/2));
+		g.drawLine(DAY-DAY_MARGIN, HALF_HOUR*(28)-HALF_HOUR_MARGIN, DAY*8-DAY_MARGIN, HALF_HOUR*(28)-HALF_HOUR_MARGIN);
+		
+		//Drawing day-dividers
+		String[] day = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+		for (int i=1; i<=8; i++) {
+			//First day is Sunday
+			g.setColor(Color.BLACK);
+			//We'd like to center the string.
+			//We don't print a day for the last line, which is after Saturday
+			if (i<8) {
+			int stringLen = (int)g.getFontMetrics().getStringBounds(day[i-1], g).getWidth();  
+			stringLen = stringLen/2;
+			g.drawString(day[i-1], DAY*i-DAY_MARGIN+(DAY/2)-stringLen, HALF_HOUR-(int)(HALF_HOUR_MARGIN*1.5));
+			}
+			g.drawLine(DAY*i-DAY_MARGIN, HALF_HOUR-HALF_HOUR_MARGIN, DAY*i-DAY_MARGIN, HALF_HOUR*28-HALF_HOUR_MARGIN);
+		}
+		
+		//Update the label to announce which schedule we're drawing, can be 0 / 0!
+		lblCurrSchedule.setText("  Displaying Schedule " + currSchedule + " / " + currSchedules.size() + "  ");
+		
+		g.dispose();
+		lblDisplay.repaint();
 	}
 
 
@@ -366,6 +481,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	    	port = DEFAULT_PORT; //Else default to the default port.
 	    } 
 		new ClientGUI("uOttawa Schedule Generator", studentNumber, host, port);
+		
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -387,7 +503,10 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		} else if (sender.equals(btnRemove)) {
 			removeCourse();
 		} else if (sender.equals(btnClearAll)) {
-			removeAllCourses();
+			int reply = JOptionPane.showConfirmDialog(null, "Clear course selection? There's no going back!", "Confirm Clear", JOptionPane.YES_NO_OPTION);
+	        if (reply == JOptionPane.YES_OPTION) {
+			removeAllCourses(); 
+			}
 		} else if (sender.equals(chkIgnoreExtras)) {
 			int ie = chkIgnoreExtras.isSelected() ? 1 : 0;
 				send("IGNOREEXTRAS " + ie);
@@ -406,6 +525,46 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 					send("EDIT " + toEdit);
 				}
 				
+		} else if (sender.equals(btnNext)) {
+			currSchedule++;
+			if (currSchedule > 1) {
+				btnPrev.setEnabled(true);
+				btnFirst.setEnabled(true);
+			}
+			if (currSchedule==currSchedules.size()) {
+				btnNext.setEnabled(false);
+				btnLast.setEnabled(false);
+			}
+			drawSchedule();
+		} else if (sender.equals(btnLast)) {
+			currSchedule = currSchedules.size();
+			if (currSchedule > 1) {
+				btnPrev.setEnabled(true);
+				btnFirst.setEnabled(true);
+			}
+			btnNext.setEnabled(false);
+			btnLast.setEnabled(false);
+			drawSchedule();
+		} else if (sender.equals(btnPrev)) {
+			currSchedule--;
+			if (currSchedule < currSchedules.size()) {
+				btnNext.setEnabled(true);
+				btnLast.setEnabled(true);
+			}
+			if (currSchedule == 1) {
+				btnPrev.setEnabled(false);
+				btnFirst.setEnabled(false);
+			}
+			drawSchedule();
+		} else if (sender.equals(btnFirst)) {
+			currSchedule = 1;
+			if (currSchedule < currSchedules.size()) {
+				btnNext.setEnabled(true);
+				btnLast.setEnabled(true);
+			}
+			btnFirst.setEnabled(false);
+			btnPrev.setEnabled(false);
+			drawSchedule();
 		}
 	}
 	
@@ -535,8 +694,99 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	}
 
 	public void displaySchedules(List<Schedule> schedules) {
-		// TODO Auto-generated method stub
+		currSchedules = schedules;
+		if (schedules.size() < 1) {
+			display("There are no possible schedules for your current selection.");
+			clear();
+			System.out.println("Clearing");
+		} else {
+			currSchedule = 1;
+			if (schedules.size()>1) {
+			btnNext.setEnabled(true);
+			btnLast.setEnabled(true);
+			}
+			drawSchedule();
+		}
+	}
+
+	private void drawSchedule() {
+		clear(); //clean the last schedule.
 		
+		//Draws the current schedule!
+		Schedule toDraw = currSchedules.get(currSchedule-1);
+		Graphics2D g = biSchedule.createGraphics();
+		g.setFont(fntActivity);
+		
+		for (CourseSelection cs : toDraw.getCourseSelections()) {
+			//So, we're moving through something like 5 classes per schedule.
+			//CS is ONE class.
+			//The CS is made up of activities. We've got to draw each activity.
+			for (Activity a: cs.getActivities()) {
+				//Now we've got one activity. Yay! The nitty-gritty!
+				int day = a.getDay();
+				if (day==0) {
+					//This must be a web course. We don't draw non-scheduled items.
+					continue;
+				}
+				Date startTime = a.getStartTime();
+				Date endTime = a.getEndTime();
+				//We're going to convert start time into the number
+				//of half-hour blocks after 8:30 that it is. (0-27).
+				double hStart = startTime.getTime()/1000/60/30 - 26;
+				double hLength = endTime.getTime()/1000/60/30 - 26 - hStart;
+				//Determine class information
+				String strSec = a.getSection().getName();
+				String actType = a.getType();
+				String strAct = actType + " " + a.getNumber();
+				String strLoc = a.getPlace();
+				
+				//We should find out what color this activity will be drawn in.
+				switch (actType) {
+				case "LEC":
+				case "SEM":
+				case "VID":
+				case "AUD":
+					//This is a lecture-type course.
+					g.setColor(lecColor);
+					break;
+				case "LAB":
+				case "RSH":
+				case "WRK":
+					//This is an applied course of sorts.
+					g.setColor(labColor);
+					break;
+				default:
+					//This is a DGD/TUT/etc. type course.
+					g.setColor(othColor);
+				}
+				
+				//Now we have the information for the activity. We must
+				//draw it as a rectangle on the graphics.
+				int x = day*DAY-DAY_MARGIN+1;
+				int y = (int) (hStart*HALF_HOUR - HALF_HOUR_MARGIN) + 1;
+				int width = DAY-1;
+				int height = (int) (hLength*HALF_HOUR) -1;
+				g.fillRect(x, y, width, height);
+				
+				//Rectangle drawn. Now we can add some text.
+				//Text color: Black of course!
+				g.setColor(Color.BLACK);
+				int stringLen = (int)g.getFontMetrics().getStringBounds(strSec, g).getWidth();  
+				stringLen = stringLen/2;
+				x += DAY/2;
+				y += 20;
+				g.drawString(strSec, x-stringLen, y);
+				y += 20;
+				stringLen = (int)g.getFontMetrics().getStringBounds(strAct, g).getWidth();  
+				stringLen = stringLen/2;
+				g.drawString(strAct, x-stringLen, y);
+				y += 20;
+				stringLen = (int)g.getFontMetrics().getStringBounds(strLoc, g).getWidth();  
+				stringLen = stringLen/2;
+				g.drawString(strLoc, x-stringLen, y);
+			}
+		}
+		lblDisplay.repaint();
 	}
 
 	public void setCourses(List<Course> courses, List<Course> nCourses) {
@@ -781,6 +1031,14 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
         	txtSearch.setText("");
     		chkOptional.setSelected(false);
     		chkIgnoreExtras.setSelected(false);
+    		currSchedules = new ArrayList<Schedule>();
+    		currSchedule = 0;
+    		clear();
+    		btnNext.setEnabled(false);
+    		btnLast.setEnabled(false);
+    		btnFirst.setEnabled(false);
+    		btnPrev.setEnabled(false);
+    		
     		return true;
         } else {
         	cboSemester.setSelectedIndex(currSemester);
@@ -856,9 +1114,19 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	}
 
 	public void schedulesGenerated(int count) {
-		//Schedules were generated. We want to display right away.
-		System.out.println(count + " schedules were generated.");
+		if (count==0) {
+			currSchedules = new ArrayList<Schedule>();
+    		currSchedule = 0;
+    		clear();
+    		btnNext.setEnabled(false);
+    		btnLast.setEnabled(false);
+    		btnFirst.setEnabled(false);
+    		btnPrev.setEnabled(false);
+			display("No conflict-free timetable possible with your current selection!");
+		} else {
+			System.out.println("Sending display");
 			send("DISPLAY");
+		}
 	}
 
 	public void windowClosing(WindowEvent e) {
@@ -899,5 +1167,10 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 			lstCourses.clearSelection();
 		}
 	}
+
+	public void courseNone() {
+		display("Cannot generate: no courses selected!");
+	}
+	
 
 }
