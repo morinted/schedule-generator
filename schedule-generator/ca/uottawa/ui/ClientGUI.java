@@ -356,11 +356,13 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 		} else if (sender.equals(btnIncK)) {
 			if (k < n) {
 				k++;
+				setK();
 				updateLblNChooseK();
 			}
 		} else if (sender.equals(btnDecK)) {
 			if (k > 1) {
 				k--;
+				setK();
 				updateLblNChooseK();
 			}
 		} else if (sender.equals(btnRemove)) {
@@ -550,10 +552,21 @@ public class ClientGUI implements ActionListener, ClientIF, DocumentListener, It
 	private void updateLblNChooseK() {
 		if (n==0) {
 			k=0;
+			setK();
 		} else if (n>0 && k==0) {
 			k = 1;
+			setK();
 		}
+		
 		lblNChooseK.setText("Selecting " + k + " ouf of " + n + " optional courses");
+	}
+	
+	private void setK() {
+		try {
+			client.handleMessageFromClientUI("SETK " + k);
+		} catch (IOException e) {
+			display("Error setting k on Client");
+		}
 	}
 
 	@Override
