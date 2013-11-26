@@ -263,7 +263,6 @@ public class ScheduleGeneratorClient extends AbstractClient {
 				}
 			} 
 			//The we make sure that there's a sort order selected.
-			
 			if (sortOrder == null) {
 				sortOrder = clientUI.getSortOrder();
 			}
@@ -280,8 +279,8 @@ public class ScheduleGeneratorClient extends AbstractClient {
 				sendToServer(generateMsg);
 				} else {
 					clientUI.courseNone();
+					clientUI.done();
 				}
-			
 			break;
 		case "SORTORDER":
 			sortOrder = clientUI.getSortOrder();
@@ -355,8 +354,8 @@ public class ScheduleGeneratorClient extends AbstractClient {
 			} else {
 				clientUI.editCourse(editMe, semester);
 			}
-			clientUI.done();
 		}
+		clientUI.done();
 		break;
 		case "SEMESTER":
 			if (clientUI.confirmSemester()) { //The user really wants to change semesters?
