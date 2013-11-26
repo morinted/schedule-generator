@@ -347,7 +347,7 @@ public class ScheduleGeneratorClient extends AbstractClient {
 					editMe = c;
 				}
 			}
-			if (toEdit == null) {
+			if (editMe == null) {
 				clientUI.sendInfo("You do not have a course called "
 						+ toEdit);
 				clientUI.sendInfo("Use LIST to see your active courses.");

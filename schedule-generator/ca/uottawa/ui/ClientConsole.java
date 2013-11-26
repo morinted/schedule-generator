@@ -316,7 +316,7 @@ break;
 		display("Editing course " + edit.getDescription());
 		display("Here are the sections in this course for your semester:");
 		
-		
+		int enabledSections = 0;
 		List<Section> editSections = new ArrayList<Section>();
 		for (Section s : edit.getSections()) {
 			if (s.getSemester().equals(semester)) {
@@ -326,11 +326,15 @@ break;
 		//We now have a list of current-semester sections.
 		for (int i = 0; i < editSections.size(); i++) {
 			Section currSection = editSections.get(i);
+				if (currSection.isSelected()) { 
+					enabledSections++; 
+			}
 			display("     " + (i+1) + ": " + currSection.getName() + ". Selected: " + currSection.isSelected());
 		}
 		display("Please select a section to edit. [Use line number].");
 		
         String response = readFromConsole();
+       
         int choice = 0;
         boolean valid = false;
         while (!valid) {
@@ -357,7 +361,11 @@ break;
         	display("Would you like to " + inquiry + " the entire section? (y/n)");
         }
         selected = response.startsWith("Y") ? !selected : selected;
+        if (selected == false && enabledSections==1) {
+        	display("Sorry! You can't disable your only active section.");
+        } else {
         editSection.setSelected(selected);
+        }
         //If selected is now false, then we can stop here. Otherwise, we'll see if they want to edit the activities further down.
         if (selected) {
         	display("Would you like to edit the activities in this section? (y/n)");
