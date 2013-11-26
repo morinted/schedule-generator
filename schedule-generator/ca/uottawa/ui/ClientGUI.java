@@ -319,8 +319,9 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		
 		paneIncDec = new JPanel();
 		paneIncDec.setLayout(new BoxLayout(paneIncDec, BoxLayout.X_AXIS));
-		paneIncDec.add(btnIncK);
 		paneIncDec.add(btnDecK);
+		paneIncDec.add(btnIncK);
+		
 		
 		c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -854,6 +855,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		Container pane = (editFrame.getContentPane());
 		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
 
+		btnPrint.setEnabled(false);
 		cboSemester.setEnabled(false);
 		btnAdd.setEnabled(false);
 		txtSearch.setEditable(false);
@@ -869,6 +871,11 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		lstCourses.setEnabled(false);
 		lstOptionalCourses.setEnabled(false);
 		lstSearchResults.setEnabled(false);
+		btnNext.setEnabled(false);
+		btnPrev.setEnabled(false);
+		btnFirst.setEnabled(false);
+		btnLast.setEnabled(false);
+
 		
 		//Let's think of the cases.
 		//1. Course has only one section and no optional courses. All checkboxes will be disabled.
@@ -1046,10 +1053,12 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
     		currSchedules = new ArrayList<Schedule>();
     		currSchedule = 0;
     		clear();
+    		btnPrint.setEnabled(false);
     		btnNext.setEnabled(false);
     		btnLast.setEnabled(false);
     		btnFirst.setEnabled(false);
     		btnPrev.setEnabled(false);
+    		btnPrint.setEnabled(false);
     		
     		return true;
         } else {
@@ -1130,6 +1139,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 			currSchedules = new ArrayList<Schedule>();
     		currSchedule = 0;
     		clear();
+    		btnPrint.setEnabled(false);
     		btnNext.setEnabled(false);
     		btnLast.setEnabled(false);
     		btnFirst.setEnabled(false);
@@ -1142,6 +1152,8 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	}
 
 	public void windowClosing(WindowEvent e) {
+		//This even is called when the edit window is being closed.
+		//We need to re-enable all controls
 		cboSemester.setEnabled(true);
 		btnAdd.setEnabled(true);
 		txtSearch.setEditable(true);
@@ -1157,6 +1169,20 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		lstCourses.setEnabled(true);
 		lstOptionalCourses.setEnabled(true);
 		lstSearchResults.setEnabled(true);
+		//Only enable nav controls if necessary
+		if (currSchedule > 0) {
+			btnPrint.setEnabled(true);
+		}
+		if (currSchedule > 1) {
+			btnPrev.setEnabled(true);
+			btnFirst.setEnabled(true);
+		}
+		if (currSchedules.size() > 1) {
+			if (currSchedule < currSchedules.size()-1) {
+				btnNext.setEnabled(true);
+				btnLast.setEnabled(true);
+			}
+		}
 	}
 	public void windowActivated(WindowEvent arg0) {
 	}
