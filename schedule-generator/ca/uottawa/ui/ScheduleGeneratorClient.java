@@ -25,14 +25,30 @@ public class ScheduleGeneratorClient extends AbstractClient {
 	private String semester;
 	private ClientIF clientUI;
 
+	/**
+	 * Return schedules
+	 * @return The list of schedules.
+	 */
 	public List<Schedule> getSchedules() {
 		return schedules;
 	}
 
+	/**
+	 * Set the list of schedules
+	 * @param schedules: The list of schedules to the set.
+	 */
 	public void setSchedules(List<Schedule> schedules) {
 		this.schedules = schedules;
 	}
 
+	/**
+	 * Constructor
+	 * @param studentNumber: The student number for the client.
+	 * @param host: The host to connect with.
+	 * @param port: The port to connect on.
+	 * @param clientUI: The ClientIF to UI with.
+	 * @throws IOException
+	 */
 	public ScheduleGeneratorClient(String studentNumber, String host, int port,
 			ClientIF clientUI) throws IOException {
 		super(host, port); // Call the superclass constructor
@@ -47,16 +63,18 @@ public class ScheduleGeneratorClient extends AbstractClient {
 		openConnection();
 
 		if (this.semester == null) {
+			//Select semester from the UI.
 			ScheduleMessage request = new ScheduleMessage();
 			request.setCommand("SEMESTERS");
-			sendToServer(request);
+			sendToServer(request); //Get list of semesters from the server.
 		} else {
-			clientUI.done();
+			clientUI.done(); //Get input from server if the semester exists.
 		}
-
-		// Send message to log in
 	}
 
+	/**
+	 * Handles message from the server and relays information to the client.
+	 */
 	protected void handleMessageFromServer(Object msg) {
 		ScheduleMessage message = (ScheduleMessage) msg;
 		String command = message.getCommand().toUpperCase();
@@ -122,6 +140,9 @@ public class ScheduleGeneratorClient extends AbstractClient {
 		clientUI.done();
 	}
 
+	/**
+	 * Quits the application.
+	 */
 	public void quit() {
 		try {
 			closeConnection();
@@ -130,15 +151,26 @@ public class ScheduleGeneratorClient extends AbstractClient {
 		System.exit(0);
 	}
 
+	/**
+	 * Connection to server closed.
+	 */
 	public void connectionClosed() {
 		clientUI.sendInfo("The connection has been closed.");
 	}
 
+	/**
+	 * Connection exception
+	 */
 	public void connectionException(Exception exception) {
 		clientUI.sendInfo("Connection to server lost. Closing connection.");
 		quit();
 	}
 
+	/**
+	 * Handle a command from the client UI.
+	 * @param msg: The message from the client.
+	 * @throws IOException
+	 */
 	public void handleMessageFromClientUI(String msg) throws IOException {
 		// Woot.
 		// Add <coursecode>
@@ -150,12 +182,12 @@ public class ScheduleGeneratorClient extends AbstractClient {
 														// of
 
 		switch (command[0].toUpperCase()) {
-		case "SEARCH":
-			if (command.length != 2) {
+		case "SEARCH": //search command
+			if (command.length != 2) { //Make sure it's a correct command
 				clientUI.sendInfo("To use search, type: SEARCH [partial or full course-code]");
 				clientUI.sendInfo("For example: SEARCH SEG2105");
 				clientUI.done();
-			} else {
+			} else { //If search is valid, send search message to the server.
 				ScheduleMessage srchMsg = new ScheduleMessage();
 				srchMsg.setCommand("SEARCH");
 				List<String> query = new ArrayList<String>();
@@ -199,7 +231,7 @@ public class ScheduleGeneratorClient extends AbstractClient {
 				sendToServer(addCourse);
 			}
 			break;
-		case "REMOVE":
+		case "REMOVE": //Remove command
 			// Now the user wants to remove a course.
 			if (command.length != 2) {
 				clientUI.sendInfo("To use add, type: REMOVE [partial or full course-code]");
@@ -236,7 +268,7 @@ public class ScheduleGeneratorClient extends AbstractClient {
 				clientUI.done();
 			}
 			break;
-		case "SETK":
+		case "SETK": //Set K command
 			if (command.length != 2) {
 				clientUI.sendInfo("To set K, which is the number of courses you'd like to have out of your optional courses, use: SETK [int]");
 			} else {
@@ -250,7 +282,7 @@ public class ScheduleGeneratorClient extends AbstractClient {
 				}
 			}
 		break;
-		case "GENERATE":
+		case "GENERATE": //Generate command
 			// Awww yeeah. We get to generate courses now.
 			// First, check for n choose k option:
 			int nCourseSize = nCourses.size();
@@ -282,12 +314,12 @@ public class ScheduleGeneratorClient extends AbstractClient {
 					clientUI.done();
 				}
 			break;
-		case "SORTORDER":
+		case "SORTORDER": //Sort order command
 			sortOrder = clientUI.getSortOrder();
 			clientUI.sendInfo("Sort order set to: " + sortOrder);
 			clientUI.done();
 			break;
-		case "DISPLAY":
+		case "DISPLAY": //Display command
 			if (schedules.size() < 1) {
 				clientUI.sendInfo("Cannot display schedules, as none have been generated.");
 			} else {
@@ -297,11 +329,11 @@ public class ScheduleGeneratorClient extends AbstractClient {
 			}
 			clientUI.done();
 			break;
-		case "LIST":
+		case "LIST": //List command
 			clientUI.setCourses(courses, nCourses);
 			clientUI.done();
 			break;
-		case "IGNOREEXTRAS":
+		case "IGNOREEXTRAS": //Ignore Extras command
 			if (command.length != 2) {
 				clientUI.sendInfo("To set ignore extras, which ignores DGDs/TUTs while sorting, use:");
 				clientUI.sendInfo("IGNOREEXTRAS [0/1]");
@@ -324,7 +356,7 @@ public class ScheduleGeneratorClient extends AbstractClient {
 				}
 			}
 			break;
-		case "EDIT":
+		case "EDIT": //Edit command
 		if (command.length != 2) {
 			clientUI.sendInfo("To use edit, type EDIT <coursecode>. Note, to edit a course, you must have it in your list of courses. To add it, use ADD <coursecode>.");
 		} else {
@@ -357,7 +389,7 @@ public class ScheduleGeneratorClient extends AbstractClient {
 		}
 		clientUI.done();
 		break;
-		case "SEMESTER":
+		case "SEMESTER": //Semester setting command.
 			if (clientUI.confirmSemester()) { //The user really wants to change semesters?
 				//If they do, they lose all previous courses and settings.
 				ignoreExtras = true;
@@ -372,7 +404,7 @@ public class ScheduleGeneratorClient extends AbstractClient {
 				sendToServer(request);
 			}
 			break;
-		case "HELP":
+		case "HELP": //Help/? command: display commands.
 		case "?":
 			clientUI.sendInfo("There are several commands. To learn about each command, type it without any arguments.");
 			clientUI.sendInfo("     ADD <COURSE-CODE> - add a course");
@@ -387,7 +419,7 @@ public class ScheduleGeneratorClient extends AbstractClient {
 			clientUI.sendInfo("     SORTORDER - set the sort order for generating a schedule");
 			clientUI.done();
 			break;
-		default:
+		default: //Unknown command:
 			clientUI.sendInfo("Unknown command: " + msg);
 			clientUI.done();
 		}

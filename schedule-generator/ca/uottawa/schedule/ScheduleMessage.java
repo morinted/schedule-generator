@@ -1,3 +1,6 @@
+/**
+ * A message to be send between the server and client. It has containers to send all kinds of messages.
+ */
 package ca.uottawa.schedule;
 
 import java.io.Serializable;
@@ -5,11 +8,14 @@ import java.util.List;
 
 public class ScheduleMessage implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * A container for all types of messages. Includes command,
+	 * sort order, semester, ignore extras, a list of courses,
+	 * a list of optionalCourses, an int k (of n), a list of strings
+	 * and a list of schedules.
+	 */
 	String command;
 	String sortOrder;
 	String semester;
@@ -28,8 +34,18 @@ public class ScheduleMessage implements Serializable {
         this.semester = semester;
     }
 
-
-
+    /**
+     * A full constructor.
+     * @param command
+     * @param sortOrder
+     * @param semester
+     * @param ignoreExtras
+     * @param courses
+     * @param strings
+     * @param schedules
+     * @param optionalCourses
+     * @param k
+     */
     public ScheduleMessage(String command, String sortOrder, String semester, boolean ignoreExtras, List<Course> courses, List<String> strings, List<Schedule> schedules, List<Course> optionalCourses, int k) {
         this.command = command;
 		this.sortOrder = sortOrder;
@@ -57,6 +73,9 @@ public class ScheduleMessage implements Serializable {
 		this.k = k;
 	}
 
+	/**
+	 * A blank constructor.
+	 */
 	public ScheduleMessage() {
 	this.command = null;
 	this.sortOrder = null;

@@ -1,3 +1,6 @@
+/**
+ * The text parser for the csv of course codes.
+ */
 package ca.uottawa.schedule;
 
 import java.io.*;
@@ -133,6 +136,7 @@ public static List<Course> getCoursesFromDatabase(File courseCodes) {
 	} catch (IOException e) {
 		e.printStackTrace();
 	}
+	//Return the database of courses.
 	return courses;
 }
 }

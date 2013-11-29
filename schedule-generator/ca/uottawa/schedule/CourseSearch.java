@@ -11,7 +11,8 @@ import java.util.*;
 
 public class CourseSearch {
     public static List<String> search(String query, String semester, List<Course> list) {
-        if (query.length()>8) {
+        query = query.replace(" ", ""); //Remove spaces
+    	if (query.length()>8) {
             query = query.substring(0, 8);
         }
         List<String> result = new ArrayList<String>();
@@ -22,8 +23,9 @@ public class CourseSearch {
         int l = 0;
         int m = h / 2;
 
-        while(!list.get(m).getDescription().substring(0, q).toUpperCase().equals(query) && (l<=h)) {
-            if (list.get(m).getDescription().substring(0, q).toUpperCase().compareTo(query) > 0) {
+        while(!list.get(m).getDescription().toUpperCase().startsWith(query) && (l<=h)) {
+        	int k = list.get(m).getDescription().length();
+            if (list.get(m).getDescription().substring(0, k).toUpperCase().compareTo(query) > 0) {
                 h = m-1;
             } else {
                 l = m + 1;
@@ -34,15 +36,18 @@ public class CourseSearch {
 
 
         if (l <= h) {
-            while(list.get(m).getDescription().substring(0, q).toUpperCase().equals(query)) {
+        	int k = list.get(m).getDescription().length();
+            while(list.get(m).getDescription().substring(0, k).toUpperCase().startsWith(query)) {
                 m--;
                 if (m < 0) { //LOL
                     break;
                 }
+                k = list.get(m).getDescription().length();
             }
 
             m++;
-            while(list.get(m).getDescription().substring(0, q).toUpperCase().equals(query)) {
+            k = list.get(m).getDescription().length();
+            while(list.get(m).getDescription().substring(0, k).toUpperCase().startsWith(query)) {
                 if (list.get(m).getSemesters().contains(semester)) {
                     result.add(list.get(m).getDescription());
                 }
@@ -50,6 +55,7 @@ public class CourseSearch {
                 if (m >= list.size()) {
                 	break;
                 }
+                k = list.get(m).getDescription().length();
             }
 
             return result;

@@ -37,7 +37,6 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	List<ArrayList<JCheckBox>> chkActivities = new ArrayList<ArrayList<JCheckBox>>();
 	
 	//Constants
-	private static final int SIDEBAR_WIDTH = 390;
 	private static final int HEIGHT = 900;
 	private static final int CANVAS_HEIGHT = 840;
 	private static final int CANVAS_WIDTH = 1040;
@@ -491,35 +490,39 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		
 	}
 
+	/**
+	 * Handles various button clicks
+	 */
 	public void actionPerformed(ActionEvent e) {
 		Object sender = e.getSource();
-		if (sender.equals(btnAdd)) {
-			addCourse();
-		} else if (sender.equals(btnIncK)) {
-			if (k < n) {
+		if (sender.equals(btnAdd)) { //Add button
+			addCourse(); //Add course
+		} else if (sender.equals(btnIncK)) { //Increment K button
+			if (k < n) { //If k can be incremented, increment it.
 				k++;
 				setK();
 				updateLblNChooseK();
 			}
-		} else if (sender.equals(btnDecK)) {
-			if (k > 1) {
+		} else if (sender.equals(btnDecK)) { //Decrement K button
+			if (k > 1) { //If k can be decremented, decrement it.
 				k--;
 				setK();
 				updateLblNChooseK();
 			}
-		} else if (sender.equals(btnRemove)) {
-			removeCourse();
-		} else if (sender.equals(btnClearAll)) {
+		} else if (sender.equals(btnRemove)) { //Remove button
+			removeCourse(); //Get rid of selected course.
+		} else if (sender.equals(btnClearAll)) { //Clear all button
+			//Get confirmation, then remove all courses.
 			int reply = JOptionPane.showConfirmDialog(null, "Clear course selection? There's no going back!", "Confirm Clear", JOptionPane.YES_NO_OPTION);
 	        if (reply == JOptionPane.YES_OPTION) {
 			removeAllCourses(); 
 			}
-		} else if (sender.equals(chkIgnoreExtras)) {
+		} else if (sender.equals(chkIgnoreExtras)) { //Ignore Extras checkbox.
 			int ie = chkIgnoreExtras.isSelected() ? 1 : 0;
-				send("IGNOREEXTRAS " + ie);
-		} else if (sender.equals(btnGenerate)) {
-			send("GENERATE");
-		} else if (sender.equals(btnEdit)) {
+				send("IGNOREEXTRAS " + ie); //Set IE on client side.
+		} else if (sender.equals(btnGenerate)) { //Generate button
+			send("GENERATE"); //Send generate command
+		} else if (sender.equals(btnEdit)) { //Edit button
 				String toEdit;
 				toEdit = lstCourses.getSelectedValue();
 				if (toEdit == null) {
@@ -530,55 +533,60 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 				} else {
 					toEdit = toEdit.split(" ")[0];
 					send("EDIT " + toEdit);
-				}
-				
-		} else if (sender.equals(btnNext)) {
-			currSchedule++;
-			if (currSchedule > 1) {
+				}				
+		} else if (sender.equals(btnNext)) { //Next button
+			currSchedule++; //Increment schedule
+			if (currSchedule > 1) { //enable prev and first button.
 				btnPrev.setEnabled(true);
 				btnFirst.setEnabled(true);
 			}
-			if (currSchedule==currSchedules.size()) {
+			if (currSchedule==currSchedules.size()) { //If we're at the end,
+				//we can't go any further so disable those buttons
 				btnNext.setEnabled(false);
 				btnLast.setEnabled(false);
 			}
-			drawSchedule();
-		} else if (sender.equals(btnLast)) {
-			currSchedule = currSchedules.size();
-			if (currSchedule > 1) {
-				btnPrev.setEnabled(true);
+			drawSchedule(); //Display the current schedule
+		} else if (sender.equals(btnLast)) { //Last button
+			currSchedule = currSchedules.size(); //Set schedule to the last
+			if (currSchedule > 1) { //If there's stuff to go back to,
+				btnPrev.setEnabled(true); //reenable the buttons
 				btnFirst.setEnabled(true);
 			}
-			btnNext.setEnabled(false);
+			btnNext.setEnabled(false); //Disable next and last buttons
 			btnLast.setEnabled(false);
-			drawSchedule();
-		} else if (sender.equals(btnPrev)) {
-			currSchedule--;
-			if (currSchedule < currSchedules.size()) {
+			drawSchedule(); //Display current schedule
+		} else if (sender.equals(btnPrev)) { //Previous button
+			currSchedule--; //Go to last schedule
+			if (currSchedule < currSchedules.size()) { //Re-enable next and last
 				btnNext.setEnabled(true);
 				btnLast.setEnabled(true);
 			}
-			if (currSchedule == 1) {
+			if (currSchedule == 1) { //Disable prev and first if we reach the bottom
 				btnPrev.setEnabled(false);
 				btnFirst.setEnabled(false);
 			}
-			drawSchedule();
-		} else if (sender.equals(btnFirst)) {
-			currSchedule = 1;
-			if (currSchedule < currSchedules.size()) {
+			drawSchedule(); //Display current schedule
+		} else if (sender.equals(btnFirst)) { //First button
+			currSchedule = 1; //Set first schedule
+			if (currSchedule < currSchedules.size()) { //Re-enable buttons if necessary
 				btnNext.setEnabled(true);
 				btnLast.setEnabled(true);
 			}
-			btnFirst.setEnabled(false);
+			btnFirst.setEnabled(false); //Disable first and prev buttons
 			btnPrev.setEnabled(false);
-			drawSchedule();
-		} else if (sender.equals(btnPrint)) {
+			drawSchedule(); //Display current schedule
+		} else if (sender.equals(btnPrint)) { //Print button
+			//Show a textbox with current schedule.toString()
 			JTextArea text = new JTextArea(currSchedules.get(currSchedule-1).toString());
 			text.setEditable(false);
 			JOptionPane.showMessageDialog(null,text);
 		}
 	}
 	
+	/**
+	 * Send the message to the server.
+	 * @param msg: The message to be sent to the Client.
+	 */
 	private void send(String msg) {
 		try {
 			client.handleMessageFromClientUI(msg);
@@ -587,6 +595,9 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		}
 	}
 
+	/**
+	 * Removes each course in the listboxes
+	 */
 	private void removeAllCourses() {
 		ListModel<String> courses = lstCourses.getModel();
 		ListModel<String> nCourses = lstOptionalCourses.getModel();
@@ -601,6 +612,9 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		}
 	}
 
+	/**
+	 * Remove the currently selected course.
+	 */
 	private void removeCourse() {
 		if ((lstCourses.getSelectedValue() == null) && (lstOptionalCourses.getSelectedValue() == null)) {
 			display("No course selected!");
@@ -615,6 +629,9 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		}
 	}
 
+	/**
+	 * Add the currently selected course.
+	 */
 	private void addCourse() {
 		if (lstSearchResults.getSelectedValue() == null) {
 			display("No course selected!");
@@ -626,17 +643,27 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		}
 	}
 
+	/**
+	 * Receives search results from the server and displays them in the list box.
+	 */
 	public void sendSearchResults(List<String> results) {
 		//We must display the search results.
 		String[] searchResults = results.toArray(new String[results.size()]);
 		lstSearchResults.setListData(searchResults);
 	}
 
+	/**
+	 * Sends relevant debug information to the console.
+	 */
 	public void sendInfo(String msg) {
 		System.out.println(msg);
 	}
 
+	/**
+	 * Given a list of semesters, return the chosen semester.
+	 */
 	public String getSemester(List<String> semesters) {
+		//On startup, don't allow the user to do anything but select a semester in the combobox.
 		String currentSelection = (String) cboSemester.getSelectedItem();
 		if (currentSelection == null) {
 			String month, year;
@@ -679,9 +706,14 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		return semesters.get(cboSemester.getSelectedIndex());
 	}
 
+	/**
+	 * No use for the GUI. Tells the GUI when the server has finished an operaton.
+	 */
 	public void done() {}
 
-	@Override
+	/**
+	 * Return the currently selected sort order.
+	 */
 	public String getSortOrder() {
 		String sortOrder = "earliestStart";//just in case there's an error.
 		switch(cboSortOrder.getSelectedIndex()) {
@@ -704,6 +736,9 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		return sortOrder;
 	}
 
+	/**
+	 * Holds the schedules to the GUI, then display the first one.
+	 */
 	public void displaySchedules(List<Schedule> schedules) {
 		currSchedules = schedules;
 		if (schedules.size() < 1) {
@@ -722,6 +757,9 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		}
 	}
 
+	/**
+	 * Draws the current schedule.
+	 */
 	private void drawSchedule() {
 		clear(); //clean the last schedule.
 		
@@ -799,9 +837,12 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 				g.drawString(strLoc, x-stringLen, y);
 			}
 		}
-		lblDisplay.repaint();
+		lblDisplay.repaint(); //Refresh the label
 	}
 
+	/**
+	 * List the courses in the list boxes.
+	 */
 	public void setCourses(List<Course> courses, List<Course> nCourses) {
 		//This is the display courses section.
 		
@@ -822,6 +863,9 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		updateLblNChooseK();
 	}
 
+	/**
+	 * Refresh the n and k label.
+	 */
 	private void updateLblNChooseK() {
 		if (n==0) {
 			k=0;
@@ -834,10 +878,14 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		lblNChooseK.setText("Selecting " + k + " ouf of " + n + " optional courses");
 	}
 	
+	//Set k to a specific value on the client.
 	private void setK() {
 		send("SETK " + k);
 	}
 
+	/**
+	 * Edit a course given by the client.
+	 */
 	public void editCourse(Course edit, String semester) {
 		//Editing a course. Let's make a list, similar to how we do on the client console.
 		List<Section> editSections = new ArrayList<Section>();
@@ -955,6 +1003,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		}
 		pane.add(Box.createRigidArea(new Dimension(15, 15))); //Gives us some margins.
 		editFrame.pack();
+		//Show the window. The window listener will evaluate when you close the window.
 		editFrame.setVisible(true);
 		editFrame.addWindowListener(this);
 	}
@@ -1068,6 +1117,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		
 	}
 	
+	//Display a message that must be shown to the user.
 	private void display(String msg) {
         JOptionPane.showMessageDialog(null, msg, "Info:", JOptionPane.INFORMATION_MESSAGE);
 	}
@@ -1079,18 +1129,23 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 			updateSearch();
 		}
 	}
+	
+	//When the txtSearch textarea is edited or inserted, we should pull more search results.
 	public void insertUpdate(DocumentEvent e) {
 		Object doc = e.getDocument();
 		if (doc.equals(txtSearch.getDocument())) {
 			updateSearch();
 		}
 	}
+	
+	//Same as insertUpdate
 	public void removeUpdate(DocumentEvent e) {
 		Object doc = e.getDocument();
 		if (doc.equals(txtSearch.getDocument())) {
 			updateSearch();
 		}
 	}
+	
 	//Updates the search list box below
 	private void updateSearch() {
 			String query = txtSearch.getText().toUpperCase();
@@ -1111,6 +1166,9 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		display("Course " + description + " is already in the list of courses.");
 	}
 
+	/**
+	 * The course doesn't exist.
+	 */
 	public void courseNotExists(String description) {
 		display("Course " + description + " is not in the list of courses and can't be removed.");
 		send("LIST");
@@ -1121,21 +1179,28 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		send("LIST");
 	}
 
+	/**
+	 * When a combobox state changed
+	 */
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getStateChange() == ItemEvent.SELECTED) {
 			Object sender = e.getSource();
 			if (sender.equals(cboSortOrder)) {
-				send("SORTORDER");
+				send("SORTORDER"); //Send sortorder to specify the sort order
 			} else if (sender.equals(cboSemester)) {
 				if (cboSemester.getSelectedIndex() != currSemester) {
-					send("SEMESTER");
+					send("SEMESTER"); //Send semester to specify the semester
 				}
 			}
 		}
 	}
 
+	/**
+	 * When schedules are generated, display how many.
+	 */
 	public void schedulesGenerated(int count) {
 		if (count==0) {
+			//If none, display the error.
 			currSchedules = new ArrayList<Schedule>();
     		currSchedule = 0;
     		clear();
@@ -1146,7 +1211,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
     		btnPrev.setEnabled(false);
 			display("No conflict-free timetable possible with your current selection!");
 		} else {
-			System.out.println("Sending display");
+			//Display the schedules.
 			send("DISPLAY");
 		}
 	}
@@ -1197,8 +1262,13 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	public void windowOpened(WindowEvent arg0) {
 	}
 
+	/**
+	 * Check if the list selection changed.
+	 */
 	public void valueChanged(ListSelectionEvent e) {
+		@SuppressWarnings("unchecked")
 		JList<String> sender = (JList<String>)e.getSource();
+		//Make sure that between the two list boxes, only one holds the selection.
 		if (sender.equals(lstCourses) && (lstCourses.getSelectedIndex() > -1)) {
 			lstOptionalCourses.clearSelection();
 		} else if (sender.equals(lstOptionalCourses) && (lstOptionalCourses.getSelectedIndex() > -1)) {
@@ -1206,9 +1276,10 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		}
 	}
 
+	/**
+	 * No courses selected, can't generate.
+	 */
 	public void courseNone() {
 		display("Cannot generate: no courses selected!");
 	}
-	
-
 }
