@@ -1,11 +1,20 @@
 package ca.uottawa.ui;
 
+import java.io.File;
 import java.io.IOException;
-import java.sql.ClientInfoStatus;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
+import biweekly.Biweekly;
+import biweekly.ICalendar;
+import biweekly.component.VEvent;
+import biweekly.util.Recurrence;
+import biweekly.util.Recurrence.Frequency;
+import ca.uottawa.schedule.Activity;
 import ca.uottawa.schedule.Course;
+import ca.uottawa.schedule.CourseSelection;
 import ca.uottawa.schedule.Schedule;
 import ca.uottawa.schedule.ScheduleMessage;
 import ca.uottawa.schedule.Section;
@@ -14,7 +23,6 @@ import com.lloseng.ocsf.client.AbstractClient;
 
 public class ScheduleGeneratorClient extends AbstractClient {
 
-	private String studentNumber;
 	private boolean ignoreExtras;
 	private List<Course> courses;
 	// Variables for n choose k courses.
@@ -43,18 +51,16 @@ public class ScheduleGeneratorClient extends AbstractClient {
 
 	/**
 	 * Constructor
-	 * @param studentNumber: The student number for the client.
 	 * @param host: The host to connect with.
 	 * @param port: The port to connect on.
 	 * @param clientUI: The ClientIF to UI with.
 	 * @throws IOException
 	 */
-	public ScheduleGeneratorClient(String studentNumber, String host, int port,
+	public ScheduleGeneratorClient(String host, int port,
 			ClientIF clientUI) throws IOException {
 		super(host, port); // Call the superclass constructor
 		this.clientUI = clientUI;
 		this.ignoreExtras = false;
-		this.studentNumber = studentNumber;
 		this.sortOrder = null;
 		this.schedules = new ArrayList<Schedule>();
 		this.courses = new ArrayList<Course>();
@@ -134,8 +140,8 @@ public class ScheduleGeneratorClient extends AbstractClient {
 			schedules = message.getSchedules();
 			clientUI.schedulesGenerated(schedules.size());
 			break;
+		
 		default:
-			;
 		}
 		clientUI.done();
 	}
@@ -417,6 +423,106 @@ public class ScheduleGeneratorClient extends AbstractClient {
 			clientUI.sendInfo("     SEARCH <PREFIX> - displays a list of course codes with that prefix");
 			clientUI.sendInfo("     SEMESTER - lose all settings to change semester");
 			clientUI.sendInfo("     SORTORDER - set the sort order for generating a schedule");
+			clientUI.done();
+			break;
+		case "EXPORT":
+			//Get the currently viewed schedule from the GUI.
+			int index = -1;
+			if (command.length != 2) {
+				clientUI.sendInfo("Error! Received invalid export argument: " + msg);
+			} else {
+				try {
+				index = Integer.parseInt(command[1]);
+				} catch (NumberFormatException e) {
+					clientUI.sendInfo("Invalid index: " + index);
+					}
+			}
+			Schedule sched = schedules.get(index);
+			//We have the schedule that the user selected.
+			String year = semester.substring(0, 4);
+			String month = semester.substring(4);
+			//month = String.format("%02d", month); //Month should have leading 0
+			//int numDay = 1;
+			//String day = "01";
+			Calendar c = Calendar.getInstance();
+			c.set(Calendar.SECOND, 0);
+			c.set(Calendar.YEAR, Integer.parseInt(year));
+			c.set(Calendar.MONTH, Integer.parseInt(month)-1);
+			c.set(Calendar.DAY_OF_MONTH, 0);
+			
+			boolean mon = false;
+			while (!mon) {
+				c.add(Calendar.DAY_OF_MONTH, 1);
+				if (c.get(Calendar.DAY_OF_WEEK)== Calendar.MONDAY ) {
+					mon = true;
+				}
+			}
+			
+			//Now we have a calendar with time being the first Monday of the month of the semester.
+			//We'll modify the time+date for each activity.
+			ICalendar ical = new ICalendar();
+			
+			for (CourseSelection cs: sched.getCourseSelections()) {
+				for (Activity a: cs.getActivities()) {
+					SimpleDateFormat hour = new SimpleDateFormat("HH");
+					SimpleDateFormat minu = new SimpleDateFormat("mm");
+
+					int startHour = Integer.parseInt(hour.format(a.getStartTime()));
+					int startMinu = Integer.parseInt(minu.format(a.getStartTime()));
+					
+					int endHour = Integer.parseInt(hour.format(a.getEndTime()));
+					int endMinu = Integer.parseInt(minu.format(a.getEndTime()));
+					
+					int day = a.getDay();
+					/* 
+					 * We must convert the day from the activity format to the offset of Monday.
+					 * Right now, Sunday = 1, Saturday = 7.
+					 * We need to convert Monday to 0, Sunday to 6:
+					 * +5 mod 7
+					 */
+					day = (day+5)%7;
+					
+					Calendar startTime = (Calendar) c.clone();
+					//We must adjust the day to be correct.
+					while (day > 0) {
+						day--;
+						startTime.add(Calendar.DAY_OF_MONTH, 1);
+					}
+					
+					Calendar endTime = (Calendar) startTime.clone(); //Make a correct-day clone
+					
+					startTime.set(Calendar.HOUR_OF_DAY, startHour);
+					startTime.set(Calendar.MINUTE, startMinu);
+					
+					endTime.set(Calendar.HOUR_OF_DAY, endHour);
+					endTime.set(Calendar.MINUTE, endMinu);
+					
+					VEvent event = new VEvent();
+					
+					event.setSummary(a.getSection().getName() + " " + a.getType() + a.getNumber());
+					event.setLocation(a.getPlace());
+					event.setDescription(a.getSection().getName() + " - " + a.getSection().getCourse().getDescription() + ", Professor: " + a.getProfessor());
+					event.setDateStart(startTime.getTime());
+					event.setDateEnd(endTime.getTime());
+					Calendar cEnd = (Calendar) c.clone();
+					cEnd.add(Calendar.MONTH, 3);
+					Recurrence recur = new Recurrence.Builder(Frequency.WEEKLY).until(cEnd.getTime()).build();
+					
+					event.setRecurrenceRule(recur);
+					
+					ical.addEvent(event);
+				}
+			}
+			
+			
+			File cal = new File("uOttawa " + semester+ ".ics");
+			try {
+				Biweekly.write(ical).go(cal);
+				
+			} catch (IOException e) {
+				clientUI.sendInfo("Error writing ICS file with schedule.");
+				clientUI.sendInfo("ICS Data: " + ical.toString());
+			}
 			clientUI.done();
 			break;
 		default: //Unknown command:

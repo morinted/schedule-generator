@@ -22,6 +22,11 @@ public class ClientConsole implements ClientIF {
 	 * The instance of the client that communicates with this ClientIF
 	 */
 	ScheduleGeneratorClient client;
+	
+	/**
+	 * The selected schedule's index
+	 */
+	int currSchedule;
 
 	/**
 	 * The constructor creates a ScheduleGeneratorClient to open a connection with the server.
@@ -29,11 +34,11 @@ public class ClientConsole implements ClientIF {
 	 * @param host: The host to connect with.
 	 * @param port: The port to connect on.
 	 */
-	public ClientConsole(String studentNumber, String host, int port) 
+	public ClientConsole(String host, int port) 
 	{
 		try 
 		{
-			client= new ScheduleGeneratorClient(studentNumber, host, port, this);
+			client= new ScheduleGeneratorClient(host, port, this);
 		} 
 		catch(IOException exception) 
 		{
@@ -81,22 +86,11 @@ public class ClientConsole implements ClientIF {
 	 */
 	public static void main(String[] args) 
 	{
-		String studentNumber = ""; //For storing the student number
 		String host = "";
 		int port;
-		//S# is a required parameter.
-		try
-		{
-			studentNumber = args[0]; //Gets the login ID.
-		}
-		catch(ArrayIndexOutOfBoundsException e) //If the user didn't provide one, then the client disconnects.
-		{
-			System.out.println("You need to provide a student number. Aborting");
-			System.exit(0);
-		}
 		try //Gets host param is necessary.
 		{
-			host = args[1];
+			host = args[0];
 		}
 		catch(ArrayIndexOutOfBoundsException e)
 		{
@@ -105,14 +99,14 @@ public class ClientConsole implements ClientIF {
 
 		try //Get port if needed
 		{
-			port = Integer.parseInt(args[2]); //Try to get it after the host
+			port = Integer.parseInt(args[1]); //Try to get it after the host
 		}
 		catch(ArrayIndexOutOfBoundsException e)
 		{
 			port = DEFAULT_PORT; //Else default to the default port.
 		} 
 
-		new ClientConsole(studentNumber, host, port); //Create instance of ClientConsole to start the client.
+		new ClientConsole(host, port); //Create instance of ClientConsole to start the client.
 	}
 	
 	/**
@@ -288,6 +282,7 @@ public class ClientConsole implements ClientIF {
 
 		//Let the user navigate through schedules.
 		while(!stop) {
+			currSchedule = index;
 			//Get schedule.
 			display(schedules.get(index).toString());
 			//Display which schedule we're showing
@@ -595,5 +590,9 @@ public class ClientConsole implements ClientIF {
 	 */
 	public void courseNone() {
 		display("No courses selected - can't generate until you ADD some.");
+	}
+
+	public int getScheduleIndex() {
+		return currSchedule;
 	}
 }

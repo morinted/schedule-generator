@@ -20,6 +20,7 @@ public interface ClientIF {
 
     public abstract String getSortOrder();
     
+    
     //the client can use this method to show the user schedules.
     //In the GUI, the schedules are always visible, so this won't be used.
     //In the console, it is actually useful.

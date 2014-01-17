@@ -59,7 +59,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	//Selecting the semester and the sort order with a combobox
 	JComboBox<String> cboSemester, cboSortOrder;
 	//Buttons. These are pretty telling of what actions will occur.
-	JButton btnAdd, btnRemove, btnEdit, btnClearAll, btnIncK, btnDecK, btnGenerate, btnNext, btnPrev, btnFirst, btnLast, btnPrint;
+	JButton btnAdd, btnRemove, btnEdit, btnClearAll, btnIncK, btnDecK, btnGenerate, btnNext, btnPrev, btnFirst, btnLast, btnPrint, btnExport;
 	//Areas to write text
 	JTextField txtSearch;
 	//To hold lists (like search results)
@@ -77,7 +77,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	Color othColor;
 	
 	
-	public ClientGUI(String title, String studentNumber, String host, int port) {
+	public ClientGUI(String title, String host, int port) {
 		//Create the main frame.
 		JFrame frame = new JFrame(title);
 		paneMain = frame.getContentPane();
@@ -105,7 +105,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		
 		try 
 	    {
-	      client = new ScheduleGeneratorClient(studentNumber, host, port, this);
+	      client = new ScheduleGeneratorClient(host, port, this);
 	    } 
 	    catch(IOException exception) 
 	    {
@@ -131,6 +131,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		btnLast.addActionListener(this);
 		btnFirst.addActionListener(this);
 		btnPrint.addActionListener(this);
+		btnExport.addActionListener(this);
 		
 		//Text boxes
 		txtSearch.getDocument().addDocumentListener(this);
@@ -378,6 +379,8 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		btnLast.setEnabled(false);
 		btnPrint = new JButton("Text-Formatted Schedule");
 		btnPrint.setEnabled(false);
+		btnExport = new JButton("Export ICS");
+		btnExport.setEnabled(false);
 		lblCurrSchedule = new JLabel("  Displaying Schedule 0 / 0  ");
 		paneSchedule.add(Box.createRigidArea(new Dimension(245, 0)));
 		paneSchedule.add(btnFirst);
@@ -385,8 +388,9 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		paneSchedule.add(lblCurrSchedule);
 		paneSchedule.add(btnNext);
 		paneSchedule.add(btnLast);
-		paneSchedule.add(Box.createRigidArea(new Dimension(110, 0)));
+		paneSchedule.add(Box.createRigidArea(new Dimension(70, 0)));
 		paneSchedule.add(btnPrint);
+		paneSchedule.add(btnExport);
 
 		
 		/*
@@ -457,21 +461,12 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	public static void main(String[] args) {
 		//Start the GUI.
 		//For now, use default host/port
-		String studentNumber = ""; //For storing the student number
 	    String host = "";
 	    int port;
-		//S# is a required parameter.
-	    try
-	    {
-	      studentNumber = args[0]; //Gets the login ID.
-	    }
-	    catch(ArrayIndexOutOfBoundsException e) //If the user didn't provide one, then the client disconnects.
-	    {
-	    	studentNumber = JOptionPane.showInputDialog("Please enter your student number.");
-	    }
+
 	    try //Gets host param is necessary.
 	    {
-	      host = args[1];
+	      host = args[0];
 	    }
 	    catch(ArrayIndexOutOfBoundsException e)
 	    {
@@ -480,13 +475,13 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	    
 	    try //Get port if needed
 	    {
-	    	port = Integer.parseInt(args[2]); //Try to get it after the host
+	    	port = Integer.parseInt(args[1]); //Try to get it after the host
 	    }
 	    catch(ArrayIndexOutOfBoundsException e)
 	    {
 	    	port = DEFAULT_PORT; //Else default to the default port.
 	    } 
-		new ClientGUI("uOttawa Schedule Generator", studentNumber, host, port);
+		new ClientGUI("uOttawa Schedule Generator", host, port);
 		
 	}
 
@@ -580,6 +575,8 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 			JTextArea text = new JTextArea(currSchedules.get(currSchedule-1).toString());
 			text.setEditable(false);
 			JOptionPane.showMessageDialog(null,text);
+		} else if (sender.equals(btnExport)) {
+			send("EXPORT " + (currSchedule-1));
 		}
 	}
 	
@@ -745,10 +742,12 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 			display("There are no possible schedules for your current selection.");
 			clear();
 			btnPrint.setEnabled(false);
+			btnExport.setEnabled(false);
 			System.out.println("Clearing");
 		} else {
 			currSchedule = 1;
 			btnPrint.setEnabled(true);
+			btnExport.setEnabled(true);
 			if (schedules.size()>1) {
 			btnNext.setEnabled(true);
 			btnLast.setEnabled(true);
@@ -904,6 +903,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
 
 		btnPrint.setEnabled(false);
+		btnExport.setEnabled(false);
 		cboSemester.setEnabled(false);
 		btnAdd.setEnabled(false);
 		txtSearch.setEditable(false);
@@ -1103,11 +1103,11 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
     		currSchedule = 0;
     		clear();
     		btnPrint.setEnabled(false);
+    		btnExport.setEnabled(false);
     		btnNext.setEnabled(false);
     		btnLast.setEnabled(false);
     		btnFirst.setEnabled(false);
     		btnPrev.setEnabled(false);
-    		btnPrint.setEnabled(false);
     		
     		return true;
         } else {
@@ -1205,6 +1205,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
     		currSchedule = 0;
     		clear();
     		btnPrint.setEnabled(false);
+    		btnExport.setEnabled(false);
     		btnNext.setEnabled(false);
     		btnLast.setEnabled(false);
     		btnFirst.setEnabled(false);
@@ -1237,6 +1238,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		//Only enable nav controls if necessary
 		if (currSchedule > 0) {
 			btnPrint.setEnabled(true);
+			btnExport.setEnabled(true);
 		}
 		if (currSchedule > 1) {
 			btnPrev.setEnabled(true);
@@ -1281,5 +1283,12 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	 */
 	public void courseNone() {
 		display("Cannot generate: no courses selected!");
+	}
+
+	/**
+	 * Returns the index of the schedule currently being viewed.
+	 */
+	public int getScheduleIndex() {
+		return currSchedule;
 	}
 }
