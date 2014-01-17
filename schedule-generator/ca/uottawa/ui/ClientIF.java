@@ -1,5 +1,6 @@
 package ca.uottawa.ui;
 
+import java.io.File;
 import java.util.List;
 
 import ca.uottawa.schedule.Course;
@@ -52,4 +53,7 @@ public interface ClientIF {
 
 	//Client lets the UI know that you can't generate without courses.
 	public abstract void courseNone();
+
+	//After an .ICS file is successfully exported, we report this to the user.
+	public abstract void savedFile(String path);
 }

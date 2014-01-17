@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import biweekly.Biweekly;
 import biweekly.ICalendar;
 import biweekly.component.VEvent;
@@ -515,10 +518,11 @@ public class ScheduleGeneratorClient extends AbstractClient {
 			}
 			
 			
+			
 			File cal = new File("uOttawa " + semester+ ".ics");
 			try {
 				Biweekly.write(ical).go(cal);
-				
+				clientUI.savedFile(cal.getAbsolutePath());
 			} catch (IOException e) {
 				clientUI.sendInfo("Error writing ICS file with schedule.");
 				clientUI.sendInfo("ICS Data: " + ical.toString());

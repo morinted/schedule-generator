@@ -94,7 +94,7 @@ public class ClientConsole implements ClientIF {
 		}
 		catch(ArrayIndexOutOfBoundsException e)
 		{
-			host = "localhost";
+			host = "http://home.tedmor.in";
 		}
 
 		try //Get port if needed
@@ -286,19 +286,19 @@ public class ClientConsole implements ClientIF {
 			//Get schedule.
 			display(schedules.get(index).toString());
 			//Display which schedule we're showing
-			display("Showing schedule " + (index+1) + "/" + size + ". NEXT to see next, PREV to go back, FIRST to see first, LAST to see last, or EXIT to stop.");
+			display("Showing schedule " + (index+1) + "/" + size + ". NEXT to see next, PREV to go back, FIRST to see first, LAST to see last, or EXIT to stop. You can export the current calendar as an ICS file for importing into Google Calendar using 'EXPORT'");
 			//Get user input
 			response = readFromConsole().toUpperCase();
 			//See if command is valid. If not, we'll loop.
 			if (response == null) {
-			} else if (response.equals("NEXT") || response.equals("PREV") || response.equals("FIRST") || response.equals("LAST") || response.equals("EXIT")) {
+			} else if (response.equals("NEXT") || response.equals("PREV") || response.equals("FIRST") || response.equals("LAST") || response.equals("EXIT") || response.equals("EXPORT")) {
 				valid = true;
 			}
 			while (!valid) {
-				display("Sorry, " + "\"" + response + "\" is not recognized. Use NEXT to see next, PREV to go back, FIRST to see first, LAST to see last, and EXIT or STOP to stop.");
+				display("Sorry, " + "\"" + response + "\" is not recognized. Use NEXT to see next, PREV to go back, FIRST to see first, LAST to see last, and EXIT or STOP to stop. Export an ICS file with EXPORT");
 				response = readFromConsole().toUpperCase();
 				if (response == null) {
-				} else if (response.equals("NEXT") || response.equals("PREV") || response.equals("FIRST") || response.equals("LAST") || response.equals("EXIT")) {
+				} else if (response.equals("NEXT") || response.equals("PREV") || response.equals("FIRST") || response.equals("LAST") || response.equals("EXIT") || response.equals("EXPORT")) {
 					valid = true;
 				}
 			}
@@ -322,6 +322,14 @@ public class ClientConsole implements ClientIF {
 			//Go to last schedule
 			case "LAST":
 				index = size-1;
+				break;
+			//Export ICS
+			case "EXPORT":
+				try {
+					client.handleMessageFromClientUI("EXPORT " + index);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				break;
 			//Stop asking for input.
 			case "EXIT":
@@ -594,5 +602,9 @@ public class ClientConsole implements ClientIF {
 
 	public int getScheduleIndex() {
 		return currSchedule;
+	}
+
+	public void savedFile(String path) {
+		display("File saved to " + path);
 	}
 }

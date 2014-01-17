@@ -106,8 +106,4 @@ public class ServerConsole {
 	    //Start accepting connections on server console.
 	    server.accept();
 	  }
-	  
-	  
-	  
-
 }

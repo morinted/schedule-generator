@@ -14,6 +14,7 @@ import ca.uottawa.schedule.Section;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
@@ -470,7 +471,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	    }
 	    catch(ArrayIndexOutOfBoundsException e)
 	    {
-	      host = "localhost";
+	      host = "http://home.tedmor.in";
 	    }
 	    
 	    try //Get port if needed
@@ -1290,5 +1291,9 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	 */
 	public int getScheduleIndex() {
 		return currSchedule;
+	}
+
+	public void savedFile(String path) {
+		JOptionPane.showMessageDialog(null,"ICS (Calendar export) successful! It is saved at: " + path);
 	}
 }
