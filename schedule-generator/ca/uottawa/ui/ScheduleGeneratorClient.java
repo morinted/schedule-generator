@@ -316,7 +316,7 @@ public class ScheduleGeneratorClient extends AbstractClient {
 				generateMsg.setCourses(courses);
 				generateMsg.setIgnoreExtras(ignoreExtras);
 				generateMsg.setSortOrder(sortOrder);
-				if (courses.size() > 0 || nCourses.size() > 0) {
+				if ((courses.size() > 0) || (nCourses.size() > 0)) {
 				sendToServer(generateMsg);
 				} else {
 					clientUI.courseNone();

@@ -38,21 +38,19 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	List<ArrayList<JCheckBox>> chkActivities = new ArrayList<ArrayList<JCheckBox>>();
 	
 	//Constants
-	private static final int HEIGHT = 900;
-	private static final int CANVAS_HEIGHT = 840;
-	private static final int CANVAS_WIDTH = 1040;
-	private static final int WIDTH = 1430;
-	private static final int HALF_HOUR = 30;
-	private static final int HALF_HOUR_MARGIN = 10;
-	private static final int DAY = 130;
-	private static final int DAY_MARGIN = 30;
+	private static final int CANVAS_HEIGHT = 720; //840
+	private static final int CANVAS_WIDTH = 900; //1040
+	private static final int HALF_HOUR = 25; //30
+	private static final int HALF_HOUR_MARGIN = 5; //10
+	private static final int DAY = 110; //130
+	private static final int DAY_MARGIN = 25; //30
 	
 	//GUI variables
 	//The top-level frame
-	JFrame frame;
+	JFrame frame, frmLoading;
 	//I personally like making sub-components to that we can easily move them around.
 	Container paneMain;
-	JPanel paneLeftSideBar, paneRightSideBar, paneSemester, paneSearch, paneList, paneOptions, paneDisplay, paneSchedule, paneIncDec;
+	JPanel paneLeftSideBar, paneRightSideBar, paneSemester, paneSearch, paneList, paneOptions, paneDisplay, paneSchedule, paneControls, paneExport, paneIncDec;
 	//Some labels that will go into those components above.
 	JLabel lblSearch, lblSemester, lblCourses, lblOptionalCourses, lblOptions, lblNChooseK, lblSortOrder, lblCurrSchedule;
 	//Options please?
@@ -82,7 +80,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		//Create the main frame.
 		JFrame frame = new JFrame(title);
 		paneMain = frame.getContentPane();
-		frame.setSize(new Dimension(WIDTH, HEIGHT));
+		//frame.setSize(new Dimension(WIDTH, HEIGHT));
 		k = 0; //We start by chosing 0 of 0 optional courses
 		n = 0;
 		createComponents();
@@ -97,11 +95,23 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		fntMain = new Font("SansSerif", Font.BOLD, 15);
 		fntActivity = new Font("SansSerif", Font.BOLD, 13);
 		
-		//Display the frame:
+		//Make loading screen.
+		frmLoading = new JFrame("Loading...");
+		frmLoading.add(new JTextArea("Connecting to server..."));
+		frmLoading.pack();
+		frmLoading.setLocationRelativeTo(null);
+		
+		//No resizing
 		frame.setResizable(false);
+		//Set the frame as visible after packing
+		frame.pack();
+		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		frmLoading.setVisible(true);
+		
+		//Display the calendar
 		clear();
 		
 		try 
@@ -196,7 +206,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		paneSearch.setBorder(BorderFactory.createTitledBorder("Add Courses"));
 		c = new GridBagConstraints();
 		//Create search label.
-		lblSearch = new JLabel("Search:");
+		lblSearch = new JLabel("Enter Course Code:");
 		//Create search text box.
 		txtSearch = new JTextField();
 		//And a list box to display the search results
@@ -369,7 +379,9 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		 * Creating the navigation pane for schedules
 		 */
 		paneSchedule = new JPanel();
-		paneSchedule.setLayout(new BoxLayout(paneSchedule, BoxLayout.X_AXIS));
+		paneSchedule.setLayout(new BorderLayout());
+		paneControls = new JPanel();
+		paneExport = new JPanel();
 		btnNext = new JButton("Next >");
 		btnNext.setEnabled(false);
 		btnPrev = new JButton("< Prev");
@@ -383,16 +395,16 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		btnExport = new JButton("Export ICS");
 		btnExport.setEnabled(false);
 		lblCurrSchedule = new JLabel("  Displaying Schedule 0 / 0  ");
-		paneSchedule.add(Box.createRigidArea(new Dimension(245, 0)));
-		paneSchedule.add(btnFirst);
-		paneSchedule.add(btnPrev);
-		paneSchedule.add(lblCurrSchedule);
-		paneSchedule.add(btnNext);
-		paneSchedule.add(btnLast);
-		paneSchedule.add(Box.createRigidArea(new Dimension(70, 0)));
-		paneSchedule.add(btnPrint);
-		paneSchedule.add(btnExport);
-
+		
+		paneControls.add(btnFirst);
+		paneControls.add(btnPrev);
+		paneControls.add(lblCurrSchedule);
+		paneControls.add(btnNext);
+		paneControls.add(btnLast);
+		paneExport.add(btnPrint);
+		paneExport.add(btnExport);
+		paneSchedule.add(paneControls, BorderLayout.CENTER);
+		paneSchedule.add(paneExport, BorderLayout.LINE_END);
 		
 		/*
 		 * Adding all panes to main layout.
@@ -671,17 +683,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 				cboSemester.addItem(month + " " + year);
 			}
 			cboSemester.setSelectedIndex(-1);
-			btnAdd.setEnabled(false);
-			txtSearch.setEditable(false);
-			chkOptional.setEnabled(false);
-			btnClearAll.setEnabled(false);
-			btnRemove.setEnabled(false);
-			btnIncK.setEnabled(false);
-			btnDecK.setEnabled(false);
-			chkIgnoreExtras.setEnabled(false);
-			cboSortOrder.setEnabled(false);
-			btnGenerate.setEnabled(false);
-			btnEdit.setEnabled(false);
+			frmLoading.setVisible(false);
 			while (cboSemester.getSelectedIndex() == -1) {
 				//wait.
 			}
@@ -1005,6 +1007,17 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		pane.add(Box.createRigidArea(new Dimension(15, 15))); //Gives us some margins.
 		editFrame.pack();
 		//Show the window. The window listener will evaluate when you close the window.
+		btnAdd.setEnabled(false);
+		txtSearch.setEditable(false);
+		chkOptional.setEnabled(false);
+		btnClearAll.setEnabled(false);
+		btnRemove.setEnabled(false);
+		btnIncK.setEnabled(false);
+		btnDecK.setEnabled(false);
+		chkIgnoreExtras.setEnabled(false);
+		cboSortOrder.setEnabled(false);
+		btnGenerate.setEnabled(false);
+		btnEdit.setEnabled(false);
 		editFrame.setVisible(true);
 		editFrame.addWindowListener(this);
 	}

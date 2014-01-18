@@ -523,8 +523,11 @@ public class Schedule implements Serializable
         //Welcome to the worst sub of your life.
 
         //Original schedules: generate your mandatory course schedules. Easy.
-        List<Schedule> originalSchedules = generateSchedules(selectedCourses);
-
+    	List<Schedule> originalSchedules = new ArrayList<Schedule>();
+    	if (selectedCourses.size() > 0) {
+    		originalSchedules = generateSchedules(selectedCourses);
+    	}
+    	
         //A string list to hold gray code.
         List<String[]> nChooseK = new ArrayList<String[]>();
 
@@ -554,37 +557,41 @@ public class Schedule implements Serializable
             }
             tempSchedules = generateSchedules(selections, requiredOptional - 1);
             //Now we must merge tempSchedules with original schedules into final schedules.
-
-            for (Schedule s1 : originalSchedules) { //For every schedule generated previously,
-                for (Schedule s2 : tempSchedules) {
-                    boolean valid = true;
-                    for (CourseSelection cs : s2.getCourseSelections()) {
-                        if (s1.collidesWith(cs)) {
-                            valid = false;
-                        }
-                    }
-                    if (valid) {
-                        //We found a valid match. Let's add them to the final list.
-                        List<CourseSelection> temp1 = s1.getCourseSelections();
-                        List<CourseSelection> temp2 = s2.getCourseSelections();
-                        Schedule result = null;
-                        for (CourseSelection cs : temp1) {
-                            if (result == null) {
-                                result = new Schedule(cs);
-                            } else {
-                                result.addCourseSelection(cs);
-                            }
-                        }
-                        for (CourseSelection cs : temp2) {
-                            result.addCourseSelection(cs);
-                        }
-                        finalSchedules.add(result);
-                    }
-                }
-
+            if (originalSchedules.size() == 0) {
+            	for (Schedule s: tempSchedules) {
+            		finalSchedules.add(s);
+            	}
+            } else {
+	            for (Schedule s1 : originalSchedules) { //For every schedule generated previously,
+	                for (Schedule s2 : tempSchedules) {
+	                    boolean valid = true;
+	                    for (CourseSelection cs : s2.getCourseSelections()) {
+	                        if (s1.collidesWith(cs)) {
+	                            valid = false;
+	                        }
+	                    }
+	                    if (valid) {
+	                        //We found a valid match. Let's add them to the final list.
+	                        List<CourseSelection> temp1 = s1.getCourseSelections();
+	                        List<CourseSelection> temp2 = s2.getCourseSelections();
+	                        Schedule result = null;
+	                        for (CourseSelection cs : temp1) {
+	                            if (result == null) {
+	                                result = new Schedule(cs);
+	                            } else {
+	                                result.addCourseSelection(cs);
+	                            }
+	                        }
+	                        for (CourseSelection cs : temp2) {
+	                            result.addCourseSelection(cs);
+	                        }
+	                        finalSchedules.add(result);
+	                    }
+	                }
+	
+	            }
             }
         }
-
         return finalSchedules;
     }
 

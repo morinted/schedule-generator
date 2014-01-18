@@ -27,7 +27,7 @@ public class ScheduleGeneratorServer extends AbstractServer {
 	private void refreshCourses() {
 		serverUI.display("Refreshing courses from " + courseCodes);
 		courses = TextParser.getCoursesFromDatabase(courseCodes);
-		serverUI.display("Courses updated.");
+		serverUI.display("tCourses updated.");
 
 	}
 	
@@ -115,15 +115,18 @@ public class ScheduleGeneratorServer extends AbstractServer {
                 }
                 break;
             case "GENERATE":
-            	//User is generating schedules with no nChooseK option. Easy to do.
+            	//User is generating schedules
             	List<Course> mandatoryCourses = message.getCourses();
-                serverUI.display("Received " + message.getCourses().size() + " courses.");
-            	String sortOrder = message.getSortOrder();
+                int k = message.getK();
+                List<Course> optional = message.getOptionalCourses();
+
+                serverUI.display("Received " + mandatoryCourses.size() + " mandatory courses.");
+                serverUI.display("Received " + optional.size() + " optional courses, choosing " + k);
+                
+                String sortOrder = message.getSortOrder();
             	boolean ignoreExtras = message.isIgnoreExtras();
-            	int k = message.getK();
             	List<Schedule> result;
             	if (k>0) {
-            		List<Course> optional = message.getOptionalCourses();
             		result = Schedule.generateSchedules(mandatoryCourses, optional, k);
             	} else {
             		result = Schedule.generateSchedules(mandatoryCourses);
