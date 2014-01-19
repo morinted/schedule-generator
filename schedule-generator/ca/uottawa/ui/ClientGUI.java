@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 
-public class ClientGUI implements ClientIF, ActionListener, DocumentListener, ItemListener, WindowListener, ListSelectionListener {
+public class ClientGUI implements ClientIF, ActionListener, DocumentListener, ItemListener, WindowListener, ListSelectionListener, MouseListener {
 	
 	final public static int DEFAULT_PORT = 5555;
 	ScheduleGeneratorClient client;
@@ -146,6 +146,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		
 		//Text boxes
 		txtSearch.getDocument().addDocumentListener(this);
+		txtSearch.addActionListener(this);
 		
 		//ComboBoxes
 		cboSemester.addItemListener(this);
@@ -155,6 +156,35 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		chkIgnoreExtras.addActionListener(this);
 		
 		//Lists
+		//Add lstSearchResults keybinding for enter:
+		lstSearchResults.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "pressed");
+		Action pressedAction = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				if (lstSearchResults.hasFocus()) {
+					addCourse();
+				}
+			}
+		};
+		lstSearchResults.getActionMap().put("pressed", pressedAction);
+		
+		lstCourses.getInputMap().put(KeyStroke.getKeyStroke("DELETE"), "delete");
+		lstOptionalCourses.getInputMap().put(KeyStroke.getKeyStroke("DELETE"), "delete");
+		Action deleteAction = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				if (lstCourses.hasFocus() || lstOptionalCourses.hasFocus()) {
+					removeCourse();
+				}
+			}
+		};
+		lstCourses.getActionMap().put("delete", deleteAction);
+		lstOptionalCourses.getActionMap().put("delete", deleteAction);
+
+		
+		lstSearchResults.addMouseListener(this);
+		
+		lstCourses.addMouseListener(this);
+		lstOptionalCourses.addMouseListener(this);
+		
 		lstCourses.addListSelectionListener(this);
 		lstOptionalCourses.addListSelectionListener(this);
 	}
@@ -531,17 +561,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		} else if (sender.equals(btnGenerate)) { //Generate button
 			send("GENERATE"); //Send generate command
 		} else if (sender.equals(btnEdit)) { //Edit button
-				String toEdit;
-				toEdit = lstCourses.getSelectedValue();
-				if (toEdit == null) {
-					toEdit = lstOptionalCourses.getSelectedValue();
-				}
-				if (toEdit == null) {
-					display("Can't edit: No course selected.");
-				} else {
-					toEdit = toEdit.split(" ")[0];
-					send("EDIT " + toEdit);
-				}				
+				editCourse();				
 		} else if (sender.equals(btnNext)) { //Next button
 			currSchedule++; //Increment schedule
 			if (currSchedule > 1) { //enable prev and first button.
@@ -590,9 +610,28 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 			JOptionPane.showMessageDialog(null,text);
 		} else if (sender.equals(btnExport)) {
 			send("EXPORT " + (currSchedule-1));
+		} else if (sender.equals(txtSearch)) {
+			if (lstSearchResults.getModel().getSize() == 1) {
+				lstSearchResults.setSelectedIndex(0);
+				addCourse();
+			}
 		}
 	}
 	
+	private void editCourse() {
+		String toEdit;
+		toEdit = lstCourses.getSelectedValue();
+		if (toEdit == null) {
+			toEdit = lstOptionalCourses.getSelectedValue();
+		}
+		if (toEdit == null) {
+			display("Can't edit: No course selected.");
+		} else {
+			toEdit = toEdit.split(" ")[0];
+			send("EDIT " + toEdit);
+		}
+	}
+
 	/**
 	 * Send the message to the server.
 	 * @param msg: The message to be sent to the Client.
@@ -1006,6 +1045,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		}
 		pane.add(Box.createRigidArea(new Dimension(15, 15))); //Gives us some margins.
 		editFrame.pack();
+		editFrame.setLocationRelativeTo(frame);
 		//Show the window. The window listener will evaluate when you close the window.
 		btnAdd.setEnabled(false);
 		txtSearch.setEditable(false);
@@ -1309,4 +1349,19 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	public void savedFile(String path) {
 		JOptionPane.showMessageDialog(null,"ICS (Calendar export) successful! It is saved at: " + path);
 	}
+
+	public void mouseClicked(MouseEvent e) {
+		if (e.getClickCount() == 2) {
+			Object sender = e.getSource();
+			if (sender.equals(lstSearchResults)) {
+				addCourse();
+			} else if (sender.equals(lstCourses) || sender.equals(lstOptionalCourses)) {
+				editCourse();
+			}
+		}
+	}
+	public void mouseEntered(MouseEvent arg0) {}
+	public void mouseExited(MouseEvent arg0) {}
+	public void mousePressed(MouseEvent arg0) {}
+	public void mouseReleased(MouseEvent arg0) {}
 }
