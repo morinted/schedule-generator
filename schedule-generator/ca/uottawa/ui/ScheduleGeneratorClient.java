@@ -399,7 +399,13 @@ public class ScheduleGeneratorClient extends AbstractClient {
 		clientUI.done();
 		break;
 		case "SEMESTER": //Semester setting command.
-			if (clientUI.confirmSemester()) { //The user really wants to change semesters?
+			boolean confirmed = false;
+			if (semester == null) {
+				confirmed = true;
+			} else if (clientUI.confirmSemester()) {
+				confirmed = true;
+			}
+			if (confirmed) { //The user really wants to change semesters?
 				//If they do, they lose all previous courses and settings.
 				ignoreExtras = true;
 				courses = new ArrayList<Course>();

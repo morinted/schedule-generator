@@ -1144,11 +1144,11 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 			}
 		}
 	}
+	
 
-	@Override
 	public boolean confirmSemester() {
 		//We are changing semesters. Let's set things back to how they should be.
-	    int reply = JOptionPane.showConfirmDialog(null, "Are you sure you want to change semesters? You will lose all settings so far.", "Confirm Change Semester", JOptionPane.YES_NO_OPTION);
+		int reply = JOptionPane.showConfirmDialog(null, "Are you sure you want to change semesters? You will lose all settings so far.", "Confirm Change Semester", JOptionPane.YES_NO_OPTION);
         if (reply == JOptionPane.YES_OPTION) {
         	txtSearch.setText("");
     		chkOptional.setSelected(false);

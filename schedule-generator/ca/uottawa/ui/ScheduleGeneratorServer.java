@@ -1,8 +1,13 @@
 package ca.uottawa.ui;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import com.lloseng.ocsf.server.AbstractServer;
@@ -119,9 +124,11 @@ public class ScheduleGeneratorServer extends AbstractServer {
             	List<Course> mandatoryCourses = message.getCourses();
                 int k = message.getK();
                 List<Course> optional = message.getOptionalCourses();
-
+                
                 serverUI.display("Received " + mandatoryCourses.size() + " mandatory courses.");
                 serverUI.display("Received " + optional.size() + " optional courses, choosing " + k);
+                
+                
                 
                 String sortOrder = message.getSortOrder();
             	boolean ignoreExtras = message.isIgnoreExtras();
@@ -138,6 +145,8 @@ public class ScheduleGeneratorServer extends AbstractServer {
             	}
             	result = Schedule.sort(sortOrder, result, ignoreExtras);
             	}
+            	
+            	updateStats(client.getInetAddress().getHostAddress().toString(), mandatoryCourses.size(), optional.size(), k, result.size());
             	ScheduleMessage schedulesMsg = new ScheduleMessage();
             	schedulesMsg.setCommand("SCHEDULES");
             	schedulesMsg.setSchedules(result);
@@ -151,6 +160,54 @@ public class ScheduleGeneratorServer extends AbstractServer {
 		}
 
 	}
+
+	private void updateStats(String user, int courses, int optional, int k,
+			int schedules) {
+		ServerStats statistics = null;
+		File stats = new File("server.stat");
+		serverUI.display(stats.getAbsolutePath());
+		if(stats.exists()) {
+			try {
+				FileInputStream fis = new FileInputStream(stats);
+				ObjectInputStream ois = new ObjectInputStream(fis);
+				statistics = (ServerStats) ois.readObject();
+			} catch (Exception e) {
+				serverUI.display("Error reading in old stats file. Creating new one.");
+			}
+		}
+		if (statistics == null) {
+			statistics = new ServerStats();
+		}
+		statistics.addCourses(courses);
+		statistics.addOptional(optional);
+		statistics.addElectives(k);
+		if (k > 0) {
+			statistics.addOptionalGenerations(1);
+		}
+		statistics.addGenerations(1);
+		statistics.addSchedules(schedules);
+		statistics.addUser(user);
+		try {
+	         FileOutputStream fos = new FileOutputStream(stats);
+	         ObjectOutputStream out = new ObjectOutputStream(fos);
+	         out.writeObject(statistics);
+	         out.flush();
+	         out.close();
+	      }
+	      catch (IOException e) {
+	          serverUI.display(e.toString()); 
+	      }
+		String currStats = "Current stats: " + Calendar.getInstance().getTime().toString();
+		currStats = currStats + System.getProperty("line.separator") + "Users: " + statistics.getUsers().size();
+		currStats = currStats + System.getProperty("line.separator") + "Mandatory Courses Chosen: " + statistics.getNumOfCourses();
+		currStats = currStats + System.getProperty("line.separator") + "Optional Courses Chosen: " + statistics.getNumOfOptional();
+		currStats = currStats + System.getProperty("line.separator") + "Total K Value: " + statistics.getNumOfElectives();
+		currStats = currStats + System.getProperty("line.separator") + "Generations: " + statistics.getNumOfGenerations();
+		currStats = currStats + System.getProperty("line.separator") + "Optional Generations: " + statistics.getNumOfOptionalGenerations();
+		currStats = currStats + System.getProperty("line.separator") + "Schedules Generated: " + statistics.getNumOfSchedules();
+		serverUI.display(currStats);
+	}
+
 
 	public void handleMessageFromServerUI(String message) {
 		//Some plans:
