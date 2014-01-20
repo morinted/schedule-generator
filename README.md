@@ -31,11 +31,11 @@ Looking toward the future:
 
 ### Getting Started
 
-1. To start, it is recommended to download the program's front-end. This can be found in the [executable directory](schedule-generator/executable) under the name [Schedule-Generator.jar](schedule-generator/executableschedule-Generator.jar).
+1. To start, it is recommended to download the program's front-end. This can be found in the [executable directory](schedule-generator/executable) under the name [Schedule-Generator.jar](https://github.com/morinted/schedule-generator/raw/master/schedule-generator/executable/Schedule-Generator.jar).
 
 2. Run the .jar.
 
-	Simply double-click the .jar to run. If you don't have Java installed, you can get it from [Sun's website](http://java.com/en/download/index.jsp) or by running [Ninite](http://ninite.com) (my preffered choice, as there is no chance of the silly "Ask Toolbar").
+	Simply double-click the .jar file to run. If you don't have Java installed, you can get it from [Sun's website](http://java.com/en/download/index.jsp) or by running [Ninite](http://ninite.com) (my preffered choice, as there is no chance of the silly "Ask Toolbar").
 
 3. Wait for the server to connect, then select a semester from the drop down.
 
@@ -61,7 +61,7 @@ After exporting an iCalendar file, you will want to import it into a program. Mi
 
 Note: You'll want to create a new calendar, just in case you want to delete the events created in this process. If you add it to your regular calendar and there is an error, there is no quick "Undo" function.
 
-1. Create a new Calendar on the left side-bar. Next to "My calendars", click the drop-down and select "Create New Calendar". Assign it a snazzy colour and name it something suave like "uOttawa F2014".
+1. Create a new Calendar on the left side-bar. Next to "My calendars", click the drop-down and select "Create New Calendar". Assign it a snazzy color and name it something suave like "uOttawa F2014".
 
 2. Click "Create Calendar"
 
@@ -74,6 +74,26 @@ Note: You'll want to create a new calendar, just in case you want to delete the 
 6. Enjoy your newly-generated calendar! Notice that the section, course code, course name, professor, and location are included in the events.
 
 We don't account for holidays, so make sure you don't come to school during Study Week!
+
+### Hosting a Server
+
+To host a server, you need to have the [ServerConsole.jar](https://github.com/morinted/schedule-generator/blob/master/schedule-generator/executable/Schedule-Generator.jar) in a directory with [/ca/uottawa/schedule/courseCodes.csv](https://github.com/morinted/schedule-generator/tree/master/schedule-generator/ca/uottawa/schedule).
+
+To launch, you use the command: `java -jar ServerConsole.jar [port]`
+
+Where [port] is the port to host on. If omitted, the default of 5555 will apply.
+
+The server will create a server.stat file when schedules are generated that keeps track of how many users connect and schedules are generated.
+
+### Connecting to Different Server or Port
+
+ClientGUI and ClientConsole can take several launch commands. In this example, the UI will be named `schedule-generator.jar`. It applies for both GUI and Console.
+
+In the working directory of the jar file, run `java -jar schedule-generator.jar [host] [port]`
+
+Both optional, host lets you specify a server to connect to. The default is home.tedmor.in.
+
+Port lets you specify the port to connect on, the default if omitted is 5555.
 
 ## Dependencies
 
