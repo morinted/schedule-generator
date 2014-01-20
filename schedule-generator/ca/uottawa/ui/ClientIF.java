@@ -51,9 +51,7 @@ public interface ClientIF {
 	//Client lets the UI know that schedules were genearated.
 	public abstract void schedulesGenerated(int count);
 
-	//Client lets the UI know that you can't generate without courses.
-	public abstract void courseNone();
 
-	//After an .ICS file is successfully exported, we report this to the user.
-	public abstract void savedFile(String path);
+	//Alert to be displayed immediately to the user, not debug info.
+	public abstract void display(String string);
 }

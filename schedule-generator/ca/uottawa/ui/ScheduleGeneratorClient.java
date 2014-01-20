@@ -103,15 +103,11 @@ public class ScheduleGeneratorClient extends AbstractClient {
 			//Check if courses exists in either course list. If it does, cancel the add.
 			for (Course c : courses) {
 				if (c.getDescription().equals(result.getDescription())) {
-					clientUI.sendInfo("Course " + result.getDescription()
-							+ " is already in the list of courses.");
 					exists = true;
 				}
 			}
 			for (Course c : nCourses) {
 				if (c.getDescription().equals(result.getDescription())) {
-					clientUI.sendInfo("Course " + result.getDescription()
-							+ " is already in the list of courses.");
 					exists = true;
 				}
 			}
@@ -130,8 +126,9 @@ public class ScheduleGeneratorClient extends AbstractClient {
 				courses.add(result);
 				}
 				clientUI.courseAdded(result.getDescription());
+				clientUI.sendInfo(result.getDescription());
 			} else {
-				clientUI.courseExists(result.getDescription());
+				clientUI.display("The course " + result.getDescription() + " is already in the list of courses.");
 			}
 			break;
 		case "ADDCOURSE-MULTIPLECOURSES":
@@ -211,6 +208,12 @@ public class ScheduleGeneratorClient extends AbstractClient {
 			if (command.length == 3) {
 				if (command[1].toUpperCase().equals("OPTIONAL")) {
 					//We have an optional course.
+					
+					//Let's check how many there are. We don't want any more than 20.
+					if (nCourses.size() >= 20) {
+						clientUI.display("Maximum number of optional courses (20) already selected.");
+						clientUI.done();
+					} else {
 					ScheduleMessage addCourse = new ScheduleMessage();
 					addCourse.setCommand("ADDOPTIONAL");
 					String courseToAdd = command[2];
@@ -219,6 +222,7 @@ public class ScheduleGeneratorClient extends AbstractClient {
 					addCourse.setStrings(stringList);
 					addCourse.setSemester(semester);
 					sendToServer(addCourse);
+					}
 					break;
 				} else {
 					issue = true;
@@ -230,6 +234,10 @@ public class ScheduleGeneratorClient extends AbstractClient {
 				clientUI.sendInfo("For example: ADD SEG2105");
 				clientUI.done();
 			} else {
+				if (courses.size() >= 10) {
+					clientUI.display("Maximum number of mandatory courses (10) already selected.");
+					clientUI.done();
+				} else {
 				ScheduleMessage addCourse = new ScheduleMessage();
 				addCourse.setCommand("ADD");
 				String courseToAdd = command[1];
@@ -238,6 +246,7 @@ public class ScheduleGeneratorClient extends AbstractClient {
 				addCourse.setStrings(stringList);
 				addCourse.setSemester(semester);
 				sendToServer(addCourse);
+				}
 			}
 			break;
 		case "REMOVE": //Remove command
@@ -319,7 +328,7 @@ public class ScheduleGeneratorClient extends AbstractClient {
 				if ((courses.size() > 0) || (nCourses.size() > 0)) {
 				sendToServer(generateMsg);
 				} else {
-					clientUI.courseNone();
+					clientUI.display("Cannot generate: no courses selected!");
 					clientUI.done();
 				}
 			break;
@@ -528,7 +537,7 @@ public class ScheduleGeneratorClient extends AbstractClient {
 			File cal = new File("uOttawa " + semester+ ".ics");
 			try {
 				Biweekly.write(ical).go(cal);
-				clientUI.savedFile(cal.getAbsolutePath());
+				clientUI.display("iCalendar successfully saved to " + cal.getAbsolutePath());
 			} catch (IOException e) {
 				clientUI.sendInfo("Error writing ICS file with schedule.");
 				clientUI.sendInfo("ICS Data: " + ical.toString());

@@ -1172,8 +1172,8 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	}
 	
 	//Display a message that must be shown to the user.
-	private void display(String msg) {
-        JOptionPane.showMessageDialog(null, msg, "Info:", JOptionPane.INFORMATION_MESSAGE);
+	public void display(String msg) {
+        JOptionPane.showMessageDialog(null, msg, "Schedule Generator", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	//For all document events, we are likely watching the search bar being typed in:
@@ -1333,13 +1333,6 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	}
 
 	/**
-	 * No courses selected, can't generate.
-	 */
-	public void courseNone() {
-		display("Cannot generate: no courses selected!");
-	}
-
-	/**
 	 * Returns the index of the schedule currently being viewed.
 	 */
 	public int getScheduleIndex() {
@@ -1364,4 +1357,5 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	public void mouseExited(MouseEvent arg0) {}
 	public void mousePressed(MouseEvent arg0) {}
 	public void mouseReleased(MouseEvent arg0) {}
+
 }

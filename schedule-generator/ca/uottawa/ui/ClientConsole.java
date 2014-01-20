@@ -75,7 +75,7 @@ public class ClientConsole implements ClientIF {
 	 * Displays a message to the user through the console.
 	 * @param message: Message to be displayed.
 	 */
-	private void display(String message) 
+	public void display(String message) 
 	{
 		System.out.println(">  " + message);
 	}
