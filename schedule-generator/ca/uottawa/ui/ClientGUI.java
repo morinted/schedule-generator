@@ -38,12 +38,13 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	List<ArrayList<JCheckBox>> chkActivities = new ArrayList<ArrayList<JCheckBox>>();
 	
 	//Constants
-	private static final int CANVAS_HEIGHT = 720; //840
-	private static final int CANVAS_WIDTH = 900; //1040
-	private static final int HALF_HOUR = 25; //30
-	private static final int HALF_HOUR_MARGIN = 5; //10
-	private static final int DAY = 110; //130
-	private static final int DAY_MARGIN = 25; //30
+	private static final int CANVAS_HEIGHT = 600; //720
+	private static final int CANVAS_WIDTH = 850; //900
+	private static final int HALF_HOUR = 21; //25
+	private static final int HALF_HOUR_MARGIN = 5; //5
+	private static final int DAY = 106; //110
+	private static final int DAY_MARGIN = 24; //25
+	private static final int LIST_ROWS = 5;
 	
 	//GUI variables
 	//The top-level frame
@@ -243,6 +244,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		lstSearchResults = new JList<String>();
 		lstSearchResults.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		lstSearchResults.setPrototypeCellValue("Prototype Cell Value");
+		lstSearchResults.setVisibleRowCount(LIST_ROWS);
 		scrSearchResults = new JScrollPane(lstSearchResults);
 		//We'll now have the option to add optional.
 		chkOptional = new JCheckBox("Optional?");
@@ -295,7 +297,9 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		lstOptionalCourses.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		lstCourses.setPrototypeCellValue("Prototype Cell Value");
 		lstOptionalCourses.setPrototypeCellValue("Prototype Cell Value");
-
+		lstCourses.setVisibleRowCount(LIST_ROWS);
+		lstOptionalCourses.setVisibleRowCount(LIST_ROWS);
+		
 		scrCourses = new JScrollPane(lstCourses);
 		scrOptionalCourses = new JScrollPane(lstOptionalCourses);
 		
@@ -866,7 +870,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 				int stringLen = (int)g.getFontMetrics().getStringBounds(strSec, g).getWidth();  
 				stringLen = stringLen/2;
 				x += DAY/2;
-				y += 20;
+				y += 16; //draw close to edge
 				g.drawString(strSec, x-stringLen, y);
 				y += 20;
 				stringLen = (int)g.getFontMetrics().getStringBounds(strAct, g).getWidth();  
