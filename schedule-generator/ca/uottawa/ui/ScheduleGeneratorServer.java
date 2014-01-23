@@ -2,6 +2,7 @@ package ca.uottawa.ui;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -24,16 +25,35 @@ public class ScheduleGeneratorServer extends AbstractServer {
 		super(port);
 		this.serverUI = serverUI;
 		courseCodes = new File("ca/uottawa/schedule/courseCodes.csv");
+		try {
 		refreshCourses();
-
+		} catch (FileNotFoundException e) {
+			serverUI.display("Error processing course codes!");
+			try {
+				this.close();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				System.err.println("Error while exiting program.");
+			}
+		}
 	}
 
 	
-	private void refreshCourses() {
+	private void refreshCourses() throws FileNotFoundException {
 		serverUI.display("Refreshing courses from " + courseCodes);
 		courses = TextParser.getCoursesFromDatabase(courseCodes);
-		serverUI.display("tCourses updated.");
-
+		if (courses.size() < 1) {
+			throw new FileNotFoundException();
+		} else {
+		serverUI.display("Courses updated.");
+		for (Course c: courses) {
+			try {
+			c.getSemesters().size();
+			} catch (Exception e) {
+				serverUI.display(c.getDescription());
+			}
+			}
+		}
 	}
 	
 	protected void handleMessageFromClient(Object msg, ConnectionToClient client) {

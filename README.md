@@ -1,12 +1,12 @@
 # schedule-generator
 
-A schedule generator for the University of Ottawa writting in Java, using OCSF.
+A schedule generator for the University of Ottawa writing in Java, using OCSF.
 
 ## Introduction
 
 This is being created by Ted Morin & Daniel Murdoch as assignment 5 & 7 for the course SEG2105A at the University of Ottawa.
 We are creating this program based on one simple problem line:
-University of Ottawa students have no easy way to generate a conflict-free, optimised schedule.
+University of Ottawa students have no easy way to generate a conflict-free, optimized schedule.
 
 ## Features
 
@@ -35,7 +35,7 @@ Looking toward the future:
 
 2. Run the .jar.
 
-	Simply double-click the .jar file to run. If you don't have Java installed, you can get it from [Sun's website](http://java.com/en/download/index.jsp) or by running [Ninite](http://ninite.com) (my preffered choice, as there is no chance of the silly "Ask Toolbar").
+	Simply double-click the .jar file to run. If you don't have Java installed, you can get it from [Sun's website](http://java.com/en/download/index.jsp) or by running [Ninite](http://ninite.com) (my preferred choice, as there is no chance of the silly "Ask Toolbar").
 
 3. Wait for the server to connect, then select a semester from the drop down.
 
@@ -47,7 +47,7 @@ Looking toward the future:
 
 	Mandatory courses or electives you definitely want should not be using the optional option. It is more for when you are looking at which elective is most convenient for your schedule.
 
-7. After selecting your courses, you may choose to omit certain sections or activities (like DGDs) based on their location, professor, or if they're full. To do this, double-click your course or click the course and select "Edit". You can use the checkboxes in the pop-up window to change your selection.
+7. After selecting your courses, you may choose to omit certain sections or activities (like DGDs) based on their location, professor, or if they're full. To do this, double-click your course or click the course and select "Edit". You can use the check-boxes in the pop-up window to change your selection.
 
 8. Select a sort order: Earliest start, shortest days, least days per week, whatever. You choose what matters most to you. By default, all other sort orders have a secondary sort of least days per week. Meaning that if two schedules have the same average starting time, the one with the least days will be favored.
 
@@ -94,6 +94,22 @@ In the working directory of the jar file, run `java -jar schedule-generator.jar 
 Both optional, host lets you specify a server to connect to. The default is home.tedmor.in.
 
 Port lets you specify the port to connect on, the default if omitted is 5555.
+
+### Updating Course Database
+
+The timetables are stored in a .CSV, and follow a specific format. Given a list of course codes, the script should download the timetables off the [uOttawa website](http://www.timetable.uottawa.ca). The output .CSV is appropriately formatted to be read by the schedule generator server.
+
+Originally, the script was a macro-enabled Excel spreadsheet using VBA to download the pages, but it was slow and the error messages were vague and difficult to pinpoint. Sometimes the script would freeze, too, with no indication of what was happening.
+
+Instead, a Python 3 script has been created. To run the script, simply use: `py .\GetTimeTables.py` on the script when it's in the same directory as `course-list.txt`. **Note:** the script first checks to see if `courseCodes.csv` exists in the current directory, *then deletes it*. If you do not with to lose your old file, please rename or move it. It will also remove any course codes that no longer exist from `course-list.txt`
+
+Depending on your connection, the script may take ~10-20 minutes to run for the full ~4000 courses. In contrast, the Excel script took roughly 3 hours.
+
+## Screenshots
+
+![The main UI, with a sample schedule already generated.](https://github.com/morinted/schedule-generator/raw/master/Documentation/Screenshots/mainui.png)
+
+![The schedule above after being exported to an .ICS and imported into Google Calendar.](https://github.com/morinted/schedule-generator/raw/master/Documentation/Screenshots/googlecalendar.png)
 
 ## Dependencies
 
