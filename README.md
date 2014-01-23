@@ -10,7 +10,7 @@ University of Ottawa students have no easy way to generate a conflict-free, opti
 
 ## Features
 
-### Current Featurse
+### Current Features
 
 Some features currently present:
 
@@ -77,7 +77,7 @@ We don't account for holidays, so make sure you don't come to school during Stud
 
 ### Hosting a Server
 
-To host a server, you need to have the [ServerConsole.jar](https://github.com/morinted/schedule-generator/blob/master/schedule-generator/executable/Schedule-Generator.jar) in a directory with [/ca/uottawa/schedule/courseCodes.csv](https://github.com/morinted/schedule-generator/tree/master/schedule-generator/ca/uottawa/schedule).
+To host a server, you need to have the [ServerConsole.jar](https://github.com/morinted/schedule-generator/blob/master/schedule-generator/executable/ServerConsole.jar) in a directory with [/ca/uottawa/schedule/courseCodes.csv](https://github.com/morinted/schedule-generator/tree/master/schedule-generator/ca/uottawa/schedule).
 
 To launch, you use the command: `java -jar ServerConsole.jar [port]`
 
@@ -93,7 +93,7 @@ In the working directory of the jar file, run `java -jar schedule-generator.jar 
 
 Both optional, host lets you specify a server to connect to. The default is home.tedmor.in.
 
-Port lets you specify the port to connect on, the default if omitted is 5555.
+Port lets you specify the port to connect on, the default, if omitted, is 5555.
 
 ### Updating Course Database
 
@@ -107,10 +107,14 @@ Depending on your connection, the script may take ~10-20 minutes to run for the 
 
 ## Screenshots
 
+### The main UI, with a sample schedule already generated:
+
 ![The main UI, with a sample schedule already generated.](https://github.com/morinted/schedule-generator/raw/master/Documentation/Screenshots/mainui.png)
+
+### The schedule above after being exported to an .ICS and imported into Google Calendar:
 
 ![The schedule above after being exported to an .ICS and imported into Google Calendar.](https://github.com/morinted/schedule-generator/raw/master/Documentation/Screenshots/googlecalendar.png)
 
 ## Dependencies
 
-The schedule generator was made using the OCSF client-server interface. The iCalendar support is provided by [Biweekly](http://sourceforge.net/projects/biweekly/)
+The schedule generator was made using the [OCSF](http://www.site.uottawa.ca/school/research/lloseng/supportMaterial/ocsf/ocsf.html) client-server interface. The iCalendar support is provided by [Biweekly](http://sourceforge.net/projects/biweekly/)
