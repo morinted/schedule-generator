@@ -1,12 +1,18 @@
 # schedule-generator
 
-A schedule generator for the University of Ottawa writing in Java, using OCSF.
+A schedule generator for the University of Ottawa written in Java, using OCSF.
 
 ## Introduction
 
-This is being created by Ted Morin & Daniel Murdoch as assignment 5 & 7 for the course SEG2105A at the University of Ottawa.
+This project was created by Ted Morin & Daniel Murdoch as assignment 5 & 7 for the course SEG2105A at the University of Ottawa.
 We are creating this program based on one simple problem line:
 University of Ottawa students have no easy way to generate a conflict-free, optimized schedule.
+
+Now that that class is done, we are continuing development on the project, as it is a useful utility when working with uOttawa's Rabaska course-registration system.
+
+## Download
+
+If you just want to get started right away, then download the program for [Windows, Mac, or Linux](https://github.com/morinted/schedule-generator/raw/master/schedule-generator/executable/Schedule-Generator.jar). Note that you need Java to run the .jar file. Check out the user's guide below if you get confused while using the program.
 
 ## Features
 
@@ -27,7 +33,7 @@ Looking toward the future:
 - When time permits, a nice feature would be a dynamically-sized GUI, but this is not planned in the short-term.
 - Make suggestions for other features!
 
-## Help
+## User's Guide
 
 ### Getting Started
 
@@ -41,11 +47,11 @@ Looking toward the future:
 
 4. Start typing a course code in the search text box.
 
-5. Select a course from the search results. You can click "Add Selected Course", double-click the course, or if there is only one search result, hit enter.
+5. Select a course from the search results. You can click "Add Selected Course", double-click the course, or, if there is only one search result, hit enter.
 
-6. If you'd like to select from a list of electives, check the "Optional?" option. For example, you can add 10 electives, then say that you can choose 2 of them, and your schedule will reflect this. The number of electives you'd like to choose is at the bottom of the pane, changed with the "-" and "+" buttons.
+6. If you'd like to select a number of courses from a list of electives, check the "Optional?" option and add your electives. For example, you can add 10 electives, then say that you want to choose 2 of them, and your schedule will reflect this. The number of electives you'd like to choose is at the bottom of the left pane, changed with the "-" and "+" buttons.
 
-	Mandatory courses or electives you definitely want should not be using the optional option. It is more for when you are looking at which elective is most convenient for your schedule.
+	Mandatory courses or electives you definitely want should *not* be using the optional option. The function is for when you are looking at which electives are the most convenient for your schedule.
 
 7. After selecting your courses, you may choose to omit certain sections or activities (like DGDs) based on their location, professor, or if they're full. To do this, double-click your course or click the course and select "Edit". You can use the check-boxes in the pop-up window to change your selection.
 
@@ -57,7 +63,7 @@ Looking toward the future:
 
 ### Google Calendar Import
 
-After exporting an iCalendar file, you will want to import it into a program. Microsoft Outlook makes it simple to just open the file, but Google Calendar is slightly more involved.
+After exporting an iCalendar file, you will want to import it into a program. Microsoft Outlook makes it simple to just open the file, but Google Calendar has a slightly more involved process.
 
 Note: You'll want to create a new calendar, just in case you want to delete the events created in this process. If you add it to your regular calendar and there is an error, there is no quick "Undo" function.
 
@@ -73,7 +79,7 @@ Note: You'll want to create a new calendar, just in case you want to delete the 
 
 6. Enjoy your newly-generated calendar! Notice that the section, course code, course name, professor, and location are included in the events.
 
-We don't account for holidays, so make sure you don't come to school during Study Week!
+	We don't account for holidays, so make sure you don't come to school during Study Week!
 
 ### Hosting a Server
 
@@ -83,11 +89,11 @@ To launch, you use the command: `java -jar ServerConsole.jar [port]`
 
 Where [port] is the port to host on. If omitted, the default of 5555 will apply.
 
-The server will create a server.stat file when schedules are generated that keeps track of how many users connect and schedules are generated.
+The server will create a server.stat file when schedules are generated that keeps track of how many users connect, how many schedules are generated, as well as the types of generations.
 
 ### Connecting to Different Server or Port
 
-ClientGUI and ClientConsole can take several launch commands. In this example, the UI will be named `schedule-generator.jar`. It applies for both GUI and Console.
+ClientGUI and ClientConsole can take several launch commands. In this example, the UI will be named `schedule-generator.jar`. It applies for both the GUI and the console.
 
 In the working directory of the jar file, run `java -jar schedule-generator.jar [host] [port]`
 
