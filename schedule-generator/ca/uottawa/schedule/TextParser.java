@@ -17,7 +17,7 @@ public static List<Course> getCoursesFromDatabase(File courseCodes) {
 	try {
 		br = new BufferedReader(new FileReader(courseCodes));
 		String line;
-		Course activeCourse = new Course("Initializing");
+		Course activeCourse = new Course("Initializing", "Not set");
 		Section activeSection = new Section(null, null, 0, 0, 0, false, activeCourse);
 		String semester = null;
 		
@@ -45,7 +45,8 @@ public static List<Course> getCoursesFromDatabase(File courseCodes) {
                    courseTitle = new String(courseTitle + "," + items[title]);
                    courseTitle.substring(0, courseTitle.length()-1);
                }
-			   activeCourse = new Course(courseTitle);
+               String courseCode = courseTitle.substring(0, courseTitle.indexOf(' '));
+			   activeCourse = new Course(courseTitle, courseCode);
 			   //We are done with this line.
 		   } else {
 			   //Process new SEMESTER

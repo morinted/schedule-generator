@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -238,7 +239,70 @@ public class ScheduleGeneratorServer extends AbstractServer {
 		String[] args = message.split(" ");
 		
 		switch (args[0].toUpperCase()) {
-		case "SEARCH":
+		case "OUTPUTDB":
+			String nl = System.getProperty("line.separator");
+			String query = "";
+			
+			query = "SET search_path = \"Schedules\";" + nl;
+			query += "DROP TABLE activities CASCADE;" + nl;
+			query += "DROP TABLE courses CASCADE;" + nl;
+			query += "DROP TABLE sections CASCADE;" + nl;
+			
+			  query += "CREATE TABLE courses" + nl
+					 + "(" + nl + "code TEXT," + nl
+					 + "description TEXT," + nl
+					 + "PRIMARY KEY (code)" + nl
+					 + ");" + nl;
+			  
+			  query += "CREATE TABLE sections" + nl
+						 + "(" + nl + "SName TEXT," + nl
+						 + "code TEXT," + nl
+						 + "semester INTEGER," + nl
+						 + "requiredDGD INTEGER," + nl
+						 + "requiredTUT INTEGER," + nl
+						 + "requiredLAB INTEGER," + nl
+						 + "PRIMARY KEY(sname,semester)," + nl
+						 + "FOREIGN KEY(code) REFERENCES course" + nl
+						 + ");" + nl;
+			  
+			  query += "CREATE TABLE activities" + nl
+					  + "(" + nl + "atype TEXT," + nl
+					  + "aNumber INTEGER," + nl
+					  + "sname TEXT," + nl
+					  + "semester INTEGER," + nl
+					  + "dayOfWeek TEXT," + nl
+					  + "startTime TIME," + nl
+					  + "endTime TIME," + nl
+					  + "place TEXT," + nl
+					  + "professor TEXT," + nl
+					  + "PRIMARY KEY(sname,semester,atype,anumber)," + nl
+					  + "FOREIGN KEY(sname,semester) REFERENCES section" + nl
+					  + ");" + nl;
+			  
+			  serverUI.display("Creating query...");
+			  
+			  int count = 0;
+			  int tenth = courses.size()/10;
+			  for (Course c: courses) {
+				  query += c.getPgSQLQuery();
+				  
+				  if (((count)%(tenth)) == 0) {
+					  serverUI.display(10*(count/tenth) + "% complete.");
+				  }
+				  count++;
+				  
+			  }
+			  
+			  serverUI.display("Saving query...");
+			  PrintWriter out;
+			try {
+				out = new PrintWriter("pgSQLquery.sql");
+				out.println(query);
+				out.close();
+				serverUI.display("Query saved to pgSQLquery.sql!");
+			} catch (FileNotFoundException e) {
+				serverUI.display("Error saving pgSQLquery.sql! Is it in use?");
+			}
 			break;
 			default:
 				

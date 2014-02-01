@@ -104,6 +104,9 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		
 		//No resizing
 		frame.setResizable(false);
+		
+		
+		
 		//Set the frame as visible after packing
 		frame.pack();
 		frame.setLocationRelativeTo(null);

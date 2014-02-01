@@ -19,7 +19,7 @@ public class ScheduleTest {
 	}
 	@Test
 	public void testCourseHasSection() {
-		Course c1 = new Course("COURSE1");
+		Course c1 = new Course("COURSE1", "ASET234");
 		Section s1 = new Section("COURSE1A", "SEM1", 0,0,0, true, c1);
 		DateFormat sdf = new SimpleDateFormat("HH:mm");
 		Date d1 = null;
@@ -36,7 +36,7 @@ public class ScheduleTest {
 	
 	@Test
 	public void testSectionHasActivity() {
-		Course c1 = new Course("COURSE1");
+		Course c1 = new Course("COURSE1", "ASET234");
 		Section s1 = new Section("COURSE1A", "SEM1", 0,0,0, true, c1);
 		DateFormat sdf = new SimpleDateFormat("HH:mm");
 		Date d1 = null;
@@ -54,7 +54,7 @@ public class ScheduleTest {
 	
 	@Test
 	public void testSingleCourseSelectionGeneration() {
-		Course c1 = new Course("COURSE1");
+		Course c1 = new Course("COURSE1", "ASET234");
 		Section s1 = new Section("COURSE1A", "SEM1", 0,0,0, true, c1);
 		DateFormat sdf = new SimpleDateFormat("HH:mm");
 		Date d1 = null;
@@ -72,7 +72,7 @@ public class ScheduleTest {
 	
 	@Test
 	public void testTwoCourseSelectionGeneration() {
-		Course c1 = new Course("COURSE1");
+		Course c1 = new Course("COURSE1", "ASET234");
 		Section s1 = new Section("COURSE1A", "SEM1", 0,0,0, true, c1);
 		Section s2 = new Section("COURSE1B", "SEM1", 0,0,0, true, c1);
 		DateFormat sdf = new SimpleDateFormat("HH:mm");
@@ -92,7 +92,7 @@ public class ScheduleTest {
 	
 	@Test
 	public void testScheduleOneCourse() {
-		Course c1 = new Course("COURSE1");
+		Course c1 = new Course("COURSE1", "ASET234");
 		Section s1 = new Section("COURSE1A", "SEM1", 0,0,0, true, c1);
 		Section s2 = new Section("COURSE1B", "SEM1", 0,0,0, true, c1);
 		DateFormat sdf = new SimpleDateFormat("HH:mm");
@@ -115,8 +115,8 @@ public class ScheduleTest {
 	
 	@Test
 	public void testScheduleTwoCourseConflict() {
-		Course c1 = new Course("COURSE1");
-		Course c2 = new Course("COURSE2");
+		Course c1 = new Course("COURSE1", "ASET234");
+		Course c2 = new Course("COURSE2", "ASET235");
 		Section s1 = new Section("COURSE1A", "SEM1", 0,0,0, true, c1);
 		Section s2 = new Section("COURSE2A", "SEM1", 0,0,0, true, c2);
 		DateFormat sdf = new SimpleDateFormat("HH:mm");
@@ -140,7 +140,7 @@ public class ScheduleTest {
 	
 	@Test
 	public void testScheduleOneCourseTwoLabs() {
-		Course c1 = new Course("COURSE1");
+		Course c1 = new Course("COURSE1", "ASET234");
 		Section s1 = new Section("COURSE1A", "SEM1", 0,0,1, true, c1);
 		DateFormat sdf = new SimpleDateFormat("HH:mm");
 		Date d1 = null;
@@ -162,8 +162,8 @@ public class ScheduleTest {
 	
 	@Test
 	public void testScheduleTwoCoursesFourLabsEachTouchingTimes() {
-		Course c1 = new Course("COURSE1");
-		Course c2 = new Course("COURSE2");
+		Course c1 = new Course("COURSE1", "ASET234");
+		Course c2 = new Course("COURSE2", "ASET235");
 		Section s1 = new Section("COURSE1A", "SEM1", 0,0,1, true, c1);
 		Section s2 = new Section("COURSE2A", "SEM1", 0,0,1, true, c2);
 		DateFormat sdf = new SimpleDateFormat("HH:mm");
@@ -200,8 +200,8 @@ public class ScheduleTest {
 	
 	@Test
 	public void testScheduleTwoCoursesFourLabsEachOverlappingTimes() {
-		Course c1 = new Course("COURSE1");
-		Course c2 = new Course("COURSE2");
+		Course c1 = new Course("COURSE1", "ASET234");
+		Course c2 = new Course("COURSE2", "ASET235");
 		Section s1 = new Section("COURSE1A", "SEM1", 0,0,1, true, c1);
 		Section s2 = new Section("COURSE2A", "SEM1", 0,0,1, true, c2);
 		DateFormat sdf = new SimpleDateFormat("HH:mm");
@@ -238,8 +238,8 @@ public class ScheduleTest {
 	
 	@Test
 	public void testScheduleStatistics() {
-		Course c1 = new Course("COURSE1");
-		Course c2 = new Course("COURSE2");
+		Course c1 = new Course("COURSE1", "ASET234");
+		Course c2 = new Course("COURSE2", "ASET235");
 		Section s1 = new Section("COURSE1A", "SEM1", 0,0,1, true, c1);
 		Section s2 = new Section("COURSE2A", "SEM1", 0,0,1, true, c2);
 		DateFormat sdf = new SimpleDateFormat("HH:mm");
@@ -283,8 +283,8 @@ public class ScheduleTest {
 	
 	@Test
 	public void testPartialSearch() {
-		Course c1 = new Course("COURSE1");
-		Course c2 = new Course("COURSE2");
+		Course c1 = new Course("COURSE1", "ASET234");
+		Course c2 = new Course("COURSE2", "ASET235");
 		Section s1 = new Section("COURSE1A", "SEM1", 0,0,1, true, c1);
 		Section s2 = new Section("COURSE2A", "SEM1", 0,0,1, true, c2);
 		
@@ -300,8 +300,8 @@ public class ScheduleTest {
 	
 	@Test
 	public void testFullSearch() {
-		Course c1 = new Course("COURSE1");
-		Course c2 = new Course("COURSE2");
+		Course c1 = new Course("COURSE1", "ASET234");
+		Course c2 = new Course("COURSE2", "ASET235");
 		Section s1 = new Section("COURSE1A", "SEM1", 0,0,1, true, c1);
 		Section s2 = new Section("COURSE2A", "SEM1", 0,0,1, true, c2);
 		
@@ -316,8 +316,8 @@ public class ScheduleTest {
 	
 	@Test
 	public void testFailedSearch() {
-		Course c1 = new Course("COURSE1");
-		Course c2 = new Course("COURSE2");
+		Course c1 = new Course("COURSE1", "ASET234");
+		Course c2 = new Course("COURSE2", "ASET235");
 		Section s1 = new Section("COURSE1A", "SEM1", 0,0,1, true, c1);
 		Section s2 = new Section("COURSE2A", "SEM1", 0,0,1, true, c2);
 		
@@ -331,8 +331,8 @@ public class ScheduleTest {
 	
 	@Test
 	public void testFailedSearchLongWithSpaces() {
-		Course c1 = new Course("COURSE1");
-		Course c2 = new Course("COURSE2");
+		Course c1 = new Course("COURSE1", "ASET234");
+		Course c2 = new Course("COURSE2", "ASET235");
 		Section s1 = new Section("COURSE1A", "SEM1", 0,0,1, true, c1);
 		Section s2 = new Section("COURSE2A", "SEM1", 0,0,1, true, c2);
 		
@@ -346,8 +346,8 @@ public class ScheduleTest {
 	
 	@Test
 	public void testSearchWrongSemester() {
-		Course c1 = new Course("COURSE1");
-		Course c2 = new Course("COURSE2");
+		Course c1 = new Course("COURSE1", "ASET234");
+		Course c2 = new Course("COURSE2", "ASET235");
 		Section s1 = new Section("COURSE1A", "SEM1", 0,0,1, true, c1);
 		Section s2 = new Section("COURSE2A", "SEM1", 0,0,1, true, c2);
 		

@@ -20,6 +20,7 @@ public class Course implements Serializable
 
   //Course Attributes
   private String description;
+  private String courseCode;
 
   //Course Associations
   private List<Section> sections;
@@ -30,9 +31,10 @@ public class Course implements Serializable
   // CONSTRUCTOR
   //------------------------
 
-  public Course(String aDescription)
+  public Course(String aDescription, String aCourseCode)
   {
     description = aDescription;
+    courseCode = aCourseCode;
     sections = new ArrayList<Section>();
   }
 
@@ -194,6 +196,20 @@ public class Course implements Serializable
 	  }
     return outputString;
   }
+  
+  public String getPgSQLQuery()
+  {
+	  
+	  String nl = System.getProperty("line.separator");
+	  String qDescription = description.replaceAll("'", "''");
+	  qDescription = qDescription.replace("\\", "/");
+	  String query = "INSERT INTO courses(code, description) VALUES('"
+			  + courseCode + "', '" + qDescription + "');" + nl;
+	  for (Section s: sections) {
+		  query += s.getPgSQLQuery(getCourseCode());
+	  }
+	  return query;
+  }
 
     public List<String> getSemesters() {
         List<String> semesters = new ArrayList<String>();
@@ -231,5 +247,13 @@ public class Course implements Serializable
 	  }
 	  return selections;
   }
+
+public String getCourseCode() {
+	return courseCode;
+}
+
+public void setCourseCode(String courseCode) {
+	this.courseCode = courseCode;
+}
   
 }

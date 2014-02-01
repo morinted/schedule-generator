@@ -574,4 +574,16 @@ public List<CourseSelection> getCourseSelections() {
 	}
 	  return selections;
 }
+
+public String getPgSQLQuery(String courseCode) {
+	String nl = System.getProperty("line.separator");
+	int iSemester = Integer.parseInt(semester);
+	  String query = "INSERT INTO sections(SName, code, semester, requiredDGD, requiredTUT, requiredLAB) VALUES('"
+			  + name + "', '" + courseCode + "'," + iSemester + ", " + requiredDGD + ", " + requiredTUT + ", "+ requiredLAB + ");" 
+			  + nl;
+	  for (Activity a: activities) {
+		  query += a.getPgSQLQuery(name, iSemester);
+	  }
+	  return query;
+}
 }

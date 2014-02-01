@@ -245,6 +245,38 @@ public class Activity implements Serializable
   public boolean overlaps(Activity e) {
 	return (getDay() == e.getDay())&&(getStartTime().compareTo(e.getEndTime()) < 0) && (e.getStartTime().compareTo(getEndTime()) < 0); 
   }
+
+public String getPgSQLQuery(String SName, int semester) {
+	String nl = System.getProperty("line.separator");
+	SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+	String day = null;
+	  switch (this.day) {
+	  case 1: day = "Sunday";
+	  break;
+	  case 2: day = "Monday";
+	  break;
+	  case 3: day = "Tuesday";
+	  break;
+	  case 4: day = "Wednesday";
+	  break;
+	  case 5: day = "Thursday";
+	  break;
+	  case 6: day = "Friday";
+	  break;
+	  case 7: day = "Saturday";
+	  break;
+	  default:
+		  day = "None";
+	  }
+	  String qPlace = place.replaceAll("'", "''");
+	  qPlace = qPlace.replace("\\", "/");
+	  String qProf = professor.replaceAll("'", "''");
+	  qProf = qProf.replace("\\", "/");
+	  String query = "INSERT INTO activities(aType, aNumber, SName, semester, dayOfWeek, startTime, endTime, place, professor) VALUES('"
+			  + type + "'," + number + ", '" + SName + "'," + semester + ",'" + day
+			  + "','" + df.format(startTime) + "','" + df.format(endTime) + "','" + qPlace +"','" + qProf +"');" + nl;
+	  return query;
+}
   
   
 }
