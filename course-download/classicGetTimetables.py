@@ -31,7 +31,7 @@ ABC1234 - Introduction to Class.
 '''
 
 #Read in the course codes
-courses = [line.strip() for line in open('course-list.txt')]
+courses = [line.strip() for line in open('courses.txt')]
 
 #Check if the file we're writing to exists... if it does, delete it.
 if os.access('courseCodes.csv', os.F_OK):
