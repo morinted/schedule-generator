@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import Queue, threading, time, urllib2, re, datetime, multiprocessing
+import Queue, threading, time, urllib2, re, datetime, multiprocessing, traceback
 
 #Used to stop threads
 exitFlag = 0
@@ -128,6 +128,7 @@ def process_data(threadName, q):
                     #usually caused by invalidly downloaded HTML
                     print("Error dealing with course " + course + ". Will retry download.")
                 except AttributeError:
+		    traceback.print_exc()
                     print("Error reading course " + course + ". Retrying...")
                 except urllib2.HTTPError:
                     #Server error
