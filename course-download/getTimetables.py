@@ -43,7 +43,7 @@ def process_data(threadName, q):
                     webpage = site.read()
 
                     #Get course description
-                    description = re.search('(?<=<h2>' + course + ' - )[^<]*(?=</h2>)', webpage).group(0)
+                    description = re.search('(?<=<h1>' + course + ' - )[^<]*(?=</h1>)', webpage).group(0)
                     if "," in description:
                         description = '"' + description + '"'
                     
