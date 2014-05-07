@@ -56,7 +56,7 @@ def process_data(threadName, q):
                         sem = re.search("(?<=<div id=')\d+(?=' class='schedule'>)", semester, flags=re.MULTILINE).group(0)
                         
                         #Get all sections for semester
-                        sections = re.split('<td class="Section">' + course, semester)
+                        sections = re.split('<td class="Section" headers="hdr_section\d+">' + course, semester)
                         sections = sections[1:]
                         totalSections += sections
                         for section in sections:
@@ -80,7 +80,7 @@ def process_data(threadName, q):
                             else:
                                 requiredTUT = 0
 
-                            activities = re.split('<td class="Activity">', section)
+                            activities = re.split('<td class="Activity" headers="hdr_activity\d+">', section)
                             activities = activities[1:]
                             #For each activity...
                             for activity in activities:
@@ -91,7 +91,9 @@ def process_data(threadName, q):
                                 
                                 #Lecture '1', '2', etc.
                                 activity_num = re.search('\d+', activity).group(0)
-                                activity_time = re.search('(?<=<td class="Day">)[^<]*(?=</td>)', activity).group(0)
+                                activity_time = re.search('(?<=<td class="Day")[^<]*(?=</td>)', activity).group(0)
+				#Eliminate hdr junk
+                                activity_time = re.split('[^>]*>', activity_time)[1]
                                 
                                 #Sunday-Saturday
                                 activity_day_time_dash_time = re.split(' ', activity_time)
@@ -102,10 +104,21 @@ def process_data(threadName, q):
                                 activity_end_time = activity_day_time_dash_time[3]
 
                                 #eg: SMD 224
-                                activity_place = re.search('((?<=<td class="Place">)[^<]*(?=</td>)|(?<=<td class="Place"><div class=\'bubble\'><span class=\'trigger\'>)[^<]*(?=</span>))', activity).group(0)
-                                
+				activity_place = re.search('(?<=<td class="Place").*(?=</td><td class="Professor)', activity).group(0)
+				#Eliminate hdr junk
+				activity_place = re.split('[^>]+>', activity_place, maxsplit=1)[1]
+				#Remove HTML tags
+				activity_place = re.sub('<[^>]*>', '', activity_place)
+				activity_place = activity_place.strip()
                                 #John Smith
-                                activity_prof = re.search('((?<=<td class="Professor">)[^<]*(?=</td>)|(?<=<td class="Professor"><div class=\'bubble\'><span class=\'trigger\'>)[^<]*(?=</span>))', activity).group(0)
+                                activity_prof = re.search('(?<=<td class="Professor").*(?=</td>)', activity).group(0)
+				#Eliminate hdr junk
+                                activity_prof = re.split('[^>]*>', activity_prof)[1]
+                                #Remove HTML tags
+				activity_prof = re.sub('<[^>]*>', '', activity_prof)
+                                if activity_prof == "&nbsp;":
+				    activity_prof = 'Not available'
+                                activity_prof = activity_prof.strip()
                                 
                                 #Add activity to list
                                 db_activities.append(activity_name + ',' + activity_num + ',' + course + ' ' + sec + ',' + sem + ',' + activity_day + ',' + activity_strt_time + ',' + activity_end_time + ',' + activity_place + ',' + activity_prof)
@@ -120,7 +133,8 @@ def process_data(threadName, q):
                         db_courses.append(course + ',' + description)
                     else:
                         #otherwise add it to the skipped list so
-                        #that the user can double-check it.
+                        #that the user can double-check it
+                        print("No sections found for course " + course + ". Will skip!")
                         skipped_courses.append(course)
                     #break out of the loop
                     retry = False
@@ -129,7 +143,15 @@ def process_data(threadName, q):
                     print("Error dealing with course " + course + ". Will retry download.")
                 except AttributeError:
 		    traceback.print_exc()
-                    print("Error reading course " + course + ". Retrying...")
+		    if ">>" in webpage:
+			print("Error reading course " + course + ". Found >>, will skip!")
+		        #We must remove this course because it's invalid.
+		        #Add it to the skipped list so
+                        #that the user can double-check it later.
+		        skipped_courses.append(course)
+		        retry = False #break out of loop
+		    else:
+                        print("Error reading course " + course + ". Retrying...")
                 except urllib2.HTTPError:
                     #Server error
                     print("Internal server error. Waiting 2 seconds and trying again.")
@@ -156,7 +178,8 @@ start_time = time.strftime(time_format)
 
 #List of threads.
 threadList = []
-threadCount = multiprocessing.cpu_count() 
+threadCount = multiprocessing.cpu_count()
+threadCount = 2
 for x in range(0,threadCount):
     threadList.append('T' + str(x+1))
 #A lock for the queue
