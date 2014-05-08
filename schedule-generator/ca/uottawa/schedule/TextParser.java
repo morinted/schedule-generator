@@ -147,26 +147,6 @@ public class TextParser {
 						}
 					}
 				}
-				/*
-				while ((sectionLine = brSections.readLine())!=null) {
-					if (sectionLine.contains(courseInfo[0])) {
-						String[] sectionInfo = sectionLine.split(",");
-						Section aSection = new Section(sectionInfo[0], sectionInfo[2], Integer.parseInt(sectionInfo[3]), Integer.parseInt(sectionInfo[4]), Integer.parseInt(sectionInfo[5]), false, aCourse);
-						System.out.println(courseInfo[0] + " " + sectionInfo[0]);
-						aCourse.addSection(aSection);
-						while ((activityLine = brActivities.readLine()) != null) {
-							if (activityLine.contains(sectionInfo[0])) {
-								System.out.println(sectionInfo[0] + ": " + activityLine);
-							} else {
-								System.err.println(sectionInfo[0] + ": " + activityLine);
-								break;
-							}
-						}
-					} else {
-						break;
-					}
-
-				}*/
 			}
 			brCourses.close();
 			brSections.close();
@@ -175,10 +155,6 @@ public class TextParser {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		System.out.println("Returning " + lstCourses.size() + " courses!");
-		for (Course course: lstCourses) {
-			System.out.println(course.getDescription());
 		}
 		return lstCourses;
 	}
