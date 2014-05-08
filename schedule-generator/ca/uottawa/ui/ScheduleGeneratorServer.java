@@ -28,9 +28,9 @@ public class ScheduleGeneratorServer extends AbstractServer {
 	public ScheduleGeneratorServer(int port, ServerConsole serverUI) {
 		super(port);
 		this.serverUI = serverUI;
-		flCourses = new File("ca/uottawa/schedule/db_courses.csv");
-		flSections = new File("ca/uottawa/schedule/db_sections.csv");
-		flActivities = new File("ca/uottawa/schedule/db_activities.csv");
+		flCourses = new File("../course-download/db_courses.csv");
+		flSections = new File("../course-download/db_sections.csv");
+		flActivities = new File("../course-download/db_activities.csv");
 
 		try {
 		refreshCourses();

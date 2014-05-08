@@ -83,7 +83,7 @@ Note: You'll want to create a new calendar, just in case you want to delete the 
 
 ### Hosting a Server
 
-To host a server, you need to have the [ServerConsole.jar](https://github.com/morinted/schedule-generator/blob/master/schedule-generator/executable/ServerConsole.jar) in a directory next to a folder called ca/uottawa/schedule which contains the three file db_courses.csv, db_sections.csv, and db_activities.csv.
+To host a server, download the entire project, and use ServerConsole.jar (in the Runnables folder). Note that the ServerConsole depends on the ../course-download/db_*.csv files. So for this reason, you cannot run the ServerConsole.jar as a standalone.
 
 To launch, you use the command: `java -jar ServerConsole.jar [port]`
 
