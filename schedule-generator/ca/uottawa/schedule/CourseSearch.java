@@ -17,7 +17,6 @@ public class CourseSearch {
         }
         List<String> result = new ArrayList<String>();
         query = query.toUpperCase();
-        int q = query.length();
 
         int h = list.size()-1;
         int l = 0;
@@ -69,7 +68,6 @@ public class CourseSearch {
         if (query.length()>8) {
             query = query.substring(0, 8);
         }
-        List<String> result = new ArrayList<String>();
         query = query.toUpperCase();
         int q = query.length();
 
