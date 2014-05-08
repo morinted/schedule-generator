@@ -57,7 +57,7 @@ public class ScheduleGeneratorServer extends AbstractServer {
 			try {
 			c.getSemesters().size();
 			} catch (Exception e) {
-				//serverUI.display(c.getDescription());
+				serverUI.display(c.getDescription());
 			}
 			}
 		}
