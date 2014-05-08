@@ -20,12 +20,18 @@ public class ScheduleGeneratorServer extends AbstractServer {
 
 	  private ServerConsole serverUI;
 	  private List<Course> courses;
-	  private File courseCodes;
-	
+	  private File flCourses;
+	  private File flSections;
+	  private File flActivities;
+
+	  
 	public ScheduleGeneratorServer(int port, ServerConsole serverUI) {
 		super(port);
 		this.serverUI = serverUI;
-		courseCodes = new File("ca/uottawa/schedule/courseCodes.csv");
+		flCourses = new File("ca/uottawa/schedule/db_courses.csv");
+		flSections = new File("ca/uottawa/schedule/db_sections.csv");
+		flActivities = new File("ca/uottawa/schedule/db_activities.csv");
+
 		try {
 		refreshCourses();
 		} catch (FileNotFoundException e) {
@@ -41,8 +47,8 @@ public class ScheduleGeneratorServer extends AbstractServer {
 
 	
 	private void refreshCourses() throws FileNotFoundException {
-		serverUI.display("Refreshing courses from " + courseCodes);
-		courses = TextParser.getCoursesFromDatabase(courseCodes);
+		serverUI.display("Refreshing courses from db files...");
+		courses = TextParser.getCoursesFromDatabase(flCourses, flSections, flActivities);
 		if (courses.size() < 1) {
 			throw new FileNotFoundException();
 		} else {
@@ -51,7 +57,7 @@ public class ScheduleGeneratorServer extends AbstractServer {
 			try {
 			c.getSemesters().size();
 			} catch (Exception e) {
-				serverUI.display(c.getDescription());
+				//serverUI.display(c.getDescription());
 			}
 			}
 		}
@@ -65,11 +71,17 @@ public class ScheduleGeneratorServer extends AbstractServer {
 		case "SEARCH":
 			String query = message.getStrings().get(0);
             String semester = message.getSemester();
+            System.out.println("Your search term is " + query);
+            System.out.println("The semester is " + semester);
+            System.out.println("We are going to search " + courses.size() + " courses...");
+
 			List<String> results = CourseSearch.search(query, semester, courses);
 			ScheduleMessage reply = new ScheduleMessage();
 			reply.setCommand("SEARCHRESULTS");
 			reply.setStrings(results);
 			try {
+				serverUI.display("Sending reply of size " + results.size());
+
 				client.sendToClient(reply);
 			} catch (IOException e) {
 				serverUI.display("Error sending search results to client. Possible connection lost.");
