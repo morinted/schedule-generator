@@ -53,7 +53,7 @@ public class ScheduleGeneratorServer extends AbstractServer {
 		if (courses.size() < 1) {
 			throw new FileNotFoundException();
 		} else {
-		serverUI.display("Courses updated.");
+		serverUI.display(courses.size() + " courses loaded.");
 		for (Course c: courses) {
 			try {
 			c.getSemesters().size();
