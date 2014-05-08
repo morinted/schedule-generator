@@ -1,11 +1,11 @@
-# schedule-generator
+# uOttawa Schedule Generator
 
-A schedule generator for the University of Ottawa written in Java, using OCSF.
+A schedule generator for the University of Ottawa written in Java, using OCSF. It is a tool to help register for courses, as the University-supplied program, "Rabaska", does a terribly poor job at helping students find conflict-free schedules.
 
 ## Introduction
 
 This project was created by Ted Morin & Daniel Murdoch as assignment 5 & 7 for the course SEG2105A at the University of Ottawa.
-We are creating this program based on one simple problem line:
+We created this program based on one simple problem line:
 University of Ottawa students have no easy way to generate a conflict-free, optimized schedule.
 
 Now that that class is done, we are continuing development on the project, as it is a useful utility when working with uOttawa's Rabaska course-registration system.
