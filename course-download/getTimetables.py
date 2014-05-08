@@ -110,6 +110,9 @@ def process_data(threadName, q):
 				#Remove HTML tags
 				activity_place = re.sub('<[^>]*>', '', activity_place)
 				activity_place = activity_place.strip()
+				if 'available' in activity_place:
+				    activity_place = 'Unavailable'
+				
                                 #John Smith
                                 activity_prof = re.search('(?<=<td class="Professor").*(?=</td>)', activity).group(0)
 				#Eliminate hdr junk
@@ -117,7 +120,7 @@ def process_data(threadName, q):
                                 #Remove HTML tags
 				activity_prof = re.sub('<[^>]*>', '', activity_prof)
                                 if activity_prof == "&nbsp;":
-				    activity_prof = 'Not available'
+				    activity_prof = 'Unavailable'
                                 activity_prof = activity_prof.strip()
                                 
                                 #Add activity to list
