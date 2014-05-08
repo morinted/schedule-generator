@@ -12,7 +12,7 @@ Now that that class is done, we are continuing development on the project, as it
 
 ## Download
 
-If you just want to get started right away, then download the program for [Windows, Mac, or Linux](https://github.com/morinted/schedule-generator/raw/master/schedule-generator/executable/Schedule-Generator.jar). Note that you need Java to run the .jar file. Check out the user's guide below if you get confused while using the program.
+If you just want to get started right away, then download the program for [Windows, Mac, and Linux](https://github.com/morinted/schedule-generator/raw/master/schedule-generator/executable/uOttawa-Schedule-Generator.jar). Note that you need Java to run the .jar file. Check out the user's guide below if you get confused while using the program.
 
 ## Features
 
@@ -37,7 +37,7 @@ Looking toward the future:
 
 ### Getting Started
 
-1. To start, it is recommended to download the program's front-end. This can be found in the [executable directory](schedule-generator/executable) under the name [Schedule-Generator.jar](https://github.com/morinted/schedule-generator/raw/master/schedule-generator/executable/Schedule-Generator.jar).
+1. To start, it is recommended to download the program's front-end. This can be found in the [executable directory](schedule-generator/executable) under the name [uOttawa-Schedule-Generator.jar](https://github.com/morinted/schedule-generator/raw/master/schedule-generator/executable/uOttawa-Schedule-Generator.jar).
 
 2. Run the .jar.
 
@@ -83,7 +83,7 @@ Note: You'll want to create a new calendar, just in case you want to delete the 
 
 ### Hosting a Server
 
-To host a server, you need to have the [ServerConsole.jar](https://github.com/morinted/schedule-generator/blob/master/schedule-generator/executable/ServerConsole.jar) in a directory with [/ca/uottawa/schedule/courseCodes.csv](https://github.com/morinted/schedule-generator/tree/master/schedule-generator/ca/uottawa/schedule).
+To host a server, you need to have the [ServerConsole.jar](https://github.com/morinted/schedule-generator/blob/master/schedule-generator/executable/ServerConsole.jar) in a directory next to a folder called ca/uottawa/schedule which contains the three file db_courses.csv, db_sections.csv, and db_activities.csv.
 
 To launch, you use the command: `java -jar ServerConsole.jar [port]`
 
