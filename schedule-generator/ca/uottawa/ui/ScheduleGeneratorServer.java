@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 import com.lloseng.ocsf.server.AbstractServer;
@@ -108,6 +109,7 @@ public class ScheduleGeneratorServer extends AbstractServer {
                             }
                         }
                     }
+                    Collections.sort(semesterList);
                     semesters.setStrings(semesterList);
                     try {
                         client.sendToClient(semesters);
