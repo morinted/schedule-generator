@@ -725,7 +725,14 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 			String month, year;
 			for (String s : semesters) {
 				year = s.substring(0, 4);
-                month = new DateFormatSymbols().getMonths()[Integer.parseInt(s.substring(4))-1];
+                Integer monthInt = Integer.parseInt(s.substring((4)));
+                if (monthInt <= 4) {
+                	month = "Winter";
+                } else if (monthInt <= 8) {
+                	month = "Spring/Summer";
+                } else {
+                	month = "Fall";
+                }
 				cboSemester.addItem(month + " " + year);
 			}
 			cboSemester.setSelectedIndex(-1);

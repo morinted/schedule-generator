@@ -147,7 +147,14 @@ public class ClientConsole implements ClientIF {
 		//display available schedules.
 		for (int i = 0; i < semesters.size(); i++) {
 			year = semesters.get(i).substring(0, 4);
-			month = new DateFormatSymbols().getMonths()[Integer.parseInt(semesters.get(i).substring(4))-1];
+			Integer monthInt = Integer.parseInt(semesters.get(i).substring((4)));
+            if (monthInt <= 4) {
+            	month = "Winter";
+            } else if (monthInt <= 8) {
+            	month = "Spring/Summer";
+            } else {
+            	month = "Fall";
+            }
 			display((i+1) + ". " + month + " " + year);
 		}
 		display("Select your choice. (Number)");
