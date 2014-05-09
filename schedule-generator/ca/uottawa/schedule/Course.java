@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.*;
 
 // line 1 "model.ump"
-public class Course implements Serializable
+public class Course implements Serializable, Comparable<Course>
 {
 
   @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
@@ -254,6 +254,11 @@ public String getCourseCode() {
 
 public void setCourseCode(String courseCode) {
 	this.courseCode = courseCode;
+}
+
+
+public int compareTo(Course o) {
+	return this.courseCode.compareTo(o.courseCode);
 }
   
 }

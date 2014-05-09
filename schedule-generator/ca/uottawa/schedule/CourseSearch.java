@@ -1,6 +1,5 @@
 package ca.uottawa.schedule;
 
-import javax.swing.*;
 import java.util.*;
 
 /**
