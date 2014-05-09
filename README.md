@@ -10,9 +10,9 @@ University of Ottawa students have no easy way to generate a conflict-free, opti
 
 Now that that class is done, we are continuing development on the project, as it is a useful utility when working with uOttawa's Rabaska course-registration system.
 
-## Download
+## [Download](https://github.com/morinted/schedule-generator/releases/download/v1.0.0/uOttawa-Schedule-Generator.jar)
 
-If you just want to get started generating schedules right away, then [download the program for Windows, Mac, and Linux](https://github.com/morinted/schedule-generator/raw/master/runnables/uOttawa-Schedule-Generator.jar). Note that you need Java to run the .jar file. Check out the user's guide below if you get confused while using the program.
+If you just want to get started generating schedules right away, then [download the program for Windows, Mac, and Linux](https://github.com/morinted/schedule-generator/releases/download/v1.0.0/uOttawa-Schedule-Generator.jar). Note that you need Java to run the .jar file. Check out the user's guide below if you get confused while using the program.
 
 ## Features
 
