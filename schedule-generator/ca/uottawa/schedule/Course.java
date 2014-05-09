@@ -237,7 +237,7 @@ public class Course implements Serializable, Comparable<Course>
   
   public List<CourseSelection> getCourseSelections() {
 	  List<CourseSelection> selections = new ArrayList<CourseSelection>();
-	  //Basicaly, we need to generate as many possible course selections for this course.
+	  //Basically, we need to generate as many possible course selections for this course.
 	  //Each section and activity have a boolean selected which will help in this process.
 	  for (Section s : sections) {
 		  if (s.isSelected()) {

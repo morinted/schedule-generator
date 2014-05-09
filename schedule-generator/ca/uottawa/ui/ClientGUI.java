@@ -45,6 +45,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	private static final int DAY = 106; //110
 	private static final int DAY_MARGIN = 24; //25
 	private static final int LIST_ROWS = 5;
+	private static final int EDIT_HEIGHT = 500; //Dialog edit height.
 	
 	//GUI variables
 	//The top-level frame
@@ -95,6 +96,20 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		othColor = new Color(216, 212, 255);
 		fntMain = new Font("SansSerif", Font.BOLD, 15);
 		fntActivity = new Font("SansSerif", Font.BOLD, 13);
+		
+		
+		//Freeze items
+		btnAdd.setEnabled(false);
+		txtSearch.setEditable(false);
+		chkOptional.setEnabled(false);
+		btnClearAll.setEnabled(false);
+		btnRemove.setEnabled(false);
+		btnIncK.setEnabled(false);
+		btnDecK.setEnabled(false);
+		chkIgnoreExtras.setEnabled(false);
+		cboSortOrder.setEnabled(false);
+		btnGenerate.setEnabled(false);
+		btnEdit.setEnabled(false);
 		
 		//Make loading screen.
 		frmLoading = new JFrame("Loading...");
@@ -531,8 +546,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	    {
 	    	port = DEFAULT_PORT; //Else default to the default port.
 	    } 
-		new ClientGUI("uOttawa Schedule Generator", host, port);
-		
+		new ClientGUI("uOttawa Schedule Generator - v1.0.0", host, port);
 	}
 
 	/**
@@ -735,11 +749,16 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
                 }
 				cboSemester.addItem(month + " " + year);
 			}
+
 			cboSemester.setSelectedIndex(-1);
 			frmLoading.setVisible(false);
+			//We'll add a border to emphasize the starting point, for now.
+			paneSemester.setBorder(BorderFactory.createLineBorder(Color.black, 2));
 			while (cboSemester.getSelectedIndex() == -1) {
-				//wait.
+				
 			}
+			paneSemester.setBorder(null);
+
 			btnAdd.setEnabled(true);
 			txtSearch.setEditable(true);
 			chkOptional.setEnabled(true);
@@ -955,7 +974,8 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		JFrame editFrame = new JFrame("Edit Course");
 		editFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		editFrame.setResizable(false);
-		Container pane = (editFrame.getContentPane());
+		Container contentPane = (editFrame.getContentPane());
+		Container pane = new Container();
 		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
 
 		btnPrint.setEnabled(false);
@@ -1058,6 +1078,24 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 			}
 		}
 		pane.add(Box.createRigidArea(new Dimension(15, 15))); //Gives us some margins.
+		
+		//We are adding the contents to a scroll pane so that if there are many, many sections, we wrap to a set number of pixels.
+		JScrollPane scrollContent = new JScrollPane(pane);
+		scrollContent.getVerticalScrollBar().setUnitIncrement(16);
+		contentPane.add(scrollContent);
+		
+		Dimension preferred = editFrame.getPreferredSize();
+		if (preferred.height > EDIT_HEIGHT) {
+			preferred.height = EDIT_HEIGHT; 
+			preferred.width+=20; //This is to handle the extra width of the scrollbar.
+		}
+		
+		
+		editFrame.setPreferredSize(preferred);
+
+
+		
+		
 		editFrame.pack();
 		editFrame.setLocationRelativeTo(frame);
 		//Show the window. The window listener will evaluate when you close the window.
