@@ -59,7 +59,7 @@ public class TextParser {
 						activityLine = brActivities.readLine();
 					}
 
-					while (activityLine.contains(sectionInfo[0]) && activityLine.contains(sectionInfo[2])) {
+					while (activityLine.contains(","+sectionInfo[0]+",") && activityLine.contains(sectionInfo[2])) {
 						String[] activityInfo = activityLine.split(",");
 
 						//Process new ACTIVITY:
