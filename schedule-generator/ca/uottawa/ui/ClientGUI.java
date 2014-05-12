@@ -755,7 +755,11 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 			//We'll add a border to emphasize the starting point, for now.
 			paneSemester.setBorder(BorderFactory.createLineBorder(Color.black, 2));
 			while (cboSemester.getSelectedIndex() == -1) {
-				
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					//do nothing
+				}
 			}
 			paneSemester.setBorder(null);
 
