@@ -549,7 +549,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	    {
 	    	port = DEFAULT_PORT; //Else default to the default port.
 	    } 
-		new ClientGUI("uOttawa Schedule Generator - v1.0.0", host, port);
+		new ClientGUI("uOttawa Schedule Generator - v1.0.1", host, port);
 	}
 
 	/**
