@@ -155,48 +155,19 @@ public class ScheduleGeneratorServer extends AbstractServer {
                 }
                 break;
             case "GENERATE":
-            	//User is generating schedules
-            	List<Course> mandatoryCourses = message.getCourses();
-                int k = message.getK();
-                List<Course> optional = message.getOptionalCourses();
-                
-                serverUI.display("Received " + mandatoryCourses.size() + " mandatory courses.");
-                serverUI.display("Received " + optional.size() + " optional courses, choosing " + k);
-                
-                
-                
-                String sortOrder = message.getSortOrder();
-            	boolean ignoreExtras = message.isIgnoreExtras();
-            	List<Schedule> result;
-            	if (k>0) {
-            		result = Schedule.generateSchedules(mandatoryCourses, optional, k);
-            	} else {
-            		result = Schedule.generateSchedules(mandatoryCourses);
-            	}
-            	if (result.size() > 0) {
-            	//We should update the schedule stats in preperation of sorting.
-            	for (Schedule s: result) {
-            		s.updateStats();
-            	}
-            	result = Schedule.sort(sortOrder, result, ignoreExtras);
-            	}
-            	
-            	updateStats(client.getInetAddress().getHostAddress().toString(), mandatoryCourses.size(), optional.size(), k, result.size());
-            	ScheduleMessage schedulesMsg = new ScheduleMessage();
-            	schedulesMsg.setCommand("SCHEDULES");
-            	schedulesMsg.setSchedules(result);
-			try {
-				client.sendToClient(schedulesMsg);
-			} catch (IOException e) {
-				serverUI.display("Unable to report back generated schedules. Possible connection lost.");
-				serverUI.display(client.toString());
-			}
+            	//User is generating schedules                
+                GenerateTask task = new GenerateTask(message, client, this);
+                task.run();
 			default:;
 		}
 
 	}
-
-	private void updateStats(String user, int courses, int optional, int k,
+	
+	public void display(String msg) {
+		serverUI.display(msg);
+	}
+	
+	public void updateStats(String user, int courses, int optional, int k,
 			int schedules) {
 		ServerStats statistics = null;
 		File stats = new File("server.stat");

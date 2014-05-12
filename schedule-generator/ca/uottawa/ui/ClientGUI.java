@@ -113,7 +113,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		
 		//Make loading screen.
 		frmLoading = new JFrame("uOttawa Schedule Generator");
-		frmLoading.add(new JLabel("Attempting to connect to server..."));
+		frmLoading.add(new JLabel("<html>Attempting to connect to server... Please wait<br><br>If this takes longer than 10 seconds,<br>the server may be down. Try again later.</html>"));
 		frmLoading.pack();
 		frmLoading.setLocationRelativeTo(null);
 		
@@ -515,7 +515,11 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		}
 		
 		//Update the label to announce which schedule we're drawing, can be 0 / 0!
-		lblCurrSchedule.setText("  Displaying Schedule " + currSchedule + " / " + currSchedules.size() + "  ");
+		String displayString = Integer.toString(currSchedules.size());
+		if (displayString.equals("1000")) {
+			displayString = "1000+";
+		}
+		lblCurrSchedule.setText("  Displaying Schedule " + currSchedule + " / " + displayString + "  ");
 		
 		g.dispose();
 		lblDisplay.repaint();
@@ -825,6 +829,9 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 			btnExport.setEnabled(false);
 			System.out.println("Clearing");
 		} else {
+			if (schedules.size() == 1000) {
+				display("There were more than 1000 results. Narrow your search to see other options.");
+			}
 			currSchedule = 1;
 			btnPrint.setEnabled(true);
 			btnExport.setEnabled(true);
