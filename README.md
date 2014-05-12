@@ -25,13 +25,21 @@ Some features currently present:
 - Select x of y optional courses, ideal for electives.
 - Hosting a server at home.tedmor.in to let individuals connect with the GUI.
 - Export .ics files for easy calendar integration.
+- Sorting by various attributes, including start time, days off, and length of day.
+- Can ignore discussion groups and tutorials when sorting (eg. A day with only a discussion group would be considered a day off)
 
-### Future Features
+### Future Plans
 
-Looking toward the future:
+These are problems that exist or features that are to be implemented. Consider this a bug list:
 
-- When time permits, a nice feature would be a dynamically-sized GUI, but this is not planned in the short-term.
-- Make suggestions for other features!
+- GUI: 1-hour long classes have text that overflow out of the calendar event.
+- GUI: There is no indication of loading after sending requests to the server. A status bar with a loading symbol and status message would be preffered.
+- GUI: When connecting to server, the message box can get caught behind the main window.
+- SERVER: When a very large schedule generation occurs, smaller tasks are queued after. The fix will be implementing a multi-threaded approach.
+
+And here are some features under a wish list, which may not happen:
+
+- A dynamically-sized GUI, but this is not planned in the short-term.
 
 ## User's Guide
 
