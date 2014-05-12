@@ -112,8 +112,8 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		btnEdit.setEnabled(false);
 		
 		//Make loading screen.
-		frmLoading = new JFrame("Loading...");
-		frmLoading.add(new JTextArea("Connecting to server..."));
+		frmLoading = new JFrame("uOttawa Schedule Generator");
+		frmLoading.add(new JLabel("Attempting to connect to server..."));
 		frmLoading.pack();
 		frmLoading.setLocationRelativeTo(null);
 		
@@ -125,11 +125,10 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		//Set the frame as visible after packing
 		frame.pack();
 		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+		frame.setVisible(true);
 		frmLoading.setVisible(true);
-		
+
 		//Display the calendar
 		clear();
 		
@@ -751,7 +750,9 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 			}
 
 			cboSemester.setSelectedIndex(-1);
+
 			frmLoading.setVisible(false);
+
 			//We'll add a border to emphasize the starting point, for now.
 			paneSemester.setBorder(BorderFactory.createLineBorder(Color.black, 2));
 			while (cboSemester.getSelectedIndex() == -1) {
