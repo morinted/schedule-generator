@@ -913,14 +913,19 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 				x += DAY/2;
 				y += 16; //draw close to edge
 				g.drawString(strSec, x-stringLen, y);
-				y += 20;
-				stringLen = (int)g.getFontMetrics().getStringBounds(strAct, g).getWidth();  
-				stringLen = stringLen/2;
-				g.drawString(strAct, x-stringLen, y);
-				y += 20;
-				stringLen = (int)g.getFontMetrics().getStringBounds(strLoc, g).getWidth();  
-				stringLen = stringLen/2;
-				g.drawString(strLoc, x-stringLen, y);
+				if (hLength >= 2) {
+					y += 20;
+					stringLen = (int)g.getFontMetrics().getStringBounds(strAct, g).getWidth();  
+					stringLen = stringLen/2;
+					g.drawString(strAct, x-stringLen, y);
+				}
+				if (hLength >= 3) {
+					System.out.println(hLength);
+					y += 20;
+					stringLen = (int)g.getFontMetrics().getStringBounds(strLoc, g).getWidth();  
+					stringLen = stringLen/2;
+					g.drawString(strLoc, x-stringLen, y);
+				}
 			}
 		}
 		lblDisplay.repaint(); //Refresh the label
