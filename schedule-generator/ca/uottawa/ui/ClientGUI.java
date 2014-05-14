@@ -1,5 +1,6 @@
 package ca.uottawa.ui;
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -16,6 +17,8 @@ import java.awt.image.BufferedImage;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Date;
@@ -51,8 +54,8 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	//The top-level frame
 	JFrame frame, frmLoading;
 	//I personally like making sub-components to that we can easily move them around.
-	Container paneMain;
-	JPanel paneLeftSideBar, paneRightSideBar, paneSemester, paneSearch, paneList, paneOptions, paneDisplay, paneSchedule, paneControls, paneExport, paneIncDec;
+	Container paneMain, paneContent;
+	JPanel paneLeftSideBar, paneRightSideBar, statusPanel, paneSemester, paneSearch, paneList, paneOptions, paneDisplay, paneSchedule, paneControls, paneExport, paneIncDec;
 	//Some labels that will go into those components above.
 	JLabel lblSearch, lblSemester, lblCourses, lblOptionalCourses, lblOptions, lblNChooseK, lblSortOrder, lblCurrSchedule;
 	//Options please?
@@ -60,12 +63,16 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	//Selecting the semester and the sort order with a combobox
 	JComboBox<String> cboSemester, cboSortOrder;
 	//Buttons. These are pretty telling of what actions will occur.
-	JButton btnAdd, btnRemove, btnEdit, btnClearAll, btnIncK, btnDecK, btnGenerate, btnNext, btnPrev, btnFirst, btnLast, btnPrint, btnExport;
+	JButton btnCourseSequences, btnAdd, btnRemove, btnEdit, btnClearAll, btnIncK, btnDecK, btnGenerate, btnNext, btnPrev, btnFirst, btnLast, btnPrint, btnExport;
 	//Areas to write text
 	JTextField txtSearch;
 	//To hold lists (like search results)
 	JList<String> lstSearchResults, lstCourses, lstOptionalCourses;
 	JScrollPane scrSearchResults, scrCourses, scrOptionalCourses;
+	//For progress
+	JProgressBar barLoading;
+	Thread barThread;
+	
 	//To draw schedules
 	BufferedImage biSchedule;
 	JLabel lblDisplay; //to hold the BI
@@ -81,7 +88,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	public ClientGUI(String title, String host, int port) {
 		//Create the main frame.
 		JFrame frame = new JFrame(title);
-		paneMain = frame.getContentPane();
+		paneContent = frame.getContentPane();
 		//frame.setSize(new Dimension(WIDTH, HEIGHT));
 		k = 0; //We start by chosing 0 of 0 optional courses
 		n = 0;
@@ -161,6 +168,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		btnFirst.addActionListener(this);
 		btnPrint.addActionListener(this);
 		btnExport.addActionListener(this);
+		btnCourseSequences.addActionListener(this);
 		
 		//Text boxes
 		txtSearch.getDocument().addDocumentListener(this);
@@ -210,6 +218,9 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	private void createComponents() {
 		//Now we are going to create all the components for the layout. This is where we are flexing our muscles, so to speak.
 		//paneMain is a box layout in the x axis. We will create other panes as vertical layouts.
+		paneContent.setLayout(new BorderLayout());
+		
+		paneMain = new Container();
 		paneMain.setLayout(new BoxLayout(paneMain, BoxLayout.X_AXIS));
 		paneLeftSideBar = new JPanel();
 		paneRightSideBar = new JPanel();
@@ -468,6 +479,32 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		paneRightSideBar.add(paneSchedule);
 		paneMain.add(paneLeftSideBar);
 		paneMain.add(paneRightSideBar);
+		
+		paneContent.add(paneMain, BorderLayout.CENTER);
+		// create the status bar panel and shove it down the bottom of the frame
+		statusPanel = new JPanel();
+		statusPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
+		paneContent.add(statusPanel, BorderLayout.SOUTH);
+		statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS));
+		JLabel statusLabel = new JLabel("");
+		statusLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		btnCourseSequences = new JButton();
+		btnCourseSequences.setText("<HTML>Don't know your courses? Check online: <FONT color=\"#000099\"><U>View Course Sequences</U></FONT></HTML>");
+		btnCourseSequences.setHorizontalAlignment(SwingConstants.RIGHT);
+		btnCourseSequences.setBorderPainted(false);
+		btnCourseSequences.setOpaque(false);
+		btnCourseSequences.setBackground(Color.WHITE);
+		
+		barLoading = new JProgressBar(0,100);
+	 	Dimension dimLoading = barLoading.getPreferredSize();
+	 	dimLoading.width = 260;
+		barLoading.setPreferredSize(dimLoading);
+		
+		statusPanel.add(barLoading);
+		statusPanel.add(statusLabel);
+		statusPanel.add(btnCourseSequences);
+		
+		
 
 	}
 	
@@ -583,7 +620,9 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 			int ie = chkIgnoreExtras.isSelected() ? 1 : 0;
 				send("IGNOREEXTRAS " + ie); //Set IE on client side.
 		} else if (sender.equals(btnGenerate)) { //Generate button
+			animateBar();
 			send("GENERATE"); //Send generate command
+			
 		} else if (sender.equals(btnEdit)) { //Edit button
 				editCourse();				
 		} else if (sender.equals(btnNext)) { //Next button
@@ -639,7 +678,39 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 				lstSearchResults.setSelectedIndex(0);
 				addCourse();
 			}
+		} else if (sender.equals(btnCourseSequences)) {
+			 if (Desktop.isDesktopSupported()) {
+			      try {
+			        Desktop.getDesktop().browse(new URI("http://www.course-sequence.uottawa.ca"));
+			      } catch (IOException | URISyntaxException ex) { 
+			    	  ex.printStackTrace();
+			    	  /* TODO: error handling */ }
+			    } else { /* TODO: error handling */ 
+		  }
+
 		}
+	}
+	
+	private void animateBar() {
+		barThread = new Thread(){
+	        public void run(){
+	            for(int i = 0 ; i < 1000 ; i++){
+	                final int percent = (int) (0.2*i-Math.pow(i,2)*0.0001);
+	                SwingUtilities.invokeLater(new Runnable() {
+	                    public void run() {
+	                        barLoading.setValue(percent);
+	                    }
+	                  });
+
+	                try {
+	                    Thread.sleep(10);
+	                } catch (InterruptedException e) {
+	                	this.interrupt();
+	                }
+	            }
+	        }
+	    };
+	    barThread.start();
 	}
 	
 	private void editCourse() {
@@ -821,6 +892,20 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	 * Holds the schedules to the GUI, then display the first one.
 	 */
 	public void displaySchedules(List<Schedule> schedules) {
+		if (barThread.isAlive()) {
+			barThread.interrupt();
+			try {
+				barThread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    barLoading.setValue(0);
+                }
+              });
+			barLoading.repaint();
+		}
 		currSchedules = schedules;
 		if (schedules.size() < 1) {
 			display("There are no possible schedules for your current selection.");
@@ -920,7 +1005,6 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 					g.drawString(strAct, x-stringLen, y);
 				}
 				if (hLength >= 3) {
-					System.out.println(hLength);
 					y += 20;
 					stringLen = (int)g.getFontMetrics().getStringBounds(strLoc, g).getWidth();  
 					stringLen = stringLen/2;
@@ -1242,6 +1326,20 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	
 	//Display a message that must be shown to the user.
 	public void display(String msg) {
+		if (barThread.isAlive()) {
+			barThread.interrupt();
+			try {
+				barThread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    barLoading.setValue(0);
+                }
+              });
+			barLoading.repaint();
+		}
         JOptionPane.showMessageDialog(null, msg, "Schedule Generator", JOptionPane.INFORMATION_MESSAGE);
 	}
 
