@@ -500,6 +500,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	 	dimLoading.width = 260;
 		barLoading.setPreferredSize(dimLoading);
 		
+		statusPanel.add(Box.createHorizontalStrut(10)); //space for the progress bar.
 		statusPanel.add(barLoading);
 		statusPanel.add(statusLabel);
 		statusPanel.add(btnCourseSequences);
@@ -899,13 +900,14 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    barLoading.setValue(0);
-                }
-              });
-			barLoading.repaint();
 		}
+		SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                barLoading.setValue(0);
+            }
+          });
+		barLoading.repaint();
+		
 		currSchedules = schedules;
 		if (schedules.size() < 1) {
 			display("There are no possible schedules for your current selection.");
