@@ -26,7 +26,9 @@ public class ScheduleGeneratorServer extends AbstractServer {
 	  private File flSections;
 	  private File flActivities;
 	  private ServerStats statistics = null;
+	  private ServerStats runStats = null;
 	  private File stats;
+	  private int connections = 0;
 
 	  
 	public ScheduleGeneratorServer(int port, ServerConsole serverUI) {
@@ -174,13 +176,18 @@ public class ScheduleGeneratorServer extends AbstractServer {
 		if (statistics == null) {
 			statistics = new ServerStats();
 		}
+		if (runStats == null) {
+			runStats = new ServerStats();
+		}
 		statistics.addCourses(courses);
 		statistics.addOptional(optional);
 		statistics.addElectives(k);
 		if (k > 0) {
 			statistics.addOptionalGenerations(1);
 		}
-		statistics.addGenerations(1);
+		if (courses > 0 || optional > 0 || k > 0 || schedules > 0) {
+			statistics.addGenerations(1);
+		}
 		statistics.addSchedules(schedules);
 		statistics.addUser(user);
 		try {
@@ -193,6 +200,18 @@ public class ScheduleGeneratorServer extends AbstractServer {
 	      catch (IOException e) {
 	          e.printStackTrace();
 	      }
+		
+		runStats.addCourses(courses);
+		runStats.addOptional(optional);
+		runStats.addElectives(k);
+		if (k > 0) {
+			runStats.addOptionalGenerations(1);
+		}
+		if (courses > 0 || optional > 0 || k > 0 || schedules > 0) {
+			runStats.addGenerations(1);
+		}
+		runStats.addSchedules(schedules);
+		runStats.addUser(user);
 	}
 	
 	public void updateStats() {
@@ -207,20 +226,31 @@ public class ScheduleGeneratorServer extends AbstractServer {
 				serverUI.display("Error reading in old stats file. Creating new one.");
 			}
 		}
+		if (runStats == null) {
+			runStats = new ServerStats();
+		}
 	}
 	
 	public void printCurrentStats() {
-		if (statistics != null) {
+		if (statistics != null && runStats != null) {
 			String newLine = System.getProperty("line.separator");
 			
-			String currStats = newLine + "---------------------------------Current Statistics-----------------------------";
+			String currStats = newLine + "---------------------------------Global Statistics-----------------------------";
 			currStats = currStats + newLine + "Users: " + statistics.getUsers().size();
 			currStats = currStats + newLine + "Mandatory Courses Chosen:\t" + statistics.getNumOfCourses();
 			currStats = currStats + "\tOptional Courses Chosen:\t" + statistics.getNumOfOptional();
 			currStats = currStats + newLine + "Total K Value:\t\t\t" + statistics.getNumOfElectives();
 			currStats = currStats + "\tGenerations:\t\t\t" + statistics.getNumOfGenerations();
 			currStats = currStats + newLine + "Optional Generations:\t\t" + statistics.getNumOfOptionalGenerations();
-			currStats = currStats + "\tSchedules Generated:\t" + statistics.getNumOfSchedules();
+			currStats = currStats + "\tSchedules Generated:\t\t" + statistics.getNumOfSchedules();
+			currStats = currStats + newLine + "--------------------------------This Run----------------------------------------";
+			currStats = currStats + newLine + "Unique Users: " + runStats.getUsers().size() + "\t\t\t\tConnections:\t\t\t" + connections;
+			currStats = currStats + newLine + "Mandatory Courses Chosen:\t" + runStats.getNumOfCourses();
+			currStats = currStats + "\tOptional Courses Chosen:\t" + runStats.getNumOfOptional();
+			currStats = currStats + newLine + "Total K Value:\t\t\t" + runStats.getNumOfElectives();
+			currStats = currStats + "\tGenerations:\t\t\t" + runStats.getNumOfGenerations();
+			currStats = currStats + newLine + "Optional Generations:\t\t" + runStats.getNumOfOptionalGenerations();
+			currStats = currStats + "\tSchedules Generated:\t\t" + runStats.getNumOfSchedules();
 			currStats = currStats + newLine + "--------------------------------------------------------------------------------";
 			serverUI.display(currStats); }
 	}
@@ -324,6 +354,8 @@ public class ScheduleGeneratorServer extends AbstractServer {
 
 	  protected void clientConnected(ConnectionToClient client) {
 		  serverUI.display(client.toString() + " has connected.");
+		  connections++;
+		  updateStats(client.getInetAddress().getHostAddress().toString(), 0, 0, 0, 0);
 		  printCurrentStats();
 	  }
 	  

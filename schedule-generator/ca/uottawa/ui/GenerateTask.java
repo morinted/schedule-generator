@@ -26,6 +26,9 @@ public class GenerateTask implements Runnable {
 	}
 	
 	private void generateSchedules(ScheduleMessage message, ConnectionToClient client, ScheduleGeneratorServer server) {
+		//For timing
+		long startTime = System.currentTimeMillis();
+		
 		//User is generating schedules
     	List<Course> mandatoryCourses = message.getCourses();
         int k = message.getK();
@@ -42,7 +45,7 @@ public class GenerateTask implements Runnable {
     	} else {
     		result = Schedule.generateSchedules(mandatoryCourses);
     	}
-    	server.display("(1/3) Generated " + result.size() + ". Sorting by " + sortOrder + "\t(" + client.getInfo("ip") + ")");
+    	server.display("[1/3] (" + client.getInfo("ip") + ") Generated " + result.size() + ". Sorting by " + sortOrder + "...");
     	
     	if (result.size() > 0) {
 	    	//We should update the schedule stats in preparation of sorting.
@@ -67,9 +70,10 @@ public class GenerateTask implements Runnable {
     	schedulesMsg.setSchedules(result);
 
 		try {
-			server.display("(2/3) Sorted. Sending back " + result.size() + "... \t\t\t(" + client.getInfo("ip") + ")");
+			server.display("[2/3] (" + client.getInfo("ip") + ") Sorted. Sending back " + result.size() + "...");
 			client.sendToClient(schedulesMsg);
-			server.display("(3/3) Sent " + result.size() + ".\t\t\t\t\t(" + client.getInfo("ip") + ")");
+			long endTime = System.currentTimeMillis();
+			server.display("[3/3] (" + client.getInfo("ip") + ") Sent " + result.size() + ", time totaled " + (endTime - startTime) + "ms.");
 			server.printCurrentStats();
 		} catch (IOException e) {
 			e.printStackTrace();
