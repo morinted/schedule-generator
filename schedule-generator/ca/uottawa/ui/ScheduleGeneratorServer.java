@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -24,6 +25,8 @@ public class ScheduleGeneratorServer extends AbstractServer {
 	  private File flCourses;
 	  private File flSections;
 	  private File flActivities;
+	  private ServerStats statistics = null;
+	  private File stats;
 
 	  
 	public ScheduleGeneratorServer(int port, ServerConsole serverUI) {
@@ -72,17 +75,13 @@ public class ScheduleGeneratorServer extends AbstractServer {
 		case "SEARCH":
 			String query = message.getStrings().get(0);
             String semester = message.getSemester();
-            System.out.println("Your search term is " + query);
-            System.out.println("The semester is " + semester);
-            System.out.println("We are going to search " + courses.size() + " courses...");
-
 			List<String> results = CourseSearch.search(query, semester, courses);
 			ScheduleMessage reply = new ScheduleMessage();
 			reply.setCommand("SEARCHRESULTS");
 			reply.setStrings(results);
+			
+			serverUI.display(client.getInfo("ip") +  " queries> \"" + query + "\" \t(" + results.size() + " results for semester " + semester + ")");
 			try {
-				serverUI.display("Sending reply of size " + results.size());
-
 				client.sendToClient(reply);
 			} catch (IOException e) {
 				serverUI.display("Error sending search results to client. Possible connection lost.");
@@ -132,10 +131,12 @@ public class ScheduleGeneratorServer extends AbstractServer {
                     
                     int courseIndex = CourseSearch.indexOf(courseCode, message.getSemester(), courses);
                     List<Course> courseList = new ArrayList<Course>();
-                    courseList.add(courses.get(courseIndex));
+                    Course desiredCourse = courses.get(courseIndex);
+                    courseList.add(desiredCourse);
                     courseMsg.setCourses(courseList);
                     try {
                         client.sendToClient(courseMsg);
+                        serverUI.display(client.getInfo("ip") + " adds> \"" + desiredCourse.getDescription() + "\"");
                     } catch (IOException e) {
                     	serverUI.display("Error sending course back to client. Possible connection lost.");
                     	serverUI.display(client.toString());
@@ -169,18 +170,7 @@ public class ScheduleGeneratorServer extends AbstractServer {
 	
 	public void updateStats(String user, int courses, int optional, int k,
 			int schedules) {
-		ServerStats statistics = null;
-		File stats = new File("server.stat");
-		serverUI.display(stats.getAbsolutePath());
-		if(stats.exists()) {
-			try {
-				FileInputStream fis = new FileInputStream(stats);
-				ObjectInputStream ois = new ObjectInputStream(fis);
-				statistics = (ServerStats) ois.readObject();
-			} catch (Exception e) {
-				serverUI.display("Error reading in old stats file. Creating new one.");
-			}
-		}
+		updateStats();
 		if (statistics == null) {
 			statistics = new ServerStats();
 		}
@@ -201,17 +191,38 @@ public class ScheduleGeneratorServer extends AbstractServer {
 	         out.close();
 	      }
 	      catch (IOException e) {
-	          serverUI.display(e.toString()); 
+	          e.printStackTrace();
 	      }
-		String currStats = "Current stats: " + Calendar.getInstance().getTime().toString();
-		currStats = currStats + System.getProperty("line.separator") + "Users: " + statistics.getUsers().size();
-		currStats = currStats + System.getProperty("line.separator") + "Mandatory Courses Chosen: " + statistics.getNumOfCourses();
-		currStats = currStats + System.getProperty("line.separator") + "Optional Courses Chosen: " + statistics.getNumOfOptional();
-		currStats = currStats + System.getProperty("line.separator") + "Total K Value: " + statistics.getNumOfElectives();
-		currStats = currStats + System.getProperty("line.separator") + "Generations: " + statistics.getNumOfGenerations();
-		currStats = currStats + System.getProperty("line.separator") + "Optional Generations: " + statistics.getNumOfOptionalGenerations();
-		currStats = currStats + System.getProperty("line.separator") + "Schedules Generated: " + statistics.getNumOfSchedules();
-		serverUI.display(currStats);
+	}
+	
+	public void updateStats() {
+		stats = new File("server.stat");
+		if(stats.exists()) {
+			try {
+				FileInputStream fis = new FileInputStream(stats);
+				ObjectInputStream ois = new ObjectInputStream(fis);
+				statistics = (ServerStats) ois.readObject();
+				ois.close();
+			} catch (Exception e) {
+				serverUI.display("Error reading in old stats file. Creating new one.");
+			}
+		}
+	}
+	
+	public void printCurrentStats() {
+		if (statistics != null) {
+			String newLine = System.getProperty("line.separator");
+			
+			String currStats = newLine + "---------------------------------Current Statistics-----------------------------";
+			currStats = currStats + newLine + "Users: " + statistics.getUsers().size();
+			currStats = currStats + newLine + "Mandatory Courses Chosen:\t" + statistics.getNumOfCourses();
+			currStats = currStats + "\tOptional Courses Chosen:\t" + statistics.getNumOfOptional();
+			currStats = currStats + newLine + "Total K Value:\t\t\t" + statistics.getNumOfElectives();
+			currStats = currStats + "\tGenerations:\t\t\t" + statistics.getNumOfGenerations();
+			currStats = currStats + newLine + "Optional Generations:\t\t" + statistics.getNumOfOptionalGenerations();
+			currStats = currStats + "\tSchedules Generated:\t" + statistics.getNumOfSchedules();
+			currStats = currStats + newLine + "--------------------------------------------------------------------------------";
+			serverUI.display(currStats); }
 	}
 
 
@@ -297,6 +308,8 @@ public class ScheduleGeneratorServer extends AbstractServer {
 	  protected void serverStarted()
 	  {
 	    serverUI.display("Server listening for connections on port " + getPort());
+	    updateStats();
+	    printCurrentStats();
 	  }
 	  
 	  protected void serverStopped()
@@ -310,14 +323,15 @@ public class ScheduleGeneratorServer extends AbstractServer {
 	  }
 
 	  protected void clientConnected(ConnectionToClient client) {
-		  serverUI.display("The client " + client.toString() + " has connected.");
+		  serverUI.display(client.toString() + " has connected.");
+		  printCurrentStats();
 	  }
 	  
 	  synchronized protected void clientDisconnected(ConnectionToClient client) {
-		  serverUI.display(client.getInfo("loginID") + " has disconnected.");
+		  serverUI.display(client.getInfo("ip") + " has disconnected.");
 	  }
 	  
 	  synchronized protected void clientException(ConnectionToClient client, Throwable exception) {
-		  clientDisconnected(client);
+		  //serverUI.display(client.getInetAddress() + " has disconnected by exception.");
 	  }
 }

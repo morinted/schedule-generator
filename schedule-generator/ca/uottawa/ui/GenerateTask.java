@@ -31,8 +31,8 @@ public class GenerateTask implements Runnable {
         int k = message.getK();
         List<Course> optional = message.getOptionalCourses();
        
-        server.display("Received " + mandatoryCourses.size() + " mandatory courses.");
-        server.display("Received " + optional.size() + " optional courses, choosing " + k);
+        server.display(client.getInfo("ip") + " generates> " + mandatoryCourses.size() +
+        		" mandatory. " + k + "/" + optional.size() + " optional.");
         
         String sortOrder = message.getSortOrder();
     	boolean ignoreExtras = message.isIgnoreExtras();
@@ -42,7 +42,8 @@ public class GenerateTask implements Runnable {
     	} else {
     		result = Schedule.generateSchedules(mandatoryCourses);
     	}
-    	server.display("Generated " + result.size() + " schedules. Now sorting by " + sortOrder);
+    	server.display("(1/3) Generated " + result.size() + ". Sorting by " + sortOrder + "\t(" + client.getInfo("ip") + ")");
+    	
     	if (result.size() > 0) {
 	    	//We should update the schedule stats in preparation of sorting.
 	    	for (Schedule s: result) {
@@ -51,7 +52,7 @@ public class GenerateTask implements Runnable {
 	    	//Now sort
 	    	result = Schedule.sort(sortOrder, result, ignoreExtras);
     	}
-    	server.display("Sorted. Sending back...");
+    	
     	server.updateStats(client.getInetAddress().getHostAddress().toString(), mandatoryCourses.size(), optional.size(), k, result.size());
     	
     	ScheduleMessage schedulesMsg = new ScheduleMessage();
@@ -61,15 +62,15 @@ public class GenerateTask implements Runnable {
     		List<Schedule> shortResult = result.subList(0, 1000); //Shrink list because it takes a while to transfer.
         	result = new ArrayList<Schedule>();
         	result.addAll(shortResult);
-    		server.display("New results size: " + result.size());
     	}
     	
     	schedulesMsg.setSchedules(result);
 
 		try {
-			server.display("SEND part 1");
+			server.display("(2/3) Sorted. Sending back " + result.size() + "... \t\t\t(" + client.getInfo("ip") + ")");
 			client.sendToClient(schedulesMsg);
-			server.display("SEND part 2");
+			server.display("(3/3) Sent " + result.size() + ".\t\t\t\t\t(" + client.getInfo("ip") + ")");
+			server.printCurrentStats();
 		} catch (IOException e) {
 			e.printStackTrace();
 			server.display("Unable to report back generated schedules. Possible connection lost.");

@@ -234,6 +234,7 @@ public class ConnectionToClient extends Thread
   final public void run()
   {
     server.clientConnected(this);
+    this.setInfo("ip", this.getInetAddress().getHostAddress());
 
     // This loop reads the input stream and responds to messages
     // from clients

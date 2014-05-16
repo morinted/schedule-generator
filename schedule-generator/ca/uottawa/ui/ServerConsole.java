@@ -1,6 +1,8 @@
 package ca.uottawa.ui;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 
 
@@ -79,7 +81,10 @@ public class ServerConsole {
 		 */
 	  public void display(String message) 
 	  {
-	    System.out.println(message);
+		  Calendar cal = Calendar.getInstance();
+	    	cal.getTime();
+	    	SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
+	    System.out.println(sdf.format(cal.getTime()) + "> " + message);
 	  }
 	  
 	  /**
