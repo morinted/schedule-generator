@@ -71,7 +71,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	JScrollPane scrSearchResults, scrCourses, scrOptionalCourses;
 	//For progress
 	JProgressBar barLoading;
-	Thread barThread;
+	Thread barThread = null;
 	
 	//To draw schedules
 	BufferedImage biSchedule;
@@ -1326,7 +1326,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	
 	//Display a message that must be shown to the user.
 	public void display(String msg) {
-		if (barThread.isAlive()) {
+		if ((barThread != null) && (barThread.isAlive())) {
 			barThread.interrupt();
 			try {
 				barThread.join();
