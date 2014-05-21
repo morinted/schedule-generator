@@ -157,6 +157,35 @@ public class TextParser {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		for (Course aCourse: lstCourses) {
+			for (Section aSection: aCourse.getSections()) {
+				for (Activity firstActivity: aSection.getActivities()) {
+					for (Activity secondActivity: aSection.getActivities()) {
+						if (firstActivity!=secondActivity) {
+							if (aSection.getRequiredDGD() == 0 && firstActivity.getType().equals("DGD") && secondActivity.getType().equals("DGD")) {
+								if (firstActivity.overlaps(secondActivity)) {
+									System.err.println("Setting course " + aSection.getName() + " to have 1 required DGD");
+									aSection.setRequiredDGD(1); // conflicting multiple DGDs!
+								}
+							} else if (aSection.getRequiredLAB() == 0 && firstActivity.getType().equals("LAB") && secondActivity.getType().equals("LAB")) {
+								if (firstActivity.overlaps(secondActivity)) {
+									aSection.setRequiredLAB(1); // conflicting multiple LABs!
+								}
+							} else if (aSection.getRequiredTUT() == 0 && firstActivity.getType().equals("TUT") && secondActivity.getType().equals("TUT")) {
+								if (firstActivity.overlaps(secondActivity)) {
+									aSection.setRequiredTUT(1); // conflicting multiple LABs!
+								}
+							} else if (firstActivity.getType().equals("LEC") && secondActivity.getType().equals("LEC")) {
+								if (firstActivity.overlaps(secondActivity)) {
+									System.err.println("Warning! Removing section because it has conflicting lectures! Section: " + aSection.getName());
+									aCourse.removeSection(aSection);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 		Collections.sort(lstCourses);
 		return lstCourses;
 	}
