@@ -77,8 +77,7 @@ public class GenerateTask implements Runnable {
 			server.printCurrentStats();
 		} catch (IOException e) {
 			e.printStackTrace();
-			server.display("Unable to report back generated schedules. Possible connection lost.");
-			server.display(client.toString());
+			server.display("Unable to report back generated schedules. Possible connection lost to " + client.getInfo("ip"));
 		}
 	}
 

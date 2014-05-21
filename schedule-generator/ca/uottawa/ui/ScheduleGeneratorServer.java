@@ -29,11 +29,13 @@ public class ScheduleGeneratorServer extends AbstractServer {
 	  private ServerStats runStats = null;
 	  private File stats;
 	  private int connections = 0;
+	  private boolean autoRestart;
 
 	  
-	public ScheduleGeneratorServer(int port, ServerConsole serverUI) {
+	public ScheduleGeneratorServer(int port, ServerConsole serverUI, boolean autoRestart) {
 		super(port);
 		this.serverUI = serverUI;
+		this.autoRestart = autoRestart;
 		flCourses = new File("../course-download/db_courses.csv");
 		flSections = new File("../course-download/db_sections.csv");
 		flActivities = new File("../course-download/db_activities.csv");
@@ -345,6 +347,19 @@ public class ScheduleGeneratorServer extends AbstractServer {
 	  protected void serverStopped()
 	  {
 	    serverUI.display("Server has stopped listening for connections.");
+	    if (autoRestart) {
+		    serverUI.display("Attempt to restart in 10 seconds.");
+		    try {
+				Thread.sleep(10000);
+				listen();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    }
 	  }
 	  
 	  protected void serverClosed() {
@@ -366,4 +381,14 @@ public class ScheduleGeneratorServer extends AbstractServer {
 	  synchronized protected void clientException(ConnectionToClient client, Throwable exception) {
 		  //serverUI.display(client.getInetAddress() + " has disconnected by exception.");
 	  }
+
+
+	public boolean isAutoRestart() {
+		return autoRestart;
+	}
+
+
+	public void setAutoRestart(boolean autoRestart) {
+		this.autoRestart = autoRestart;
+	}
 }

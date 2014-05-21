@@ -29,9 +29,9 @@ public class ServerConsole {
 	   *k
 	   * @param port The port to connect on.
 	   */
-	  public ServerConsole(int port) 
+	  public ServerConsole(int port, boolean autoRestart) 
 	  {
-	      server = new ScheduleGeneratorServer(port, this);
+	      server = new ScheduleGeneratorServer(port, this, autoRestart);
 	      try 
 		    {
 		      server.listen(); //Start listening for connections
@@ -42,7 +42,6 @@ public class ServerConsole {
 		      System.out.println("Quitting application");
 		      System.exit(0);
 		    }
-	      
 	  }
 
 	  
@@ -97,7 +96,7 @@ public class ServerConsole {
 	  public static void main(String[] args) 
 	  {
 	    int port = 0; //Port to listen on
-
+	    boolean autoRestart = true;
 	    try
 	    {
 	      port = Integer.parseInt(args[0]); //Get port from command line
@@ -106,8 +105,16 @@ public class ServerConsole {
 	    {
 	      port = DEFAULT_PORT; //Set port to the default
 	    }
+	    try
+	    {
+	      autoRestart = Boolean.parseBoolean(args[1]); //Get port from command line
+	    }
+	    catch(Throwable t)
+	    {
+	      autoRestart = true;
+	    }
 		//Create new server console.
-	    ServerConsole server = new ServerConsole(port);
+	    ServerConsole server = new ServerConsole(port, autoRestart);
 	    //Start accepting connections on server console.
 	    server.accept();
 	  }
