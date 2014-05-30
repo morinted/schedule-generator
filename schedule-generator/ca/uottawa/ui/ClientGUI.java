@@ -587,7 +587,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	    {
 	    	port = DEFAULT_PORT; //Else default to the default port.
 	    } 
-		new ClientGUI("uOttawa Schedule Generator - v1.0.2", host, port);
+		new ClientGUI("uOttawa Schedule Generator - v1.1.0", host, port);
 	}
 
 	/**
@@ -914,7 +914,6 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 			clear();
 			btnPrint.setEnabled(false);
 			btnExport.setEnabled(false);
-			System.out.println("Clearing");
 		} else {
 			if (schedules.size() == 1000) {
 				display("There were more than 1000 results. Narrow your search to see other options.");
@@ -1071,6 +1070,18 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 				editSections.add(s);
 			}
 		}
+		
+		List<Section> sectionsToRemove = new ArrayList<Section>();
+		for (Section s: edit.getSections()) {
+			if (!s.getSemester().equals(semester)) {
+				sectionsToRemove.add(s);
+			}
+		}
+		while (!sectionsToRemove.isEmpty()) {
+			Section toRemove = sectionsToRemove.get(0);
+			sectionsToRemove.remove(0);
+			toRemove.delete();
+		}
 		courseEditing = edit;
 		
 		//Now edit sections contains the current semester's lists.
@@ -1189,8 +1200,8 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		
 		Dimension preferred = editFrame.getPreferredSize();
 		if (preferred.height > EDIT_HEIGHT) {
-			preferred.height = EDIT_HEIGHT; 
-			preferred.width+=20; //This is to handle the extra width of the scrollbar.
+			preferred.height = EDIT_HEIGHT+20; 
+			preferred.width+=40; //This is to handle the extra width of the scrollbar.
 		}
 		
 		
