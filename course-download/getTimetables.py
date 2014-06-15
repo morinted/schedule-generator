@@ -13,9 +13,6 @@ from Queue import Queue
 
 from bs4 import BeautifulSoup
 
-# Format for the time
-time_format = "%H:%M:%S"
-
 
 class WorkThread(Thread):
     def __init__(self, name, work_lock, work_queue, count, skipped_queue, q_activities, q_sections, q_courses, l_db):
@@ -267,10 +264,11 @@ def process_data(thread_name, lock, queue, count, skipped_queue, activity_queue,
 
 
 def main():
-    """Main Thread
+    """Main method/entrypoint
     """
 
     # Get the start time
+    time_format = "%H:%M:%S"
     start_time = time.strftime(time_format)
 
     # Courses
