@@ -270,10 +270,6 @@ def main():
     """Main method/entrypoint
     """
 
-    # Get the start time
-    time_format = "%H:%M:%S"
-    start_time = time.strftime(time_format)
-
     # Courses
     work_lock = Lock()
     work_queue = Queue(0)
@@ -297,7 +293,7 @@ def main():
 
     # Create the threads
     thread_list = []
-    thread_count = multiprocessing.cpu_count()
+    thread_count = multiprocessing.cpu_count() * 2
     for x in range(1, thread_count + 1):
         t = WorkThread(name=''.join(['Worker-', str(x)]), work_lock=work_lock, work_queue=work_queue,
                        count=course_count, skipped_queue=skipped_queue, q_activities=db_activities,
@@ -316,8 +312,11 @@ def main():
     # Announce skipped courses
     if not skipped_queue.empty():
         print('These courses were skipped: ')
-        while not skipped_queue.empty():
-            print('  {0}'.format(skipped_queue.get()))
+        with open('skippedCourses.txt', 'w') as f:
+            while not skipped_queue.empty():
+                skipped_course = skipped_queue.get()
+                print('  {0}'.format(skipped_course))
+                f.write(u'{0}\n'.format(skipped_course).encode('utf8'))
         print()
 
     # Print total count of all items
@@ -339,11 +338,6 @@ def main():
     with open('db_activities.csv', 'w') as f:
         while not db_activities.empty():
             f.write(u'{0}\n'.format(db_activities.get()).encode('utf8'))
-
-    # Calculate script time and print it
-    end_time = time.strftime(time_format)
-    time_delta = datetime.datetime.strptime(end_time, time_format) - datetime.datetime.strptime(start_time, time_format)
-    print('\nTime elapsed: ' + str(time_delta))
 
 
 if __name__ == '__main__':
