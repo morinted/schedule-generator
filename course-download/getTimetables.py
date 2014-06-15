@@ -257,7 +257,10 @@ def process_data(thread_name, lock, queue, count, skipped_queue, activity_queue,
                 break  # break out of the retry loop
 
             local_count += 1
-            print('[{0}][Thread: {1}][Total: {2}]'.format(thread_name, local_count, count))
+            lock.acquire()
+            todo = queue.qsize()
+            print('[{0}][Thread: {1}][Total: {2}/{3}]'.format(thread_name, local_count, count - todo, count))
+            lock.release()
         except AttributeError, e:
             print('Error in thread {0} with course {1}: {2}'.format(thread_name, course, e.message), file=sys.stderr)
             traceback.print_exc()
