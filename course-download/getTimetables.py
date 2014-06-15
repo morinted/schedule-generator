@@ -293,7 +293,7 @@ def main():
 
     # Create the threads
     thread_list = []
-    thread_count = multiprocessing.cpu_count() * 2
+    thread_count = int(multiprocessing.cpu_count() * 1.5)
     for x in range(1, thread_count + 1):
         t = WorkThread(name=''.join(['Worker-', str(x)]), work_lock=work_lock, work_queue=work_queue,
                        count=course_count, skipped_queue=skipped_queue, q_activities=db_activities,
