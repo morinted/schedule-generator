@@ -227,9 +227,9 @@ def process_data(thread_name, lock, queue, count, skipped_queue, activity_queue,
                             # If there was at least one activity, add the section to the sections list.
                             db_lock.acquire()
                             if section_id is None:
-                                string = u'{0} {1},{0},{2},{3},{4},{5}'
-                            else:
                                 string = u'{0},{0},{2},{3},{4},{5}'
+                            else:
+                                string = u'{0} {1},{0},{2},{3},{4},{5}'
 
                             section_queue.put(
                                 string.format(
