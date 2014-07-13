@@ -182,7 +182,7 @@ start_time = time.strftime(time_format)
 #List of threads.
 threadList = []
 threadCount = multiprocessing.cpu_count()
-threadCount = 2
+threadCount = 1
 for x in range(0,threadCount):
     threadList.append('T' + str(x+1))
 #A lock for the queue
