@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
+import argparse
 import sys
 import time
 import traceback
@@ -195,7 +196,7 @@ def process_data(main_q, skipped_q, activity_queue, section_queue, course_queue,
             traceback.print_exc()
 
 
-def main():
+def main(course_file='courses.txt', clear_db=True):
     """Main method/entrypoint
     """
 
@@ -203,7 +204,7 @@ def main():
     work_queue = JoinableQueue()
     skipped_queue = Queue(0)
 
-    with open("courses.txt", "r") as f:
+    with open(course_file, "r") as f:
         for line in f:
             work_queue.put(line.strip())
 
@@ -240,20 +241,28 @@ def main():
     print('Activities: {0}'.format(db_activities.qsize()))
 
     # Write courses to files
-    with open('db_courses.csv', 'w') as f:
+    with open('db_courses.csv', 'w' if clear_db else 'a') as f:
         while not db_courses.empty():
             f.write(u'{0}\n'.format(db_courses.get()).encode('utf8'))
 
     # Write sections to files
-    with open('db_sections.csv', 'w') as f:
+    with open('db_sections.csv', 'w' if clear_db else 'a') as f:
         while not db_sections.empty():
             f.write(u'{0}\n'.format(db_sections.get()).encode('utf8'))
 
     # Write activities to files
-    with open('db_activities.csv', 'w') as f:
+    with open('db_activities.csv', 'w' if clear_db else 'a') as f:
         while not db_activities.empty():
             f.write(u'{0}\n'.format(db_activities.get()).encode('utf8'))
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description='Generate a course list.')
+    parser.add_argument('-s', '--skipped', help='run over the skipped courses instead of the full list',
+                        action='store_const', const='skippedCourses.txt', default='courses.txt')
+    parser.add_argument('-n', '--no-clear-db', help='clear the DB prior to saving the results', action='store_true',
+                        default=False)
+    parser.add_argument('--version', action='version', version='%(prog)s 2.0')
+    args = parser.parse_args()
+    args.no_clear_db = True if args.skipped == 'skippedCourses.txt' else args.no_clear_db
+    main(course_file=args.skipped, clear_db=(not args.no_clear_db))

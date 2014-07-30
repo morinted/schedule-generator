@@ -13811,3 +13811,416 @@ Theory and laboratory,1,TRA6951 A,20151,Thursday,10:00,13:00,SMD 504,Carol Card
 Seminar,1,TRA6984 A,20151,Tuesday,13:00,16:00,ART 523,Ryan Fraser
 Research,1,TRA7993 T,20145,,00:00,00:00,N/A,N/A
 Research,1,TRA9998 T,20145,,00:00,00:00,N/A,N/A
+Lecture,1,ADM6274 C,20149,Tuesday,19:00,22:00,TBT 325,Nour El-Kadri
+Lecture,1,ADM3740 A,20149,Tuesday,08:30,11:30,DMS 4120,Richard Bozec
+Lecture,1,ADM4350 A,20149,Monday,16:00,17:30,MRT 211,Miwako Nitani
+Lecture,2,ADM4350 A,20149,Wednesday,14:30,16:00,MRT 211,Miwako Nitani
+Lecture,1,ADM4350 B,20149,Wednesday,08:30,11:30,DMS 4130,Miwako Nitani
+Lecture,1,ADM4350 M,20151,Monday,16:00,17:30,MRT 256,Miwako Nitani
+Lecture,2,ADM4350 M,20151,Wednesday,14:30,16:00,MRT 256,Miwako Nitani
+Lecture,1,ADM3745 A,20149,Friday,16:00,19:00,DMS 4130,Lyne Paris
+Lecture,1,ADM6275 C,20151,Wednesday,16:00,19:00,DMS 4140,N/A
+Lecture,1,ADM6260 B,20145,Wednesday,19:00,22:00,DMS 4170,John Rakos
+Seminar,1,ADM6260 A,20151,Tuesday,16:00,19:00,POR 104,Lavagnon Ika
+Seminar,2,ADM6260 A,20151,Thursday,16:00,19:00,POR 104,Lavagnon Ika
+Lecture,1,ADM6260 C,20151,Thursday,19:00,22:00,DMS 4130,N/A
+Lecture,1,ADM6260 D,20151,Friday,10:00,13:00,DMS 4170,N/A
+Lecture,1,ADM6260 I,20151,Saturday,09:00,12:00,FTX 315,Lavagnon Ika
+Lecture,2,ADM6260 I,20151,Saturday,13:00,16:00,FTX 315,N/A
+Lecture,3,ADM6260 I,20151,Sunday,09:00,12:00,FTX 315,N/A
+Seminar,1,ADM6261 B,20145,Wednesday,19:00,22:00,DMS 4120,John Rakos
+Seminar,1,ADM6261 A,20151,Tuesday,16:00,19:00,DMS 4170,Lavagnon Ika
+Seminar,2,ADM6261 A,20151,Thursday,16:00,19:00,DMS 4170,Lavagnon Ika
+Lecture,1,ADM6261 C,20151,Thursday,19:00,22:00,DMS 4130,N/A
+Seminar,1,CML4162,20151,Tuesday,08:30,10:30,FTX 416,Larry Chartrand
+Seminar,2,CML4162,20151,Thursday,13:00,15:00,FTX 316,Larry Chartrand
+Lecture,1,ADM6261 D,20151,Friday,10:00,13:00,DMS 4170,Lavagnon Ika
+Seminar,1,CML4200 JA,20151,Monday,08:30,11:30,FTX 102,Tracey Lindberg
+Seminar,2,CML4200 JA,20151,Tuesday,08:30,11:30,FTX 102,Tracey Lindberg
+Seminar,3,CML4200 JA,20151,Wednesday,08:30,11:30,FTX 102,Tracey Lindberg
+Seminar,4,CML4200 JA,20151,Thursday,08:30,11:30,FTX 102,Tracey Lindberg
+Seminar,5,CML4200 JA,20151,Friday,08:30,11:30,FTX 102,Tracey Lindberg
+Lecture,1,ENG1100 E1,20145,Monday,17:30,19:00,LMX 221,Kevin Gildea
+Lecture,2,ENG1100 E1,20145,Wednesday,17:30,19:00,LMX 221,Kevin Gildea
+Discussion Group,1,ENG1100 E1,20145,Monday,19:00,20:30,LMX 121,N/A
+Discussion Group,2,ENG1100 E1,20145,Wednesday,19:00,20:30,LMX 121,N/A
+Lecture,1,ENG1100 E2,20145,Monday,17:30,19:00,LMX 221,Kevin Gildea
+Lecture,2,ENG1100 E2,20145,Wednesday,17:30,19:00,LMX 221,Kevin Gildea
+Discussion Group,1,ENG1100 E2,20145,Monday,19:00,20:30,LMX 106,N/A
+Discussion Group,2,ENG1100 E2,20145,Wednesday,19:00,20:30,LMX 106,N/A
+Lecture,1,ENG1100 P1,20145,Tuesday,17:30,19:00,MNT 207,Marc Hewson
+Lecture,2,ENG1100 P1,20145,Thursday,17:30,19:00,MNT 207,Marc Hewson
+Discussion Group,1,ENG1100 P1,20145,Tuesday,19:00,20:30,SMD 428,N/A
+Discussion Group,2,ENG1100 P1,20145,Thursday,19:00,20:30,SMD 428,N/A
+Lecture,1,ENG1100 P2,20145,Tuesday,17:30,19:00,MNT 207,Marc Hewson
+Lecture,2,ENG1100 P2,20145,Thursday,17:30,19:00,MNT 207,Marc Hewson
+Discussion Group,1,ENG1100 P2,20145,Tuesday,19:00,20:30,SMD 422,N/A
+Discussion Group,2,ENG1100 P2,20145,Thursday,19:00,20:30,SMD 422,N/A
+Lecture,1,ENG1100 A,20149,Monday,17:30,19:00,FSS 1006,Kevin Gildea
+Discussion Group,1,ENG1100 A,20149,Monday,19:00,20:30,MRT 251,N/A
+Discussion Group,2,ENG1100 A,20149,Monday,19:00,20:30,MRT 252,N/A
+Lecture,1,ENG1100 AA,20149,Monday,17:30,19:00,MNT 201,N/A
+Discussion Group,1,ENG1100 AA,20149,Monday,19:00,20:30,LMX 407,N/A
+Discussion Group,2,ENG1100 AA,20149,Monday,19:00,20:30,LMX 405,N/A
+Lecture,1,ENG1100 AP,20149,Thursday,09:00,12:00,Pembroke,N/A
+Lecture,1,ENG1100 B,20149,Tuesday,17:30,19:00,DMS 1130,Carmela Coccimiglio
+Discussion Group,1,ENG1100 B,20149,Tuesday,19:00,20:30,SMD 221,N/A
+Discussion Group,2,ENG1100 B,20149,Tuesday,19:00,20:30,SMD 222,N/A
+Lecture,1,ENG1100 BB,20149,Tuesday,19:00,20:30,LMX 122,Lorrie Graham
+Discussion Group,1,ENG1100 BB,20149,Tuesday,20:30,22:00,LMX 122,N/A
+Discussion Group,2,ENG1100 BB,20149,Tuesday,20:30,22:00,LMX 121,N/A
+Lecture,1,ENG1100 C,20149,Wednesday,17:30,19:00,MRT 212,Janice Fiamengo
+Discussion Group,1,ENG1100 C,20149,Wednesday,19:00,20:30,MRT 251,N/A
+Discussion Group,2,ENG1100 C,20149,Wednesday,19:00,20:30,MRT 252,N/A
+Lecture,1,ENG1100 CC,20149,Wednesday,19:00,20:30,MNT 207,Ross Clarkson
+Discussion Group,1,ENG1100 CC,20149,Wednesday,20:30,22:00,MNT 207,N/A
+Discussion Group,2,ENG1100 CC,20149,Wednesday,20:30,22:00,MRT 219,N/A
+Videoconference course,1,ENG1100 CJ,20149,Friday,17:30,20:30,Various sites (with online component),Jamie Bradley
+Lecture,1,ENG1100 D,20149,Friday,17:30,19:00,MNT 201,Carmela Coccimiglio
+Discussion Group,1,ENG1100 D,20149,Friday,19:00,20:30,MNT 201,N/A
+Discussion Group,2,ENG1100 D,20149,Friday,19:00,20:30,MNT 202,N/A
+Lecture,1,ENG1100 DD,20149,Friday,08:30,10:00,MRT 218,Gaye Taylor
+Discussion Group,1,ENG1100 DD,20149,Tuesday,08:30,10:00,MCD 121,N/A
+Discussion Group,2,ENG1100 DD,20149,Friday,10:00,11:30,TBT 309,N/A
+Lecture,1,ENG1100 E,20149,Monday,08:30,10:00,SMD 425,Gaye Taylor
+Discussion Group,1,ENG1100 E,20149,Thursday,10:00,11:30,THN 133,N/A
+Discussion Group,2,ENG1100 E,20149,Thursday,10:00,11:30,THN 054,N/A
+Lecture,1,ENG1100 EE,20149,Friday,10:00,11:30,SMD 224,Aleksa Jankovic
+Discussion Group,1,ENG1100 EE,20149,Monday,08:30,10:00,LMX 407,N/A
+Discussion Group,2,ENG1100 EE,20149,Monday,08:30,10:00,LMX 405,N/A
+Lecture,1,ENG1100 F,20149,Monday,10:00,11:30,ART 257,Chance Pahl
+Discussion Group,1,ENG1100 F,20149,Wednesday,08:30,10:00,LMX 242,N/A
+Discussion Group,2,ENG1100 F,20149,Wednesday,11:30,13:00,FTX 133,N/A
+Lecture,1,ENG1100 FF,20149,Wednesday,08:30,10:00,MRT 205,Marc Hewson
+Discussion Group,1,ENG1100 FF,20149,Monday,10:00,11:30,LMX 407,N/A
+Discussion Group,2,ENG1100 FF,20149,Monday,10:00,11:30,LMX 405,N/A
+Lecture,1,ENG1100 G,20149,Wednesday,10:00,11:30,DMS 1110,Hazel Atkins
+Discussion Group,1,ENG1100 G,20149,Friday,08:30,10:00,LMX 407,N/A
+Discussion Group,2,ENG1100 G,20149,Friday,08:30,10:00,LMX 405,N/A
+Lecture,1,ENG1100 GG,20149,Friday,08:30,10:00,SMD 425,Neal Hackler
+Discussion Group,1,ENG1100 GG,20149,Wednesday,10:00,11:30,TBT 325,N/A
+Discussion Group,2,ENG1100 GG,20149,Wednesday,10:00,11:30,TBT 315,N/A
+Lecture,1,ENG1100 H,20149,Tuesday,08:30,10:00,DMS 1110,Ross Clarkson
+Discussion Group,1,ENG1100 H,20149,Friday,08:30,10:00,LMX 243,N/A
+Discussion Group,2,ENG1100 H,20149,Friday,11:30,13:00,LMX 221,N/A
+Lecture,1,ENG1100 HH,20149,Friday,10:00,11:30,LPR 155,David Sacks
+Discussion Group,1,ENG1100 HH,20149,Tuesday,08:30,10:00,TBT 315,N/A
+Discussion Group,2,ENG1100 HH,20149,Tuesday,08:30,10:00,TBT 319,N/A
+Videoconference course,1,ENG1100 HJ,20149,Friday,17:30,20:30,Various sites (with online component),Jamie Bradley
+Lecture,1,ENG1100 I,20149,Thursday,08:30,10:00,FTX 302,Paul Graves
+Discussion Group,1,ENG1100 I,20149,Tuesday,10:00,11:30,TBT 0019,N/A
+Discussion Group,2,ENG1100 I,20149,Tuesday,10:00,11:30,SMD 428,N/A
+Lecture,1,ENG1100 II,20149,Tuesday,10:00,11:30,SMD 425,Elaine Bailey
+Discussion Group,1,ENG1100 II,20149,Thursday,10:00,11:30,FTX 147B,N/A
+Discussion Group,2,ENG1100 II,20149,Thursday,11:30,13:00,CBY D103,N/A
+Lecture,1,ENG1100 J,20149,Monday,11:30,13:00,FTX 302,Alan West
+Discussion Group,1,ENG1100 J,20149,Thursday,13:00,14:30,CBY B202,N/A
+Discussion Group,2,ENG1100 J,20149,Thursday,13:00,14:30,LMX 360,N/A
+Lecture,1,ENG1100 JJ,20149,Thursday,13:00,14:30,LPR 155,Melanie Sexton
+Discussion Group,1,ENG1100 JJ,20149,Monday,11:30,13:00,FTX 227,N/A
+Discussion Group,2,ENG1100 JJ,20149,Monday,11:30,13:00,VNR 3075,N/A
+Lecture,1,ENG1100 K,20149,Wednesday,11:30,13:00,SMD 425,Marc Hewson
+Discussion Group,1,ENG1100 K,20149,Monday,13:00,14:30,SMD 422,N/A
+Discussion Group,2,ENG1100 K,20149,Monday,13:00,14:30,LMX 342,N/A
+Lecture,1,ENG1100 KK,20149,Monday,13:00,14:30,SMD 425,Natalie Taylor
+Discussion Group,1,ENG1100 KK,20149,Wednesday,11:30,13:00,SMD 427,N/A
+Discussion Group,2,ENG1100 KK,20149,Wednesday,11:30,13:00,SMD 423,N/A
+Lecture,1,ENG1100 L,20149,Wednesday,13:00,14:30,VNR 5070,Hazel Atkins
+Discussion Group,1,ENG1100 L,20149,Friday,11:30,13:00,HGN 305,N/A
+Discussion Group,2,ENG1100 L,20149,Friday,11:30,13:00,SMD 423,N/A
+Lecture,1,ENG1100 LL,20149,Friday,11:30,13:00,FTX 351,Trevor Tucker
+Discussion Group,1,ENG1100 LL,20149,Wednesday,11:30,13:00,FTX 137,N/A
+Discussion Group,2,ENG1100 LL,20149,Wednesday,11:30,13:00,FTX 227,N/A
+Lecture,1,ENG1100 M,20149,Tuesday,11:30,13:00,FSS 1006,Kelly St-Jacques
+Discussion Group,1,ENG1100 M,20149,Friday,13:00,14:30,POR 107,N/A
+Discussion Group,2,ENG1100 M,20149,Friday,13:00,14:30,LMX 121,N/A
+Lecture,1,ENG1100 MM,20149,Friday,13:00,14:30,VNR 3075,David Sacks
+Discussion Group,1,ENG1100 MM,20149,Tuesday,11:30,13:00,TBT 0021,N/A
+Discussion Group,2,ENG1100 MM,20149,Tuesday,11:30,13:00,TBT 317,N/A
+Lecture,1,ENG1100 N,20149,Thursday,11:30,13:00,LPR 155,Gerald Lynch
+Discussion Group,1,ENG1100 N,20149,Tuesday,11:30,13:00,CBY D103,N/A
+Discussion Group,2,ENG1100 N,20149,Tuesday,13:00,14:30,LPR 285,N/A
+Lecture,1,ENG1100 NN,20149,Tuesday,13:00,14:30,LPR 155,Ross Clarkson
+Discussion Group,1,ENG1100 NN,20149,Thursday,11:30,13:00,SMD 422,N/A
+Discussion Group,2,ENG1100 NN,20149,Thursday,11:30,13:00,SMD 423,N/A
+Lecture,1,ENG1100 O,20149,Monday,14:30,16:00,DMS 1110,Alan West
+Discussion Group,1,ENG1100 O,20149,Thursday,16:00,17:30,STE J0106,N/A
+Discussion Group,2,ENG1100 O,20149,Thursday,16:00,17:30,LMX 360,N/A
+Lecture,1,ENG1100 OO,20149,Thursday,16:00,17:30,FSS 1030,Melanie Sexton
+Discussion Group,1,ENG1100 OO,20149,Monday,14:30,16:00,MRT 256,N/A
+Discussion Group,2,ENG1100 OO,20149,Monday,14:30,16:00,MRT 250,N/A
+Lecture,1,ENG1100 P,20149,Monday,16:00,17:30,LPR 155,Natalie Taylor
+Discussion Group,1,ENG1100 P,20149,Wednesday,14:30,16:00,LMX 390,N/A
+Discussion Group,2,ENG1100 P,20149,Wednesday,14:30,16:00,MRT 221,N/A
+Lecture,1,ENG1112 A,20149,Friday,17:30,19:00,ART 257,Geraldine Arbach
+Discussion Group,1,ENG1112 A,20149,Friday,19:00,20:30,ART 257,N/A
+Videoconference course,1,ENG1100 PJ,20149,Friday,17:30,20:30,Various sites (with online component),Jamie Bradley
+Discussion Group,2,ENG1112 A,20149,Friday,19:00,20:30,SMD 221,N/A
+Discussion Group,3,ENG1112 A,20149,Friday,19:00,20:30,SMD 222,N/A
+Lecture,1,ENG1112 B,20149,Wednesday,19:00,20:30,HGN 302,Elena Ilina
+Discussion Group,1,ENG1112 B,20149,Wednesday,20:30,22:00,SMD 221,N/A
+Lecture,1,ENG1100 PP,20149,Wednesday,14:30,16:00,LPR 155,Zachary Abram
+Discussion Group,2,ENG1112 B,20149,Wednesday,20:30,22:00,SMD 222,N/A
+Discussion Group,3,ENG1112 B,20149,Wednesday,20:30,22:00,SMD 226,N/A
+Lecture,1,ENG1112 C,20149,Thursday,17:30,19:00,ART 257,Gefen Bar-On Santor
+Discussion Group,1,ENG1112 C,20149,Thursday,19:00,20:30,SMD 221,N/A
+Discussion Group,2,ENG1112 C,20149,Thursday,19:00,20:30,SMD 222,N/A
+Discussion Group,3,ENG1112 C,20149,Thursday,19:00,20:30,SMD 227,N/A
+Lecture,1,ENG1112 D,20149,Tuesday,10:00,11:30,SCR 002,Elena Ilina
+Discussion Group,1,ENG1112 D,20149,Thursday,11:30,13:00,LMX 339,N/A
+Discussion Group,1,ENG1100 PP,20149,Monday,16:00,17:30,LMX 339,N/A
+Discussion Group,2,ENG1112 D,20149,Thursday,11:30,13:00,LMX 342,N/A
+Discussion Group,2,ENG1100 PP,20149,Monday,16:00,17:30,HGN 305,N/A
+Discussion Group,3,ENG1112 D,20149,Thursday,11:30,13:00,LMX 360,N/A
+Lecture,1,ENG1100 Q,20149,Wednesday,16:00,17:30,TBT 070,Hazel Atkins
+Lecture,1,ENG1112 E,20149,Tuesday,08:30,10:00,STE A0150,Elena Ilina
+Discussion Group,1,ENG1112 E,20149,Monday,11:30,13:00,LMX 407,N/A
+Discussion Group,2,ENG1112 E,20149,Monday,11:30,13:00,LMX 405,N/A
+Discussion Group,3,ENG1112 E,20149,Monday,11:30,13:00,UCU 205,N/A
+Lecture,1,ENG1112 F,20149,Wednesday,16:00,17:30,TBT 333,Gefen Bar-On Santor
+Discussion Group,1,ENG1112 F,20149,Friday,14:30,16:00,LMX 221,N/A
+Discussion Group,2,ENG1112 F,20149,Friday,14:30,16:00,LMX 360,N/A
+Discussion Group,3,ENG1112 F,20149,Friday,14:30,16:00,LMX 342,N/A
+Discussion Group,1,ENG1100 Q,20149,Friday,14:30,16:00,TBT 0021,N/A
+Lecture,1,ENG1112 K,20149,Saturday,09:30,11:00,HGN 302,N/A
+Discussion Group,1,ENG1112 K,20149,Saturday,11:00,12:30,SMD 422,N/A
+Discussion Group,2,ENG1100 Q,20149,Friday,14:30,16:00,TBT 327,N/A
+Discussion Group,2,ENG1112 K,20149,Saturday,11:00,12:30,SMD 428,N/A
+Lecture,1,ESP1991 PA,20145,Tuesday,17:30,19:00,VNR 2095,David Garcia
+Lecture,1,ENG1100 QQ,20149,Friday,14:30,16:00,SMD 224,Jamie Bradley
+Discussion Group,3,ENG1112 K,20149,Saturday,11:00,12:30,SMD 430,N/A
+Lecture,1,ENG1112 L,20149,Friday,14:30,16:00,HGN 302,Lynda Morrissey
+Discussion Group,1,ENG1112 L,20149,Thursday,11:30,13:00,FTX 359,N/A
+Discussion Group,2,ENG1112 L,20149,Thursday,11:30,13:00,HGN 305,N/A
+Discussion Group,3,ENG1112 L,20149,Thursday,11:30,13:00,LMX 106,N/A
+Lecture,1,ENG1112 G,20151,Thursday,19:00,20:30,FSS 2005,Geraldine Arbach
+Discussion Group,1,ENG1112 G,20151,Thursday,20:30,22:00,FSS 2005,N/A
+Discussion Group,2,ENG1112 G,20151,Thursday,20:30,22:00,FSS 1006,N/A
+Discussion Group,3,ENG1112 G,20151,Thursday,20:30,22:00,FSS 1007,N/A
+Lecture,1,ENG1112 H,20151,Friday,17:30,19:00,DMS 1160,Geraldine Arbach
+Discussion Group,1,ENG1112 H,20151,Friday,19:00,20:30,DMS 1160,N/A
+Discussion Group,2,ENG1112 H,20151,Friday,19:00,20:30,DMS 1110,N/A
+Discussion Group,3,ENG1112 H,20151,Friday,19:00,20:30,DMS 1130,N/A
+Lecture,1,ENG1112 I,20151,Tuesday,11:30,13:00,ART 257,Gefen Bar-On Santor
+Discussion Group,1,ENG1112 I,20151,Friday,13:00,14:30,TBT 319,N/A
+Discussion Group,2,ENG1112 I,20151,Friday,13:00,14:30,TBT 317,N/A
+Discussion Group,3,ENG1112 I,20151,Friday,13:00,14:30,TBT 315,N/A
+Lecture,1,ENG1112 J,20151,Tuesday,08:30,10:00,FSS 1007,Elena Ilina
+Discussion Group,1,ENG1112 J,20151,Tuesday,11:30,13:00,VNR 1075,N/A
+Discussion Group,2,ENG1112 J,20151,Tuesday,11:30,13:00,VNR 2075,N/A
+Discussion Group,3,ENG1112 J,20151,Tuesday,11:30,13:00,VNR 3075,N/A
+Lecture,2,ESP1991 PA,20145,Thursday,17:30,19:00,VNR 2095,David Garcia
+Discussion Group,1,ESP1991 PA,20145,Tuesday,20:00,21:30,SMD 402,Javier Garcia
+Discussion Group,2,ESP1991 PA,20145,Thursday,20:00,21:30,SMD 402,Javier Garcia
+Laboratory,1,ESP1991 PA,20145,Tuesday,19:00,20:00,Consult the department,Javier Garcia
+Laboratory,2,ESP1991 PA,20145,Thursday,19:00,20:00,Consult the department,N/A
+Lecture,1,ESP1991 PB,20145,Tuesday,17:30,19:00,VNR 2095,David Garcia
+Lecture,2,ESP1991 PB,20145,Thursday,17:30,19:00,VNR 2095,David Garcia
+Discussion Group,1,ESP1991 PB,20145,Tuesday,20:00,21:30,SMD 222,Stephanie Maitland
+Discussion Group,2,ESP1991 PB,20145,Thursday,20:00,21:30,SMD 222,Stephanie Maitland
+Laboratory,1,ESP1991 PB,20145,Tuesday,19:00,20:00,Consult the department,Stephanie Maitland
+Laboratory,2,ESP1991 PB,20145,Thursday,19:00,20:00,Consult the department,N/A
+Lecture,1,ESP1991 PC,20145,Tuesday,17:30,19:00,VNR 2095,David Garcia
+Lecture,2,ESP1991 PC,20145,Thursday,17:30,19:00,VNR 2095,David Garcia
+Discussion Group,1,ESP1991 PC,20145,Tuesday,20:00,21:30,SMD 503,Natalie Wasylyk
+Discussion Group,2,ESP1991 PC,20145,Thursday,20:00,21:30,SMD 503,Natalie Wasylyk
+Laboratory,1,ESP1991 PC,20145,Tuesday,19:00,20:00,Consult the department,Natalie Wasylyk
+Laboratory,2,ESP1991 PC,20145,Thursday,19:00,20:00,Consult the department,N/A
+Discussion Group,1,ENG1100 QQ,20149,Wednesday,16:00,17:30,CBY B202,N/A
+Discussion Group,2,ENG1100 QQ,20149,Wednesday,16:00,17:30,TBT 327,N/A
+Lecture,1,ENG1100 R,20149,Tuesday,14:30,16:00,MNT 201,Kelly St-Jacques
+Discussion Group,1,ENG1100 R,20149,Friday,16:00,17:30,LMX 243,N/A
+Discussion Group,2,ENG1100 R,20149,Friday,16:00,17:30,SMD 423,N/A
+Lecture,1,ENG1100 RR,20149,Friday,16:00,17:30,MNT 201,David Sacks
+Discussion Group,1,ENG1100 RR,20149,Tuesday,14:30,16:00,TBT 323,N/A
+Discussion Group,2,ENG1100 RR,20149,Tuesday,14:30,16:00,SMD 227,N/A
+Lecture,1,ENG1100 S,20149,Tuesday,16:00,17:30,MNT 201,Ross Clarkson
+Discussion Group,1,ENG1100 S,20149,Thursday,14:30,16:00,UCU 205,N/A
+Discussion Group,2,ENG1100 S,20149,Thursday,14:30,16:00,LMX 360,N/A
+Lecture,1,ENG1100 SS,20149,Thursday,14:30,16:00,MNT 201,Jamie Bradley
+Discussion Group,1,ENG1100 SS,20149,Tuesday,16:00,17:30,LMX 360,N/A
+Discussion Group,2,ENG1100 SS,20149,Tuesday,16:00,17:30,HGN 305,N/A
+Lecture,1,ENG1100 T,20149,Friday,17:30,20:30,LPR 155,Jamie Bradley
+Lecture,1,ENG1100 U,20149,Friday,17:30,19:00,DMS 1130,N/A
+Discussion Group,1,ENG1100 U,20149,Friday,19:00,20:30,SMD 427,N/A
+Discussion Group,2,ENG1100 U,20149,Friday,19:00,20:30,LMX 243,N/A
+Lecture,1,ENG1100 V,20149,Friday,17:30,19:00,DMS 1110,N/A
+Discussion Group,1,ENG1100 V,20149,Friday,19:00,20:30,DMS 1110,N/A
+Discussion Group,2,ENG1100 V,20149,Friday,19:00,20:30,DMS 1140,N/A
+Lecture,1,ENG1100 W,20149,Thursday,19:00,20:30,FTX 302,Geraldine Arbach
+Discussion Group,1,ENG1100 W,20149,Thursday,20:30,22:00,LMX 407,N/A
+Discussion Group,2,ENG1100 W,20149,Thursday,20:30,22:00,LMX 405,N/A
+Lecture,1,ENG1100 X,20149,Friday,16:00,17:30,SMD 425,N/A
+Discussion Group,1,ENG1100 X,20149,Tuesday,14:30,16:00,SMD 222,N/A
+Discussion Group,2,ENG1100 X,20149,Tuesday,14:30,16:00,SMD 226,N/A
+Lecture,1,ENG1100 Y,20149,Tuesday,14:30,16:00,SMD 425,N/A
+Discussion Group,1,ENG1100 Y,20149,Friday,16:00,17:30,LMX 407,N/A
+Discussion Group,2,ENG1100 Y,20149,Friday,16:00,17:30,LMX 405,N/A
+Lecture,1,ENG1100 Z,20151,Wednesday,16:00,17:30,TBT 070,N/A
+Discussion Group,1,ENG1100 Z,20151,Friday,14:30,16:00,SMD 427,N/A
+Discussion Group,2,ENG1100 Z,20151,Friday,14:30,16:00,HGN 305,N/A
+Lecture,1,ESP1991 AA,20149,Wednesday,10:00,11:30,MCD 146,Luis Abanto Rojas
+Discussion Group,1,ESP1991 AA,20149,Monday,10:00,11:30,LMX 390,N/A
+Laboratory,1,ESP1991 AA,20149,Monday,09:00,10:00,Consult the department,N/A
+Lecture,1,ESP1991 AB,20149,Wednesday,10:00,11:30,MCD 146,Luis Abanto Rojas
+Discussion Group,1,ESP1991 AB,20149,Monday,10:00,11:30,LMX 121,N/A
+Laboratory,1,ESP1991 AB,20149,Monday,09:00,10:00,Consult the department,N/A
+Lecture,1,ESP1991 AC,20149,Wednesday,10:00,11:30,MCD 146,Luis Abanto Rojas
+Discussion Group,1,ESP1991 AC,20149,Monday,10:00,11:30,MRT 251,N/A
+Laboratory,1,ESP1991 AC,20149,Monday,09:00,10:00,Consult the department,N/A
+Lecture,1,ESP1991 AD,20149,Wednesday,10:00,11:30,MCD 146,Luis Abanto Rojas
+Discussion Group,1,ESP1991 AD,20149,Friday,11:30,13:00,SMD 429,N/A
+Laboratory,1,ESP1991 AD,20149,Friday,10:30,11:30,Consult the department,N/A
+Lecture,1,ESP1991 AE,20149,Wednesday,10:00,11:30,MCD 146,Luis Abanto Rojas
+Discussion Group,1,ESP1991 AE,20149,Friday,11:30,13:00,SMD 503,N/A
+Laboratory,1,ESP1991 AE,20149,Friday,10:30,11:30,Consult the department,N/A
+Lecture,1,ESP1991 AF,20149,Wednesday,10:00,11:30,MCD 146,Luis Abanto Rojas
+Discussion Group,1,ESP1991 AF,20149,Friday,11:30,13:00,THN 054,N/A
+Laboratory,1,ESP1991 AF,20149,Friday,10:30,11:30,Consult the department,N/A
+Lecture,1,ESP1991 BA,20149,Wednesday,19:00,20:30,MCD 146,Alejandra Bernal Rodriguez
+Discussion Group,1,ESP1991 BA,20149,Monday,19:00,20:30,LMX 215,N/A
+Laboratory,1,ESP1991 BA,20149,Monday,18:00,19:00,Consult the department,N/A
+Lecture,1,ESP1991 BB,20149,Wednesday,19:00,20:30,MCD 146,Alejandra Bernal Rodriguez
+Discussion Group,1,ESP1991 BB,20149,Monday,19:00,20:30,FSS 4014,N/A
+Laboratory,1,ESP1991 BB,20149,Monday,18:00,19:00,Consult the department,N/A
+Lecture,1,ESP1991 BC,20149,Wednesday,19:00,20:30,MCD 146,Alejandra Bernal Rodriguez
+Discussion Group,1,ESP1991 BC,20149,Monday,19:00,20:30,THN 054,N/A
+Laboratory,1,ESP1991 BC,20149,Monday,18:00,19:00,Consult the department,N/A
+Lecture,1,ESP1991 BD,20149,Wednesday,19:00,20:30,MCD 146,Alejandra Bernal Rodriguez
+Discussion Group,1,ESP1991 BD,20149,Tuesday,17:30,19:00,MRN 226,N/A
+Laboratory,1,ESP1991 BD,20149,Tuesday,19:00,20:00,Consult the department,N/A
+Lecture,1,ESP1991 BE,20149,Wednesday,19:00,20:30,MCD 146,Alejandra Bernal Rodriguez
+Discussion Group,1,ESP1991 BE,20149,Tuesday,17:30,19:00,DMS 11161,N/A
+Laboratory,1,ESP1991 BE,20149,Tuesday,19:00,20:00,Consult the department,N/A
+Lecture,1,ESP1991 BF,20149,Wednesday,19:00,20:30,MCD 146,Alejandra Bernal Rodriguez
+Discussion Group,1,ESP1991 BF,20149,Tuesday,17:30,19:00,DMS 8161,N/A
+Laboratory,1,ESP1991 BF,20149,Tuesday,19:00,20:00,Consult the department,N/A
+Lecture,1,ESP1991 CA,20149,Thursday,13:00,14:30,SCR 002,David Garcia
+Discussion Group,1,ESP1991 CA,20149,Monday,13:00,14:30,CBY B202,N/A
+Laboratory,1,ESP1991 CA,20149,Monday,14:30,15:30,Consult the department,N/A
+Lecture,1,ESP1991 CB,20149,Thursday,13:00,14:30,SCR 002,David Garcia
+Discussion Group,1,ESP1991 CB,20149,Monday,13:00,14:30,LMX 124,N/A
+Laboratory,1,ESP1991 CB,20149,Monday,14:30,15:30,Consult the department,N/A
+Lecture,1,ESP1991 CC,20149,Thursday,13:00,14:30,SCR 002,David Garcia
+Discussion Group,1,ESP1991 CC,20149,Monday,13:00,14:30,LMX 360,N/A
+Laboratory,1,ESP1991 CC,20149,Monday,14:30,15:30,Consult the department,N/A
+Lecture,1,ESP1991 CD,20149,Thursday,13:00,14:30,SCR 002,David Garcia
+Discussion Group,1,ESP1991 CD,20149,Tuesday,11:30,13:00,DMS 11161,N/A
+Laboratory,1,ESP1991 CD,20149,Tuesday,13:00,14:00,Consult the department,N/A
+Lecture,1,ESP1991 CE,20149,Thursday,13:00,14:30,SCR 002,David Garcia
+Discussion Group,1,ESP1991 CE,20149,Tuesday,11:30,13:00,DMS 8161,N/A
+Laboratory,1,ESP1991 CE,20149,Tuesday,13:00,14:00,Consult the department,N/A
+Lecture,1,ESP1991 CF,20149,Thursday,13:00,14:30,SCR 002,David Garcia
+Discussion Group,1,ESP1991 CF,20149,Tuesday,11:30,13:00,LMX 215,N/A
+Laboratory,1,ESP1991 CF,20149,Tuesday,13:00,14:00,Consult the department,N/A
+Lecture,1,ESP1991 DA,20149,Friday,10:00,11:30,STE A0150,Anne-Sophie Chiabaut
+Discussion Group,1,ESP1991 DA,20149,Monday,10:00,11:30,TBT 325,N/A
+Laboratory,1,ESP1991 DA,20149,Monday,11:30,12:30,Consult the department,N/A
+Lecture,1,ESP1991 DB,20149,Friday,10:00,11:30,STE A0150,Anne-Sophie Chiabaut
+Discussion Group,1,ESP1991 DB,20149,Monday,13:00,14:30,THN 133,N/A
+Laboratory,1,ESP1991 DB,20149,Monday,12:00,13:00,Consult the department,N/A
+Lecture,1,ESP1991 DC,20149,Friday,10:00,11:30,STE A0150,Anne-Sophie Chiabaut
+Discussion Group,1,ESP1991 DC,20149,Monday,10:00,11:30,TBT 0019,N/A
+Laboratory,1,ESP1991 DC,20149,Monday,11:30,12:30,Consult the department,N/A
+Lecture,1,ESP1991 DD,20149,Friday,10:00,11:30,STE A0150,Anne-Sophie Chiabaut
+Discussion Group,1,ESP1991 DD,20149,Tuesday,10:00,11:30,CBY B012,N/A
+Laboratory,1,ESP1991 DD,20149,Tuesday,09:00,10:00,Consult the department,N/A
+Lecture,1,ESP1991 DE,20149,Friday,10:00,11:30,STE A0150,Anne-Sophie Chiabaut
+Discussion Group,1,ESP1991 DE,20149,Tuesday,10:00,11:30,MRT 251,N/A
+Laboratory,1,ESP1991 DE,20149,Tuesday,09:00,10:00,Consult the department,N/A
+Lecture,1,ESP1991 DF,20149,Friday,10:00,11:30,STE A0150,Anne-Sophie Chiabaut
+Discussion Group,1,ESP1991 DF,20149,Tuesday,10:00,11:30,KED B004,N/A
+Laboratory,1,ESP1991 DF,20149,Tuesday,09:00,10:00,Consult the department,N/A
+Lecture,1,ESP1992 PA,20145,Tuesday,17:30,19:00,SMD 423,Javier Garcia
+Lecture,2,ESP1992 PA,20145,Thursday,17:30,19:00,SMD 423,Javier Garcia
+Discussion Group,1,ESP1992 PA,20145,Tuesday,20:00,21:30,SMD 402,Ana Maria Fernandez
+Discussion Group,2,ESP1992 PA,20145,Thursday,20:00,21:30,SMD 402,Ana Maria Fernandez
+Laboratory,1,ESP1992 PA,20145,Tuesday,19:00,20:00,Consult the department,Ana Maria Fernandez
+Laboratory,2,ESP1992 PA,20145,Thursday,19:00,20:00,Consult the department,N/A
+Lecture,1,ESP1992 AA,20151,Monday,10:00,11:30,FSS 1007,N/A
+Discussion Group,1,ESP1992 AA,20151,Wednesday,10:00,11:30,SWT 125,N/A
+Laboratory,1,ESP1992 AA,20151,Wednesday,09:00,10:00,Consult the department,N/A
+Lecture,1,ESP1992 AB,20151,Monday,10:00,11:30,FSS 1007,N/A
+Discussion Group,1,ESP1992 AB,20151,Wednesday,10:00,11:30,FSS 4014,N/A
+Laboratory,1,ESP1992 AB,20151,Wednesday,09:00,10:00,Consult the department,N/A
+Lecture,1,ESP1992 AC,20151,Monday,10:00,11:30,FSS 1007,N/A
+Discussion Group,1,ESP1992 AC,20151,Thursday,10:00,11:30,DMS 3105,N/A
+Laboratory,1,ESP1992 AC,20151,Thursday,09:00,10:00,Consult the department,N/A
+Lecture,1,ESP1992 AD,20151,Monday,10:00,11:30,FSS 1007,N/A
+Discussion Group,1,ESP1992 AD,20151,Thursday,10:00,11:30,GSD 307,N/A
+Laboratory,1,ESP1992 AD,20151,Thursday,09:00,10:00,Consult the department,N/A
+Lecture,1,ESP1992 AE,20151,Monday,10:00,11:30,FSS 1007,N/A
+Discussion Group,1,ESP1992 AE,20151,Thursday,10:00,11:30,VNR 5070,N/A
+Laboratory,1,ESP1992 AE,20151,Thursday,09:00,10:00,Consult the department,N/A
+Lecture,1,ESP1992 BA,20151,Monday,17:30,19:00,MRT 205,N/A
+Discussion Group,1,ESP1992 BA,20151,Wednesday,17:30,19:00,LMX 215,N/A
+Laboratory,1,ESP1992 BA,20151,Wednesday,19:00,20:00,Consult the department,N/A
+Lecture,1,ESP1992 BB,20151,Monday,17:30,19:00,MRT 205,N/A
+Discussion Group,1,ESP1992 BB,20151,Wednesday,17:30,19:00,THN 054,N/A
+Laboratory,1,ESP1992 BB,20151,Wednesday,19:00,20:00,Consult the department,N/A
+Lecture,1,ESP1992 BC,20151,Monday,17:30,19:00,MRT 205,N/A
+Discussion Group,1,ESP1992 BC,20151,Thursday,17:30,19:00,FSS 4014,N/A
+Laboratory,1,ESP1992 BC,20151,Thursday,19:00,20:00,Consult the department,N/A
+Lecture,1,ESP1992 BD,20151,Monday,17:30,19:00,MRT 205,N/A
+Discussion Group,1,ESP1992 BD,20151,Thursday,17:30,19:00,DMS 3105,N/A
+Laboratory,1,ESP1992 BD,20151,Thursday,19:00,20:00,Consult the department,N/A
+Lecture,1,ESP1992 CA,20151,Tuesday,13:00,14:30,SMD 224,Luis Abanto Rojas
+Discussion Group,1,ESP1992 CA,20151,Wednesday,11:30,13:00,DMS 3105,N/A
+Laboratory,1,ESP1992 CA,20151,Wednesday,13:00,14:00,Consult the department,N/A
+Lecture,1,ESP1992 CB,20151,Tuesday,13:00,14:30,SMD 224,Luis Abanto Rojas
+Discussion Group,1,ESP1992 CB,20151,Wednesday,11:30,13:00,DMS 10161,N/A
+Laboratory,1,ESP1992 CB,20151,Wednesday,13:00,14:00,Consult the department,N/A
+Lecture,1,ESP1992 CC,20151,Tuesday,13:00,14:30,SMD 224,Luis Abanto Rojas
+Discussion Group,1,ESP1992 CC,20151,Thursday,13:00,14:30,FSS 1005,N/A
+Laboratory,1,ESP1992 CC,20151,Thursday,12:00,13:00,Consult the department,N/A
+Lecture,1,ESP1992 CD,20151,Tuesday,13:00,14:30,SMD 224,Luis Abanto Rojas
+Discussion Group,1,ESP1992 CD,20151,Thursday,13:00,14:30,BRS 314,N/A
+Laboratory,1,ESP1992 CD,20151,Thursday,12:00,13:00,Consult the department,N/A
+Lecture,1,HIS1110 A,20149,Tuesday,16:00,17:30,MCD 146,Henry Habib
+Lecture,2,HIS1110 A,20149,Thursday,14:30,16:00,MCD 146,Henry Habib
+Lecture,1,HIS1110 B,20151,Monday,19:00,22:00,MCD 146,Thomas Boogaart
+Lecture,1,HIS1101 A,20149,Monday,14:30,16:00,ART 033,Damien-Claude Bélanger
+Lecture,2,HIS1101 A,20149,Thursday,16:00,17:30,ART 033,Damien-Claude Bélanger
+Lecture,1,HIS1101 B,20151,Monday,16:00,17:30,MCD 146,Patryk Polec
+Lecture,2,HIS1101 B,20151,Wednesday,14:30,16:00,MCD 146,Patryk Polec
+Seminar,1,HIS4538 A,20151,Thursday,14:30,17:30,DMS 9161,Peter Bischoff
+Lecture,1,MAT1741 3X,20145,Monday,17:30,19:00,CBY D207,M'Hammed Mountassir
+Lecture,2,MAT1741 3X,20145,Wednesday,17:30,19:00,CBY D207,M'Hammed Mountassir
+Discussion Group,1,MAT1741 3X,20145,Monday,19:00,20:30,CBY B012,M'Hammed Mountassir
+Lecture,1,MAT1741 A,20149,Tuesday,10:00,11:30,LMX 122,Farid Elktaibi
+Lecture,2,MAT1741 A,20149,Thursday,08:30,10:00,LMX 122,Farid Elktaibi
+Discussion Group,1,MAT1741 A,20149,Monday,14:30,16:00,CBY B012,N/A
+Discussion Group,2,MAT1741 A,20149,Monday,14:30,16:00,VNR 2095,N/A
+Discussion Group,3,MAT1741 A,20149,Monday,16:00,17:30,LPR 285,N/A
+Discussion Group,4,MAT1741 A,20149,Monday,16:00,17:30,UCU 205,N/A
+Lecture,1,MAT1741 C,20149,Tuesday,10:00,11:30,TBT 317,N/A
+Lecture,2,MAT1741 C,20149,Thursday,08:30,10:00,TBT 317,N/A
+Discussion Group,1,MAT1741 C,20149,Monday,14:30,16:00,KED B004,N/A
+Lecture,1,MAT1741 B,20151,Tuesday,13:00,14:30,CBY C03,Joseph Khoury
+Lecture,2,MAT1741 B,20151,Thursday,11:30,13:00,CBY C03,Joseph Khoury
+Discussion Group,1,MAT1741 B,20151,Monday,14:30,16:00,MRT 219,N/A
+Discussion Group,2,MAT1741 B,20151,Monday,16:00,17:30,TBT 325,N/A
+Discussion Group,3,MAT1741 B,20151,Monday,16:00,17:30,KED B005,N/A
+Discussion Group,4,MAT1741 B,20151,Monday,16:00,17:30,MRT 219,N/A
+Lecture,1,POL3505 A,20149,Monday,16:00,17:30,LEE C104,Gilles Labelle
+Lecture,2,POL3505 A,20149,Wednesday,14:30,16:00,LEE C104,Gilles Labelle
+Seminar,1,PAP4315 A,20151,Monday,11:30,13:00,SWT 125,N/A
+Seminar,2,PAP4315 A,20151,Thursday,13:00,14:30,SWT 125,N/A
+Lecture,1,POR2901 A,20149,Monday,17:30,19:00,SMD 429,Carlos Gomes Da Silva
+Lecture,2,POR2901 A,20149,Wednesday,17:30,19:00,SMD 429,Carlos Gomes Da Silva
+Discussion Group,1,POR2901 A,20149,Wednesday,19:00,20:00,TBT 315,Carlos Gomes Da Silva
+Seminar,1,PAP4315 B,20151,Tuesday,08:30,10:00,LMX 405,N/A
+Seminar,2,PAP4315 B,20151,Friday,10:00,11:30,LMX 405,N/A
+Lecture,1,PSY3102 A,20145,Monday,17:30,20:30,SMD 224,Rosalinde Klempan
+Lecture,2,PSY3102 A,20145,Wednesday,17:30,20:30,SMD 224,Rosalinde Klempan
+Lecture,1,PSY3102 B,20149,Tuesday,19:00,22:00,LPR 155,Rosalinde Klempan
+Lecture,1,PSY3102 C,20149,Monday,16:00,17:30,MNT 201,Rosalinde Klempan
+Lecture,2,PSY3102 C,20149,Wednesday,14:30,16:00,MNT 201,Rosalinde Klempan
+Lecture,1,PSY3102 D,20151,Monday,14:30,16:00,FSS 1030,N/A
+Lecture,2,PSY3102 D,20151,Thursday,16:00,17:30,FSS 1030,N/A
+Lecture,1,PSY3102 E,20151,Tuesday,14:30,16:00,FSS 1030,N/A
+Lecture,2,PSY3102 E,20151,Friday,16:00,17:30,FSS 1030,N/A
+Lecture,1,TRA3590 A,20151,Tuesday,19:00,22:00,LMX 242,N/A
+Lecture,1,TRA3956 A,20151,Friday,08:30,11:30,MRT 0036,Elizabeth Marshman
+Lecture,1,TRA3956 B,20151,Monday,16:00,17:30,DMS 2175,N/A
+Lecture,2,TRA3956 B,20151,Wednesday,14:30,16:00,DMS 2175,N/A
