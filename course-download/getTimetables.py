@@ -6,82 +6,21 @@ import time
 import traceback
 import urllib2
 import re
-import datetime
 import multiprocessing
-from threading import Thread, Lock, Event
-from Queue import Queue
+from multiprocessing import Lock, Queue, JoinableQueue
 
 from bs4 import BeautifulSoup
 
 
-class WorkThread(Thread):
-    def __init__(self, name, work_lock, work_queue, count, skipped_queue, q_activities, q_sections, q_courses, l_db):
-        """
-        :param str name:
-        :param work_lock:
-        :type work_lock: threading.Lock
-        :param work_queue:
-        :type work_queue: Queue.Queue
-        :param count:
-        :type count: int
-        :param skipped_queue:
-        :type skipped_queue: Queue.Queue
-        :param q_activities:
-        :type q_activities: Queue.Queue
-        :param q_sections:
-        :type q_sections: Queue.Queue
-        :param q_courses:
-        :type q_courses: Queue.Queue
-        :param l_db:
-        :type l_db: threading.Lock
-        """
-
-        Thread.__init__(self, name=name)
-        self.lock = work_lock
-        self.queue = work_queue
-        self.count = count
-        self.skipped = skipped_queue
-        self.aq = q_activities
-        self.sq = q_sections
-        self.cq = q_courses
-        self.lq = l_db
-
-    def run(self):
-        process_data(self.name, self.lock, self.queue, self.count, self.skipped, self.aq, self.sq, self.cq, self.lq)
-
-
-def process_data(thread_name, lock, queue, count, skipped_queue, activity_queue, section_queue, course_queue,
-                 db_lock):
+def process_data(main_q, skipped_q, activity_queue, section_queue, course_queue, db_lock):
     """Downloads and processes the course info
-    :param thread_name: The name of the thread that started this instance
-    :type thread_name: str
-    :param lock: The global queue lock
-    :type lock: threading.Lock
-    :param queue: The queue holding the work pieces (course codes)
-    :type queue: Queue.Queue
-    :param count: The number of work pieces
-    :type count: int
-    :param skipped_queue:
-    :type skipped_queue: Queue.Queue
-    :param activity_queue:
-    :type activity_queue: Queue.Queue
-    :param section_queue:
-    :type section_queue: Queue.Queue
-    :param course_queue:
-    :type course_queue: Queue.Queue
-    :param db_lock:
-    :type db_lock: threading.Lock
     """
 
-    local_count = 0
     while True:
-        lock.acquire()
-        if queue.empty():
-            lock.release()
+        if main_q.empty():
             break
         else:
-            course = queue.get()
-            lock.release()
+            course = main_q.get()
 
         try:
             retry = 5  # This loop will restart at most 5 times
@@ -100,9 +39,7 @@ def process_data(thread_name, lock, queue, count, skipped_queue, activity_queue,
                         continue
                     else:
                         print('Skipping course')
-                        lock.acquire()
-                        skipped_queue.put(course)
-                        lock.release()
+                        skipped_q.put(course)
                         break
                 except urllib2.URLError, e:
                     print('Internet problem: {0}.'.format(e.reason))
@@ -113,9 +50,7 @@ def process_data(thread_name, lock, queue, count, skipped_queue, activity_queue,
                         continue
                     else:
                         print('Skipping course')
-                        lock.acquire()
-                        skipped_queue.put(course)
-                        lock.release()
+                        skipped_q.put(course)
                         break
                 finally:
                     try:
@@ -129,9 +64,7 @@ def process_data(thread_name, lock, queue, count, skipped_queue, activity_queue,
                 # Get course title
                 title = re.search(r'{0} - (.*)'.format(course), content.find('h1').get_text())
                 if title is None:
-                    lock.acquire()
-                    skipped_queue.put(course)
-                    lock.release()
+                    skipped_q.put(course)
                     break
                 else:
                     title = title.group(1).strip()
@@ -140,7 +73,7 @@ def process_data(thread_name, lock, queue, count, skipped_queue, activity_queue,
                     title = u'"{0}"'.format(title)
 
                 # Get all semesters
-                sections = 0
+                sections = False
                 for semester in content.find('div', id='schedule').find_all('div', class_='schedule'):
                     # Get semester integer
                     semester_id = semester.get('id')
@@ -168,7 +101,7 @@ def process_data(thread_name, lock, queue, count, skipped_queue, activity_queue,
                             if u'Only one tutorial' in _footer_content:
                                 one_tut = 1
 
-                        activities = 0
+                        activities = False
                         for activity in section.find_all('td', class_='Activity'):
                             # Lecture, Lab, etc.
                             activity_type = re.search(r'([a-zA-Z ]+)', activity.get_text()).group(1).strip()
@@ -220,7 +153,7 @@ def process_data(thread_name, lock, queue, count, skipped_queue, activity_queue,
                                     activity_time_start, activity_time_end, activity_place, activity_prof
                                 )
                             )
-                            activities = 1
+                            activities = True
                             db_lock.release()
 
                         if activities:
@@ -236,7 +169,7 @@ def process_data(thread_name, lock, queue, count, skipped_queue, activity_queue,
                                     course, section_id, semester_id, str(one_dgd), str(one_tut), str(one_lab)
                                 )
                             )
-                            sections = 1
+                            sections = True
                             db_lock.release()
 
                 if sections:
@@ -250,19 +183,15 @@ def process_data(thread_name, lock, queue, count, skipped_queue, activity_queue,
                     db_lock.release()
                 else:
                     # Otherwise add it to the skipped list so that the user can double-check it
-                    lock.acquire()
-                    skipped_queue.put(course)
-                    lock.release()
+                    skipped_q.put(course)
 
                 break  # break out of the retry loop
 
-            local_count += 1
-            lock.acquire()
-            todo = queue.qsize()
-            print('[{0}][Thread: {1}][Total: {2}/{3}]'.format(thread_name, local_count, count - todo, count))
-            lock.release()
+            main_q.task_done()
+            print('[{0}][Course: {1}]'.format(multiprocessing.current_process().name, course))
         except AttributeError, e:
-            print('Error in thread {0} with course {1}: {2}'.format(thread_name, course, e.message), file=sys.stderr)
+            print('Error in process {0} with course {1}: {2}'.format(multiprocessing.current_process().name, course,
+                                                                     e.message), file=sys.stderr)
             traceback.print_exc()
 
 
@@ -271,19 +200,12 @@ def main():
     """
 
     # Courses
-    work_lock = Lock()
-    work_queue = Queue(0)
-    course_count = 0
+    work_queue = JoinableQueue()
     skipped_queue = Queue(0)
-
-    work_lock.acquire()
 
     with open("courses.txt", "r") as f:
         for line in f:
             work_queue.put(line.strip())
-            course_count += 1
-
-    work_lock.release()
 
     # For holding the database info
     db_courses = Queue(0)
@@ -292,27 +214,20 @@ def main():
     db_lock = Lock()
 
     # Create the threads
-    thread_list = []
-    thread_count = int(multiprocessing.cpu_count() * 1.5)
-    for x in range(1, thread_count + 1):
-        t = WorkThread(name=''.join(['Worker-', str(x)]), work_lock=work_lock, work_queue=work_queue,
-                       count=course_count, skipped_queue=skipped_queue, q_activities=db_activities,
-                       q_sections=db_sections, q_courses=db_courses, l_db=db_lock)
-        thread_list.append(t)
+    process_list = []
+    for i in range(multiprocessing.cpu_count()):
+        p = multiprocessing.Process(target=process_data,
+                                    args=(work_queue, skipped_queue, db_activities, db_sections, db_courses, db_lock))
+        process_list.append(p)
+        p.start()
 
-    # Start the threads
-    for t in thread_list:
-        t.start()
-
-    # Wait for all threads to complete
-    for t in thread_list:
-        t.join()
+    work_queue.join()
 
     print()
     # Announce skipped courses
-    if not skipped_queue.empty():
-        print('These courses were skipped: ')
-        with open('skippedCourses.txt', 'w') as f:
+    with open('skippedCourses.txt', 'w') as f:
+        if not skipped_queue.empty():
+            print('These courses were skipped: ')
             while not skipped_queue.empty():
                 skipped_course = skipped_queue.get()
                 print('  {0}'.format(skipped_course))
@@ -341,4 +256,4 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    main()
