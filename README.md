@@ -115,9 +115,11 @@ The timetables are stored in a .CSV, and follow a specific format. Given a list 
 
 Originally, the script was a macro-enabled Excel spreadsheet using VBA to download the pages, but it was slow and the error messages were vague and difficult to pinpoint. Sometimes the script would freeze, too, with no indication of what was happening.
 
-Instead, a Python 3 script has been created. To run the script, simply use: `py .\GetTimeTables.py` on the script when it's in the same directory as `course-list.txt`. **Note:** the script first checks to see if `courseCodes.csv` exists in the current directory, *then deletes it*. If you do not with to lose your old file, please rename or move it. It will also remove any course codes that no longer exist from `course-list.txt`
+Instead, a Python 2 script has been created. To run the script, simply use: `py .\GetTimeTables.py` on the script when it's in the same directory as `course-list.txt`. **Note:** the script first checks to see if `courseCodes.csv` exists in the current directory, *then deletes it*. If you do not with to lose your old file, please rename or move it. It will also remove any course codes that no longer exist from `course-list.txt`
 
 Depending on your connection, the script may take ~10-20 minutes to run for the full ~4000 courses. In contrast, the Excel script took roughly 3 hours.
+
+Remember to use Python 2.7+ and not 3.
 
 ## Screenshots
 
