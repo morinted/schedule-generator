@@ -115,11 +115,19 @@ The timetables are stored in a .CSV, and follow a specific format. Given a list 
 
 Originally, the script was a macro-enabled Excel spreadsheet using VBA to download the pages, but it was slow and the error messages were vague and difficult to pinpoint. Sometimes the script would freeze, too, with no indication of what was happening.
 
-Instead, a Python 2 script has been created. To run the script, simply use: `py .\GetTimeTables.py` on the script when it's in the same directory as `course-list.txt`. **Note:** the script first checks to see if `courseCodes.csv` exists in the current directory, *then deletes it*. If you do not with to lose your old file, please rename or move it. It will also remove any course codes that no longer exist from `course-list.txt`
+Now we use a set of Python scripts. One gets all the course names using Selenium webdriver, and the other updates all the timetables based on those courses.
 
-Depending on your connection, the script may take ~10-20 minutes to run for the full ~4000 courses. In contrast, the Excel script took roughly 3 hours.
+In order to run these scripts, make sure to have Selenium and Firefox installed.
 
-Remember to use Python 2.7+ and not 3.
+To update courses, use: `py .\getCourses.py`
+
+After the script finishes (watch the console output), run the timetable script.
+
+To update timetables, use: `py .\getTimetables.py`
+
+Depending on your connection, these scripts take ~10-20 minutes combined to run for the full ~4000 courses. In contrast, the Excel script took roughly 3 hours.
+
+**Remember to use Python 2.7+ and not 3.**
 
 ## Screenshots
 
