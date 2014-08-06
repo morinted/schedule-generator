@@ -1,57 +1,73 @@
-import urllib2, re, time
+#!/usr/bin/env python
+
+from __future__ import print_function
+import argparse
+import re
+import time
+
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 
-#Search page - Timetable uOttawa
-baseurl="https://web30.uottawa.ca/v3/SITS/timetable/Search.aspx"
 
-#Open page in Firefox
-browser = webdriver.Firefox()
-browser.get(baseurl)
+base_url = "https://web30.uottawa.ca/v3/SITS/timetable/Search.aspx"
 
-#Click search button
-searchButton = browser.find_element_by_id('ctl00_MainContentPlaceHolder_Basic_Button')
-searchButton.click()
-codes = []
 
-#Continue flag
-cont=True
+def main(debug=False):
+    # Open page in Firefox
+    browser = webdriver.Firefox()
+    browser.get(base_url)
 
-#For each page in "Next"
-while cont:
-	try:
-		html = browser.page_source
-		currentCodes = re.findall('(?<=">)[a-zA-Z]{3}\d{4}[a-zA-Z]?(?=</a>)', html)
-		while len(currentCodes) < 2:
-			time.sleep(2)
-			html = browser.page_source
-			currentCodes = re.findall('(?<=">)[a-zA-Z]{3}\d{4}[a-zA-Z]?(?=</a>)', html)
-		
-		codes += currentCodes
-		print currentCodes
-		next = browser.find_element_by_xpath('/html/body/form/div[3]/div[2]/div/div[3]/div[2]/span[2]/a')
-		next.click()
-	except:
-		print 'Exception: Possible no next button. Check browser.'
-		cont = False
+    # Click search button
+    search_button = browser.find_element_by_id('ctl00_MainContentPlaceHolder_Basic_Button')
+    search_button.click()
+    codes = []
 
-#Print raw count of courses
-print 'Found ' + str(len(codes)) + ' courses.'
+    # Continue flag
+    cont = True
 
-#Remove duplicates with set, then sort.
-print 'Removing duplicates and sorting alphabetically...'
-codes = list(set(codes))
-codes.sort()
+    # For each page in "Next"
+    while cont:
+        # noinspection PyBroadException
+        try:
+            html = browser.page_source
+            current_codes = re.findall('(?<=">)[a-zA-Z]{3}\d{4}[a-zA-Z]?(?=</a>)', html)
+            while len(current_codes) < 2:
+                time.sleep(2)
+                html = browser.page_source
+                current_codes = re.findall('(?<=">)[a-zA-Z]{3}\d{4}[a-zA-Z]?(?=</a>)', html)
 
-#Print net/unique course count
-print 'Done! Now there are ' + str(len(codes)) + ' courses.'
+            codes += current_codes
+            if debug:
+                print(current_codes)
+            next_link = browser.find_element_by_xpath('/html/body/form/div[3]/div[2]/div/div[3]/div[2]/span[2]/a')
+            next_link.click()
+        except NoSuchElementException:
+            print('No next button. We\'ve reached the end of the list.')
+            cont = False
 
-#Convert courses into one string for a text file
-courses_string = ''
-for code in codes:
-	courses_string+=code + '\n'
+    browser.quit()
 
-#Write courses to courses.txt
-course_list = open("courses.txt", "w")
-course_list.write(courses_string)
-course_list.close()
-print 'Courses printed to courses.txt'
+    # Print raw count of courses
+    print('Found', str(len(codes)), 'courses.')
+
+    # Remove duplicates with set, then sort.
+    print('Removing duplicates and sorting alphabetically...')
+    codes = list(set(codes))
+    codes.sort()
+
+    # Print net/unique course count
+    print('Done! Now there are', str(len(codes)), 'courses.')
+
+    # Write courses to courses.txt
+    with open('courses.txt', 'w') as f:
+        f.writelines((u'{0}\n'.format(c).encode('utf8') for c in codes))
+
+    print('Courses printed to courses.txt')
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Generate a course list.')
+    parser.add_argument('-v', '--verbose', help='Print all the course IDs', action='store_true')
+    parser.add_argument('--version', action='version', version='%(prog)s 2.0')
+    args = parser.parse_args()
+    main(debug=args.verbose)
