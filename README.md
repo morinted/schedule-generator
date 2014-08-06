@@ -32,14 +32,7 @@ Some features currently present:
 
 These are problems that exist or features that are to be implemented. Consider this a bug list:
 
-- GUI: 1-hour long classes have text that overflow out of the calendar event.
-- GUI: There is no indication of loading after sending requests to the server. A status bar with a loading symbol and status message would be preffered.
 - GUI: When connecting to server, the message box can get caught behind the main window.
-- SERVER: When a very large schedule generation occurs, smaller tasks are queued after. The fix will be implementing a multi-threaded approach.
-
-And here are some features under a wish list, which may not happen:
-
-- A dynamically-sized GUI, but this is not planned in the short-term.
 
 ## User's Guide
 
