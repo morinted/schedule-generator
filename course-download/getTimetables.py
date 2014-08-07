@@ -13,7 +13,7 @@ from multiprocessing import Lock, Queue, JoinableQueue
 from bs4 import BeautifulSoup
 
 
-def process_data(main_q, skipped_q, activity_queue, section_queue, course_queue, db_lock):
+def process_data(main_q, skipped_q, db_queue, db_lock):
     """Downloads and processes the course info
     """
 
@@ -22,6 +22,10 @@ def process_data(main_q, skipped_q, activity_queue, section_queue, course_queue,
             break
         else:
             course = main_q.get()
+
+        course_list = []
+        section_list = []
+        activity_list = []
 
         try:
             retry = 5  # This loop will restart at most 5 times
@@ -142,44 +146,40 @@ def process_data(main_q, skipped_q, activity_queue, section_queue, course_queue,
                                 activity_prof = u'N/A'
 
                             # Add activity to list
-                            db_lock.acquire()
                             if section_id is None:
                                 string = u'{0},{1},{2},{4},{5},{6},{7},{8},{9}'
                             else:
-                                string = u'{0},{1},{2} {3},{4},{5},{6},{7},{8},{9}'
+                                string = u'{0},{1},{2}{3},{4},{5},{6},{7},{8},{9}'
 
-                            activity_queue.put(
+                            activity_list.append(
                                 string.format(
                                     activity_type, activity_num, course, section_id, semester_id, activity_day,
                                     activity_time_start, activity_time_end, activity_place, activity_prof
                                 )
                             )
                             activities = True
-                            db_lock.release()
 
                         if activities:
                             # If there was at least one activity, add the section to the sections list.
-                            db_lock.acquire()
                             if section_id is None:
                                 string = u'{0},{0},{2},{3},{4},{5}'
                             else:
-                                string = u'{0} {1},{0},{2},{3},{4},{5}'
+                                string = u'{0}{1},{0},{2},{3},{4},{5}'
 
-                            section_queue.put(
+                            section_list.append(
                                 string.format(
                                     course, section_id, semester_id, str(one_dgd), str(one_tut), str(one_lab)
                                 )
                             )
                             sections = True
-                            db_lock.release()
 
                 if sections:
                     # If there was at least one section, add the course to the courses list.
+                    full_course = u'{0},{1}'.format(course, title)
+                    # Add course, sections, and activities to queue
                     db_lock.acquire()
-                    course_queue.put(
-                        u'{0},{1}'.format(
-                            course, title
-                        )
+                    db_queue.put(
+                        [full_course, section_list, activity_list]
                     )
                     db_lock.release()
                 else:
@@ -188,6 +188,7 @@ def process_data(main_q, skipped_q, activity_queue, section_queue, course_queue,
 
                 break  # break out of the retry loop
 
+
             main_q.task_done()
             print('[{0}][Course: {1}]'.format(multiprocessing.current_process().name, course))
         except AttributeError, e:
@@ -195,6 +196,10 @@ def process_data(main_q, skipped_q, activity_queue, section_queue, course_queue,
                                                                      e.message), file=sys.stderr)
             traceback.print_exc()
 
+def activity_key(activity):
+    # Key is after 2nd comma
+    print (activity)
+    return activity.split(',')[2]
 
 def main(course_file='courses.txt', clear_db=True):
     """Main method/entrypoint
@@ -209,16 +214,14 @@ def main(course_file='courses.txt', clear_db=True):
             work_queue.put(line.strip())
 
     # For holding the database info
-    db_courses = Queue(0)
-    db_sections = Queue(0)
-    db_activities = Queue(0)
+    db_queue = Queue(0)
     db_lock = Lock()
 
     # Create the threads
     process_list = []
     for i in range(multiprocessing.cpu_count()):
         p = multiprocessing.Process(target=process_data,
-                                    args=(work_queue, skipped_queue, db_activities, db_sections, db_courses, db_lock))
+                                    args=(work_queue, skipped_queue, db_queue, db_lock))
         process_list.append(p)
         p.start()
 
@@ -234,6 +237,21 @@ def main(course_file='courses.txt', clear_db=True):
                 print('  {0}'.format(skipped_course))
                 f.write(u'{0}\n'.format(skipped_course).encode('utf8'))
         print()
+
+    db_courses = Queue(0)
+    db_sections = Queue(0)
+    db_activities = Queue(0)
+
+    while not db_queue.empty():
+        course = db_queue.get()
+        # course name
+        db_courses.put(course[0])
+        # sections
+        for section in course[1]:
+            db_sections.put(section)
+        # activities
+        for activity in course[2]:
+            db_activities.put(activity)
 
     # Print total count of all items
     print('Courses: {0}'.format(db_courses.qsize()))
