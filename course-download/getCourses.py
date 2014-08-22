@@ -59,7 +59,7 @@ def main(debug=False):
     print('Done! Now there are', str(len(codes)), 'courses.')
 
     # Write courses to courses.txt
-    with open('courses.txt', 'w') as f:
+    with open('courses.txt', 'wb') as f:
         f.writelines((u'{0}\n'.format(c).encode('utf8') for c in codes))
 
     print('Courses printed to courses.txt')

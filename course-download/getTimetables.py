@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from __future__ import print_function
 import argparse
@@ -14,11 +13,14 @@ from bs4 import BeautifulSoup
 
 
 def process_data(main_q, skipped_q, db_queue, db_lock):
-    """Downloads and processes the course info
+    """
+    Downloads and processes the course info
     """
 
-    while True:
+    exitFlag = False
+    while not exitFlag:
         if main_q.empty():
+            exitFlag = True
             break
         else:
             course = main_q.get()
@@ -35,7 +37,7 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                     site = urllib2.urlopen(
                         'https://web30.uottawa.ca/v3/SITS/timetable/Course.aspx?code={0}'.format(course))
                     html = site.read()
-                except urllib2.HTTPError, e:
+                except urllib2.HTTPError as e:
                     print('Server error: {0}.'.format(e.reason))
                     if retry:
                         print('Waiting 2 seconds...')
@@ -44,9 +46,9 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                         continue
                     else:
                         print('Skipping course')
-                        skipped_q.put(course)
+                        skipped_q.put('{0}, ran out of retries, HTTPError'.format(course))
                         break
-                except urllib2.URLError, e:
+                except urllib2.URLError as e:
                     print('Internet problem: {0}.'.format(e.reason))
                     if retry:
                         print('Waiting 5 seconds...')
@@ -55,7 +57,7 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                         continue
                     else:
                         print('Skipping course')
-                        skipped_q.put(course)
+                        skipped_q.put('{0}, ran out of retries, URLError'.format(course))
                         break
                 finally:
                     try:
@@ -69,7 +71,7 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                 # Get course title
                 title = re.search(r'{0} - (.*)'.format(course), content.find('h1').get_text())
                 if title is None:
-                    skipped_q.put(course)
+                    skipped_q.put('{0}, no title'.format(course))
                     break
                 else:
                     title = title.group(1).strip()
@@ -184,14 +186,16 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                     db_lock.release()
                 else:
                     # Otherwise add it to the skipped list so that the user can double-check it
-                    skipped_q.put(course)
+                    skipped_q.put('{0}, no sections'.format(course))
 
                 break  # break out of the retry loop
 
-
-            main_q.task_done()
-            print('[{0}][Course: {1}]'.format(multiprocessing.current_process().name, course))
-        except AttributeError, e:
+            if exitFlag == True:
+                break
+            else:
+                print('[{0}][Course: {1}]'.format(multiprocessing.current_process().name, course))
+                main_q.task_done()
+        except AttributeError as e:
             print('Error in process {0} with course {1}: {2}'.format(multiprocessing.current_process().name, course,
                                                                      e.message), file=sys.stderr)
             traceback.print_exc()
@@ -214,7 +218,7 @@ def main(course_file='courses.txt', clear_db=True):
             work_queue.put(line.strip())
 
     # For holding the database info
-    db_queue = Queue(0)
+    db_queue = Queue()
     db_lock = Lock()
 
     # Create the threads
@@ -225,7 +229,13 @@ def main(course_file='courses.txt', clear_db=True):
         process_list.append(p)
         p.start()
 
+
     work_queue.join()
+    work_queue.close()
+
+    db_lock.acquire()
+    print('Done work. Got {0} courses, skipped {1}'.format(db_queue.qsize(), skipped_queue.qsize()))
+    db_lock.release()
 
     print()
     # Announce skipped courses
@@ -235,7 +245,8 @@ def main(course_file='courses.txt', clear_db=True):
             while not skipped_queue.empty():
                 skipped_course = skipped_queue.get()
                 print('  {0}'.format(skipped_course))
-                f.write(u'{0}\n'.format(skipped_course).encode('utf8'))
+                to_file = skipped_course.split(',', 1)[0]
+                f.write(u'{0}\n'.format(to_file).encode('utf8'))
         print()
 
     db_courses = Queue(0)
@@ -252,6 +263,8 @@ def main(course_file='courses.txt', clear_db=True):
         # activities
         for activity in course[2]:
             db_activities.put(activity)
+
+
 
     # Print total count of all items
     print('Courses: {0}'.format(db_courses.qsize()))
