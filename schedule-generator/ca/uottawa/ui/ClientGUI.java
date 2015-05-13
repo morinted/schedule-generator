@@ -1,28 +1,27 @@
 package ca.uottawa.ui;
+import ca.uottawa.schedule.*;
+
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import ca.uottawa.schedule.Activity;
-import ca.uottawa.schedule.Course;
-import ca.uottawa.schedule.CourseSelection;
-import ca.uottawa.schedule.Schedule;
-import ca.uottawa.schedule.Section;
-
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
+import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class ClientGUI implements ClientIF, ActionListener, DocumentListener, ItemListener, WindowListener, ListSelectionListener, MouseListener {
@@ -173,6 +172,20 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		//Text boxes
 		txtSearch.getDocument().addDocumentListener(this);
 		txtSearch.addActionListener(this);
+
+        ((AbstractDocument) this.txtSearch.getDocument()).setDocumentFilter(new DocumentFilter() {
+            final Pattern regEx = Pattern.compile("[A-Za-z0-9]+");
+            @Override
+            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+                final Matcher matcher = this.regEx.matcher(text);
+                if ( !matcher.matches() ) {
+                    return;
+                }
+                if (ClientGUI.this.txtSearch.getText().length() <= 6) {
+                    super.replace(fb, offset, length, text, attrs);
+                }
+            }
+        });
 		
 		//ComboBoxes
 		cboSemester.addItemListener(this);

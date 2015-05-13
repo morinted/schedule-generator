@@ -1,15 +1,5 @@
 package ca.uottawa.ui;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import biweekly.Biweekly;
 import biweekly.ICalendar;
 import biweekly.component.VEvent;
@@ -17,14 +7,15 @@ import biweekly.property.DateEnd;
 import biweekly.property.DateStart;
 import biweekly.util.Recurrence;
 import biweekly.util.Recurrence.Frequency;
-import ca.uottawa.schedule.Activity;
-import ca.uottawa.schedule.Course;
-import ca.uottawa.schedule.CourseSelection;
-import ca.uottawa.schedule.Schedule;
-import ca.uottawa.schedule.ScheduleMessage;
-import ca.uottawa.schedule.Section;
-
+import ca.uottawa.schedule.*;
 import com.lloseng.ocsf.client.AbstractClient;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 public class ScheduleGeneratorClient extends AbstractClient {
 
@@ -203,8 +194,8 @@ public class ScheduleGeneratorClient extends AbstractClient {
 				srchMsg.setStrings(query);
 				srchMsg.setSemester(semester);
 				sendToServer(srchMsg);
-				break;
 			}
+            break;
 		case "ADD":
 			boolean issue = false; //This is a flag in case the command length is 3 but [2] is not OPTIONAL
 			if (command.length == 3) {
