@@ -6,6 +6,7 @@ import sys
 import time
 import traceback
 import urllib2
+import ssl
 import re
 import multiprocessing
 from multiprocessing import Lock, Queue, JoinableQueue
@@ -35,8 +36,9 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
             while retry:
                 html = ''
                 try:
+                    context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
                     site = urllib2.urlopen(
-                        'https://web30.uottawa.ca/v3/SITS/timetable/Course.aspx?code={0}'.format(course))
+                        'https://web30.uottawa.ca/v3/SITS/timetable/Course.aspx?code={0}'.format(course), context=context)
                     html = site.read()
                 except urllib2.HTTPError as e:
                     print('Server error: {0}.'.format(e.reason))
