@@ -122,6 +122,8 @@ Depending on your connection, these scripts take ~10-20 minutes combined to run 
 
 **Remember to use Python 2.7+ and not 3.**
 
+(Tip: On a headless server, you can use `xvfb` to run Firefox without a graphical session, e.g. `xvfb-run ./getCourses.py`)
+
 ## Screenshots
 
 ### The main UI, with a sample schedule already generated:
