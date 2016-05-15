@@ -44,7 +44,7 @@ def main(debug=False):
             codes += current_codes
             if debug:
                 print(current_codes)
-            next_link = browser.find_element_by_xpath('/html/body/form/div[3]/div[2]/div/div[3]/div[2]/span[2]/a')
+            next_link = browser.find_element_by_xpath('/html/body/form/div[3]/div[2]/div/div[3]/div[4]/span[2]/a')
             next_link.click()
         except NoSuchElementException:
             print('No next button. We\'ve reached the end of the list.')
