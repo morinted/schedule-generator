@@ -31,10 +31,15 @@ def main(debug=False):
         try:
             html = browser.page_source
             current_codes = re.findall('(?<=">)[a-zA-Z]{3}\d{4}[a-zA-Z]?(?=</a>)', html)
+            waited = 0
             while len(current_codes) < 2:
                 time.sleep(2)
+                waited += 1
                 html = browser.page_source
                 current_codes = re.findall('(?<=">)[a-zA-Z]{3}\d{4}[a-zA-Z]?(?=</a>)', html)
+                if waited > 15:
+                    print('Time out. Could not find course codes.')
+                    break
 
             codes += current_codes
             if debug:
