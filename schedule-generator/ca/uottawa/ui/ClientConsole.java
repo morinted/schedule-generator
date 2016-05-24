@@ -94,7 +94,7 @@ public class ClientConsole implements ClientIF {
 		}
 		catch(ArrayIndexOutOfBoundsException e)
 		{
-			host = "home.tedmor.in";
+			host = "schlachter.ca";
 		}
 
 		try //Get port if needed

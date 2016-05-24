@@ -589,7 +589,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	    }
 	    catch(ArrayIndexOutOfBoundsException e)
 	    {
-	      host = "home.tedmor.in";
+	      host = "schlachter.ca";
 	    }
 	    
 	    try //Get port if needed
