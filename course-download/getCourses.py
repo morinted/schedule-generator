@@ -8,13 +8,12 @@ import time
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
-
 base_url = "https://web30.uottawa.ca/v3/SITS/timetable/Search.aspx"
 
 
 def main(debug=False):
-    # Open page in Firefox
-    browser = webdriver.Firefox()
+    # Open in Chrome
+    browser = webdriver.Chrome()
     browser.get(base_url)
 
     # Click search button
