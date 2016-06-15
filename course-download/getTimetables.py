@@ -68,7 +68,7 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                     except NameError:
                         pass
 
-                soup = BeautifulSoup(html)
+                soup = BeautifulSoup(html, "lxml")
                 content = soup.find('div', id='main-content')
 
                 # Get course title
