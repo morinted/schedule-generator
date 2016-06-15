@@ -1,0 +1,40 @@
+# systemd init script for running the server.
+# To use: make a system user, 'schedgen', adjust the paths below,
+# where WorkingDirectory is where the server executable is, with the
+# schedule files at ../course-download. 
+# 
+# Move the script to /etc/systemd/system/schedule-generator.service,
+# and use systemctl enable schedule-generator to enable it.
+#
+
+[Unit]
+Description=Server for the uOttawa schedule generator
+Requires=network.target
+After=network.target
+
+[Service]
+WorkingDirectory=/etc/schedgen/uOttawa Schedule Generator/schedule-generator-master
+User=schedgen
+Group=schedgen
+#Environment=
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=
+# Keeping the CapabilityBoundingSet empty is restrictive
+# ref. http://man7.org/linux/man-pages/man7/capabilities.7.html
+CapabilityBoundingSet=
+InaccessibleDirectories=/media
+PrivateDevices=true
+PrivateTmp=true
+# ProtectSystem can be 'full' if we want /etc to be read-only
+# as well, but if we do this we can't make server.stat
+ProtectSystem=true
+ProtectHome=true
+NoNewPrivileges=true
+Type=simple
+ExecStart=/usr/bin/java -jar ServerConsole-v1.1.0.jar 5555
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=default.target
