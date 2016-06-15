@@ -226,7 +226,7 @@ def main(course_file='courses.txt', clear_db=True):
 
     # Create the threads
     process_list = []
-    for i in range(multiprocessing.cpu_count() * args.Workers):
+    for i in range(args.Workers):
         p = multiprocessing.Process(target=process_data,
                                     args=(work_queue, skipped_queue, db_queue, db_lock))
         process_list.append(p)
@@ -297,7 +297,7 @@ if __name__ == '__main__':
     parser.add_argument('-n', '--no-clear-db', help='clear the DB prior to saving the results', action='store_true',
                         default=False)
     parser.add_argument('--version', action='version', version='%(prog)s 2.0')
-    parser.add_argument('-p', '--Workers', action='store', dest='Workers', type=int, help='Number of worker processes to spawn per core. Default is 8.', default=8)
+    parser.add_argument('-p', '--Workers', action='store', dest='Workers', type=int, help='Number of worker processes to spawn. Default is equal to the number of cores. Higher numbers may improve performance.', default=multiprocessing.cpu_count())
     args = parser.parse_args()
     args.no_clear_db = True if args.skipped == 'skippedCourses.txt' else args.no_clear_db
     main(course_file=args.skipped, clear_db=(not args.no_clear_db))
