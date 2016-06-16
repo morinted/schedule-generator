@@ -791,14 +791,19 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	 * Add the currently selected course.
 	 */
 	private void addCourse() {
-		if (lstSearchResults.getSelectedValue() == null) {
+		if (lstSearchResults.getSelectedValue() == null && lstSearchResults.getModel().getSize() != 1) {
 			display("No course selected!");
-		} else {
-				String courseCode = lstSearchResults.getSelectedValue().split(" ")[0];
-				//Determine if we're sending an optional or mandatory course.
-				String optional = chkOptional.isSelected() ? "OPTIONAL " : "";
-				send("ADD " + optional + courseCode);
+			return;
 		}
+
+		if (lstSearchResults.getSelectedValue() == null) {
+			lstSearchResults.setSelectedIndex(0);
+		}
+
+		String courseCode = lstSearchResults.getSelectedValue().split(" ")[0];
+		//Determine if we're sending an optional or mandatory course.
+		String optional = chkOptional.isSelected() ? "OPTIONAL " : "";
+		send("ADD " + optional + courseCode);
 	}
 
 	/**
