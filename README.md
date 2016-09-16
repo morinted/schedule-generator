@@ -4,15 +4,15 @@ A schedule generator for the University of Ottawa written in Java, using OCSF. I
 
 ## Introduction
 
-This project was created by Ted Morin & Daniel Murdoch as assignment 5 & 7 for the course SEG2105A at the University of Ottawa.
+This project was created by Ted Morin & Daniel Murdoch as assignment 5 & 7 for the course SEG2105A at the University of Ottawa. The program is now maintained by David Schlachter.
 We created this program based on one simple problem line:
 University of Ottawa students have no easy way to generate a conflict-free, optimized schedule.
 
 Now that that class is done, we are continuing development on the project, as it is a useful utility when working with uOttawa's Rabaska course-registration system.
 
-## [Download](https://github.com/davidschlachter/schedule-generator/releases/download/v1.1.1/uOttawa-Schedule-Generator-v1.1.1.jar)
+## [Download](https://github.com/morinted/schedule-generator/releases/download/v1.1.1/uOttawa-Schedule-Generator-v1.1.1.jar)
 
-If you just want to get started generating schedules right away, then [download the program for Windows, Mac, and Linux](https://github.com/davidschlachter/schedule-generator/releases/download/v1.1.1/uOttawa-Schedule-Generator-v1.1.1.jar). Note that you need Java to run the .jar file. Check out the user's guide below if you get confused while using the program.
+If you just want to get started generating schedules right away, then [download the program for Windows, Mac, and Linux](https://github.com/morinted/schedule-generator/releases/download/v1.1.1/uOttawa-Schedule-Generator-v1.1.1.jar). Note that you need Java to run the .jar file. Check out the user's guide below if you get confused while using the program.
 
 ## Features
 
@@ -38,7 +38,7 @@ These are problems that exist or features that are to be implemented. Consider t
 
 ### Getting Started
 
-1. To start, it is recommended to download the program's front-end. This can be found in the [executable directory](schedule-generator/executable) under the name [uOttawa-Schedule-Generator.jar](https://github.com/morinted/schedule-generator/raw/master/schedule-generator/executable/uOttawa-Schedule-Generator.jar).
+1. To start, it is recommended to download the program's front-end. This can be found in the releases section under the name [uOttawa-Schedule-Generator-v1.1.1.jar](https://github.com/morinted/schedule-generator/releases/download/v1.1.1/uOttawa-Schedule-Generator-v1.1.1.jar).
 
 2. Run the .jar.
 
@@ -84,7 +84,7 @@ Note: You'll want to create a new calendar, just in case you want to delete the 
 
 ### Hosting a Server
 
-To host a server, download the entire project, and use ServerConsole.jar (in the Runnables folder). Note that the ServerConsole depends on the ../course-download/db_*.csv files. So for this reason, you cannot run the ServerConsole.jar as a standalone.
+To host a server, download the entire project, and use ServerConsole.jar (in the releases section). Note that the ServerConsole depends on the ../course-download/db_*.csv files. So for this reason, you cannot run the ServerConsole.jar as a standalone.
 
 To launch, you use the command: `java -jar ServerConsole.jar [port]`
 
