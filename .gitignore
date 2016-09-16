@@ -1,1 +1,7 @@
 *.pyc
+skippedCourses.txt
+courses.txt
+db_courses.csv
+db_sections.csv
+courseCodes.csv
+db_activities.csv

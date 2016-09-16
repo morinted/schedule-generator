@@ -8,13 +8,12 @@ import time
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
-
 base_url = "https://web30.uottawa.ca/v3/SITS/timetable/Search.aspx"
 
 
 def main(debug=False):
-    # Open page in Firefox
-    browser = webdriver.Firefox()
+    # Open in Chrome
+    browser = webdriver.Chrome()
     browser.get(base_url)
 
     # Click search button
@@ -31,15 +30,20 @@ def main(debug=False):
         try:
             html = browser.page_source
             current_codes = re.findall('(?<=">)[a-zA-Z]{3}\d{4}[a-zA-Z]?(?=</a>)', html)
+            waited = 0
             while len(current_codes) < 2:
                 time.sleep(2)
+                waited += 1
                 html = browser.page_source
                 current_codes = re.findall('(?<=">)[a-zA-Z]{3}\d{4}[a-zA-Z]?(?=</a>)', html)
+                if waited > 15:
+                    print('Time out. Could not find course codes.')
+                    break
 
             codes += current_codes
             if debug:
                 print(current_codes)
-            next_link = browser.find_element_by_xpath('/html/body/form/div[3]/div[2]/div/div[3]/div[2]/span[2]/a')
+            next_link = browser.find_element_by_xpath('/html/body/form/div[3]/div[2]/div/div[3]/div[4]/span[2]/a')
             next_link.click()
         except NoSuchElementException:
             print('No next button. We\'ve reached the end of the list.')
