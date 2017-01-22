@@ -29,13 +29,13 @@ def main(debug=False):
         # noinspection PyBroadException
         try:
             html = browser.page_source
-            current_codes = re.findall('(?<=">)[a-zA-Z]{3}\d{4}[a-zA-Z]?(?=</a>)', html)
+            current_codes = re.findall('<a href="Course.aspx\?id=(\d+&)amp;(term=\d+&)amp;(session=[A-Z]+)', html)
             waited = 0
             while len(current_codes) < 2:
                 time.sleep(2)
                 waited += 1
                 html = browser.page_source
-                current_codes = re.findall('(?<=">)[a-zA-Z]{3}\d{4}[a-zA-Z]?(?=</a>)', html)
+                current_codes = re.findall('<a href="Course.aspx\?id=(\d+&)amp;(term=\d+&)amp;(session=[A-Z]+)', html)
                 if waited > 15:
                     print('Time out. Could not find course codes.')
                     break

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
+from __future__ import unicode_literals
 import argparse
 import sys
 import time
@@ -38,7 +39,7 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                 try:
                     context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
                     site = urllib2.urlopen(
-                        'https://web30.uottawa.ca/v3/SITS/timetable/Course.aspx?code={0}'.format(course), context=context)
+                        'https://web30.uottawa.ca/v3/SITS/timetable/Course.aspx?id={0}'.format(course), context=context)
                     html = site.read()
                 except urllib2.HTTPError as e:
                     print('Server error: {0}.'.format(e.reason))
@@ -71,13 +72,26 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                 soup = BeautifulSoup(html, "lxml")
                 content = soup.find('div', id='main-content')
 
+                # Get course code
+                try:
+                    course = re.search(r'([A-Z]{3}[0-9]{4})', content.find(id="schedule").find(class_="Section").get_text())
+                    if course is None:
+                        skipped_q.put('{0}'.format(course))
+                        exitFlag = True
+                        break
+                    else:
+                        course = course.group(1)
+                except AttributeError:
+                    skipped_q.put('{0}'.format(course))
+                    exitFlag = True
+                    break
+
                 # Get course title
-                title = re.search(r'{0} - (.*)'.format(course), content.find('h1').get_text())
+                title = re.search(r'(.*)'.format(course), content.find('h1').get_text()).group(0)
                 if title is None:
                     skipped_q.put('{0}, no title'.format(course))
+                    exitFlag = True
                     break
-                else:
-                    title = title.group(1).strip()
 
                 if ',' in title:
                     title = u'"{0}"'.format(title)
@@ -88,16 +102,28 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                     # Get semester integer
                     semester_id = semester.get('id')
 
+                    # Semester integer is no longer the id of the semester div...
+                    semester_id = re.search(r'Course schedule for the term:\s*([0-9]{4}\s+[A-Za-z]+)', semester.parent.get_text())
+                    if semester_id is None:
+                        skipped_q.put('{0}, {1}'.format(course, title))
+                        exitFlag = True
+                        break
+                    else:
+                        semester_id = semester_id.group(1).replace(' Winter', '1').replace(' Fall', '9').replace(' Spring/Summer', '5')
+
+
                     for section in semester.find_all('table'):
                         _section_title = section.find('td', class_='Section').contents[0]
-                        section_id = re.search(r'{0} (.*)'.format(course), _section_title)
+                        section_id = re.search(r'{0} (.{{1}})'.format(course), _section_title) # Section_id is alphanumeric and seems to be the first character after the space
                         if section_id is not None:
                             section_id = section_id.group(1).strip()
 
                         one_dgd = 0
                         one_lab = 0
                         one_tut = 0
-
+                        
+                        
+                        # (tr of class footer doesn't exist anymore)
                         _footer = section.find('tr', class_='footer')
                         if _footer is not None:
                             _footer_content = _footer.find('td').get_text()
@@ -114,10 +140,11 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                         activities = False
                         for activity in section.find_all('td', class_='Activity'):
                             # Lecture, Lab, etc.
-                            activity_type = re.search(r'([a-zA-Z ]+)', activity.get_text()).group(1).strip()
-
+                            activity_type = re.search(r'([a-zA-Z ]+)', activity.get_text()).group(0).strip()
+                            activity_type = activity_type.replace('LEC', 'Lecture').replace('DGD', 'Discussion Group').replace('LAB', 'Laboratory').replace('TUT', 'Tutorial').replace('SEM', 'Seminar')
+                            
                             # 1, 2, etc.
-                            activity_num = re.search(r'(\d+)', activity.get_text()).group(1).strip()
+                            activity_num = re.search(r'[^ ]+ .{1}(\d+)', activity.previous_sibling.get_text()).group(1).strip()
 
                             # Day
                             _day = activity.next_sibling
@@ -129,9 +156,18 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                             else:
                                 activity_day = activity_day.group(1).strip()
 
-                            # 08:30 - 22:00
-                            activity_time_start = re.search(r'(\d{2}:\d{2}) -', _day.get_text()).group(1).strip()
-                            activity_time_end = re.search(r'- (\d{2}:\d{2})', _day.get_text()).group(1).strip()
+                            # 8:30 - 22:00
+                            activity_time_start = re.search(r'(\d{1,2}:\d{2}) -', _day.get_text())
+                            if activity_time_start is None:
+                                activity_time_start = u'N/A'
+                            else:
+                                activity_time_start = activity_time_start.group(1).strip()
+
+                            activity_time_end = re.search(r'- (\d{1,2}:\d{2})', _day.get_text())
+                            if activity_time_end is None:
+                                activity_time_end = u'N/A'
+                            else:
+                                activity_time_end = activity_time_end.group(1).strip()
 
                             # Place
                             _place = _day.next_sibling
