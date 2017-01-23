@@ -74,23 +74,21 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
 
                 # Get course code
                 try:
+                    oldcourse = course
                     course = re.search(r'([A-Z]{3}[0-9]{4})', content.find(id="schedule").find(class_="Section").get_text())
                     if course is None:
-                        skipped_q.put('{0}'.format(course))
-                        exitFlag = True
+                        print("Error: could not get course code for {0}".format(oldcourse))
                         break
                     else:
                         course = course.group(1)
                 except AttributeError:
-                    skipped_q.put('{0}'.format(course))
-                    exitFlag = True
+                    print("Error: could not get course code for {0}".format(oldcourse))
                     break
 
                 # Get course title
                 title = re.search(r'(.*)'.format(course), content.find('h1').get_text()).group(0)
                 if title is None:
                     skipped_q.put('{0}, no title'.format(course))
-                    exitFlag = True
                     break
 
                 if ',' in title:
@@ -105,8 +103,7 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                     # Semester integer is no longer the id of the semester div...
                     semester_id = re.search(r'Course schedule for the term:\s*([0-9]{4}\s+[A-Za-z]+)', semester.parent.get_text())
                     if semester_id is None:
-                        skipped_q.put('{0}, {1}'.format(course, title))
-                        exitFlag = True
+                        print("Error: could not get semester_id for {0}".format(course))
                         break
                     else:
                         semester_id = semester_id.group(1).replace(' Winter', '1').replace(' Fall', '9').replace(' Spring/Summer', '5')
@@ -114,9 +111,12 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
 
                     for section in semester.find_all('table'):
                         _section_title = section.find('td', class_='Section').contents[0]
-                        section_id = re.search(r'{0} (.{{1}})'.format(course), _section_title) # Section_id is alphanumeric and seems to be the first character after the space
+                        section_id = re.search(r'{0} (.{{1}})'.format(course), _section_title)
                         if section_id is not None:
                             section_id = section_id.group(1).strip()
+                        else:
+                            print("Error: could not get section_id for {0}".format(course))
+                            break
 
                         one_dgd = 0
                         one_lab = 0
@@ -140,11 +140,30 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                         activities = False
                         for activity in section.find_all('td', class_='Activity'):
                             # Lecture, Lab, etc.
-                            activity_type = re.search(r'([a-zA-Z ]+)', activity.get_text()).group(0).strip()
-                            activity_type = activity_type.replace('LEC', 'Lecture').replace('DGD', 'Discussion Group').replace('LAB', 'Laboratory').replace('TUT', 'Tutorial').replace('SEM', 'Seminar')
+                            activity_type = re.search(r'([a-zA-Z ]+)', activity.get_text())
+                            if activity_type is None:
+                                print("Error: could not get activity_type for {0}".format(course))
+                                break
+                            else:
+                                if 'STG' in activity_type.group(1):
+                                    print("Error: activity_type is internship for {0}".format(course))
+                                    break
+                                elif 'REC' in activity_type.group(1):
+                                    print("Error: activity_type is research project for {0}".format(course))
+                                    break
+                                elif 'TLB' in activity_type.group(1):
+                                    print("Error: activity_type is research project for {0}".format(course))
+                                    break
+                                else:
+                                    activity_type = activity_type.group(1).strip().replace('LEC', 'Lecture').replace('DGD', 'Discussion Group').replace('LAB', 'Laboratory').replace('TUT', 'Tutorial').replace('SEM', 'Seminar')
                             
                             # 1, 2, etc.
-                            activity_num = re.search(r'[^ ]+ .{1}(\d+)', activity.previous_sibling.get_text()).group(1).strip()
+                            activity_num = re.search(r'[^ ]+ .{1}(\d+)', activity.previous_sibling.get_text())
+                            if activity_num is None:
+                                print("Error: could not get activity_num for {0}".format(course))
+                                break
+                            else:
+                                activity_num = activity_num.group(1).strip()
 
                             # Day
                             _day = activity.next_sibling
