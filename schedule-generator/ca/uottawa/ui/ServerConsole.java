@@ -40,6 +40,7 @@ public class ServerConsole {
 		    {
 		      System.out.println("ERROR - Could not listen for clients!");
 		      System.out.println("Quitting application");
+		      ex.printStackTrace(System.out);
 		      System.exit(0);
 		    }
 	  }
@@ -70,6 +71,7 @@ public class ServerConsole {
 	    {
 	      System.out.println
 	        ("Unexpected error while reading from console!");
+              ex.printStackTrace(System.out);
 	    }
 	  }
 
