@@ -40,6 +40,7 @@ def main(debug=False):
                     print('Time out. Could not find course codes.')
                     break
 
+            codes += [''.join(t) for t in current_codes]
             codes += current_codes
             if debug:
                 print(current_codes)
