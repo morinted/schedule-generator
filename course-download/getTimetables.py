@@ -121,21 +121,7 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                         one_dgd = 0
                         one_lab = 0
                         one_tut = 0
-                        
-                        
-                        # (tr of class footer doesn't exist anymore)
-                        _footer = section.find('tr', class_='footer')
-                        if _footer is not None:
-                            _footer_content = _footer.find('td').get_text()
 
-                            if u'Only one discussion group' in _footer_content:
-                                one_dgd = 1
-
-                            if u'Only one laboratory' in _footer_content:
-                                one_lab = 1
-
-                            if u'Only one tutorial' in _footer_content:
-                                one_tut = 1
 
                         activities = False
                         for activity in section.find_all('td', class_='Activity'):
@@ -154,6 +140,12 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                                 elif 'TLB' in activity_type.group(1):
                                     print("Error: activity_type is research project for {0}".format(course))
                                     break
+                                elif 'DGD' in activity_type.group(1):
+                                    one_dgd = 1
+                                elif 'LAB' in activity_type.group(1):
+                                    one_lab = 1
+                                elif 'TUT' in activity_type.group(1):
+                                    one_tut = 1
                                 else:
                                     activity_type = activity_type.group(1).strip().replace('LEC', 'Lecture').replace('DGD', 'Discussion Group').replace('LAB', 'Laboratory').replace('TUT', 'Tutorial').replace('SEM', 'Seminar')
                             
