@@ -23,7 +23,7 @@ Some features currently present:
 - A console and graphical user interface.
 - Select mandatory courses, but can edit sections.
 - Select x of y optional courses, ideal for electives.
-- Hosting a server at home.tedmor.in to let individuals connect with the GUI.
+- Hosting a server at schlachter.ca to let individuals connect with the GUI.
 - Export .ics files for easy calendar integration.
 - Sorting by various attributes, including start time, days off, and length of day.
 - Can ignore discussion groups and tutorials when sorting (eg. A day with only a discussion group would be considered a day off)
@@ -42,7 +42,7 @@ These are problems that exist or features that are to be implemented. Consider t
 
 2. Run the .jar.
 
-	Simply double-click the .jar file to run. If you don't have Java installed, you can get it from [Sun's website](http://java.com/en/download/index.jsp) or by running [Ninite](http://ninite.com) (my preferred choice, as there is no chance of the silly "Ask Toolbar").
+	Simply double-click the .jar file to run. If you don't have Java installed, you can get it from [Sun's website](http://java.com/en/download/index.jsp) or by running [Ninite](http://ninite.com) (my preferred choice, as there is no chance of the silly "Ask Toolbar"). Note that on macOS you may need to open the program by right-clicking it and selecting Open, depending on your Gatekeeper settings.
 
 3. Wait for the server to connect, then select a semester from the drop down.
 
@@ -98,7 +98,7 @@ ClientGUI and ClientConsole can take several launch commands. In this example, t
 
 In the working directory of the jar file, run `java -jar schedule-generator.jar [host] [port]`
 
-Both optional, host lets you specify a server to connect to. The default is home.tedmor.in.
+Both optional, host lets you specify a server to connect to. The default is schlachter.ca.
 
 Port lets you specify the port to connect on, the default, if omitted, is 5555.
 
@@ -110,7 +110,7 @@ Originally, the script was a macro-enabled Excel spreadsheet using VBA to downlo
 
 Now we use a set of Python scripts. One gets all the course names using Selenium webdriver, and the other updates all the timetables based on those courses.
 
-In order to run these scripts, make sure to have Selenium and Firefox installed.
+In order to run these scripts, make sure to have Selenium and Chromium installed.
 
 To update courses, use: `py .\getCourses.py`
 
@@ -122,7 +122,7 @@ Depending on your connection, these scripts take ~10-20 minutes combined to run 
 
 **Remember to use Python 2.7+ and not 3.**
 
-(Tip: On a headless server, you can use `xvfb` to run Firefox without a graphical session, e.g. `xvfb-run ./getCourses.py`)
+(Tip: On a headless server, you can use `xvfb` to run Chromium without a graphical session, e.g. `xvfb-run ./getCourses.py`)
 
 ## Screenshots
 
