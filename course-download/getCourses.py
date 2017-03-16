@@ -41,7 +41,6 @@ def main(debug=False):
                     break
 
             codes += [''.join(t) for t in current_codes]
-            codes += current_codes
             if debug:
                 print(current_codes)
             next_link = browser.find_element_by_xpath('/html/body/form/div[3]/div[2]/div/div[3]/div[4]/span[2]/a')
