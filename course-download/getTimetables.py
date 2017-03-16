@@ -109,6 +109,10 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                         semester_id = semester_id.group(1).replace(' Winter', '1').replace(' Fall', '9').replace(' Spring/Summer', '5')
 
 
+                    one_dgd = 0
+                    one_lab = 0
+                    one_tut = 0
+
                     for section in semester.find_all('table'):
                         _section_title = section.find('td', class_='Section').contents[0]
                         section_id = re.search(r'{0} (.{{1}})'.format(course), _section_title)
@@ -117,11 +121,6 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                         else:
                             print("Error: could not get section_id for {0}".format(course))
                             break
-
-                        one_dgd = 0
-                        one_lab = 0
-                        one_tut = 0
-
 
                         activities = False
                         for activity in section.find_all('td', class_='Activity'):
