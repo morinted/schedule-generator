@@ -140,13 +140,13 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                                 elif 'TLB' in activity_type.group(1):
                                     print("Error: activity_type is research project for {0}".format(course))
                                     break
-                                elif 'DGD' in activity_type.group(1):
-                                    one_dgd = 1
-                                elif 'LAB' in activity_type.group(1):
-                                    one_lab = 1
-                                elif 'TUT' in activity_type.group(1):
-                                    one_tut = 1
                                 else:
+                                    if 'DGD' in activity_type.group(1):
+                                        one_dgd = 1
+                                    if 'LAB' in activity_type.group(1):
+                                        one_lab = 1
+                                    if 'TUT' in activity_type.group(1):
+                                        one_tut = 1
                                     activity_type = activity_type.group(1).strip().replace('LEC', 'Lecture').replace('DGD', 'Discussion Group').replace('LAB', 'Laboratory').replace('TUT', 'Tutorial').replace('SEM', 'Seminar')
                             
                             # 1, 2, etc.
@@ -218,11 +218,13 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                             else:
                                 string = u'{0}{1},{0},{2},{3},{4},{5}'
 
-                            section_list.append(
-                                string.format(
-                                    course, section_id, semester_id, str(one_dgd), str(one_tut), str(one_lab)
-                                )
-                            )
+                            newstring = string.format(course, section_id, semester_id, str(one_dgd), str(one_tut), str(one_lab))
+                            
+                            if not any(newstring[:22] in s for s in section_list):
+                                section_list.append(newstring)
+                            else:
+                                section_list = [newstring if newstring[:22] in s else s for s in section_list]
+                                
                             sections = True
 
                 if sections:
