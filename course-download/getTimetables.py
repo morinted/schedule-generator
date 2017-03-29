@@ -106,7 +106,7 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                         print("Error: could not get semester_id for {0}".format(course))
                         break
                     else:
-                        semester_id = semester_id.group(1).replace(' Winter', '1').replace(' Fall', '9').replace(' Spring/Summer', '5')
+                        semester_id = semester_id.group(1).replace(' Winter', '1').replace(' Fall', '9').replace(' Spring/Summer', '5').replace(' Spring', '5')
 
 
                     one_dgd = 0
