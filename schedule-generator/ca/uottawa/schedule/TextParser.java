@@ -25,16 +25,10 @@ public class TextParser {
 		List<Section> lstSections = new ArrayList<Section>();
 		List<Activity> lstActivities = new ArrayList<Activity>();
 		BufferedReader brCourses;
-		BufferedReader brSections;
-		BufferedReader brActivities;
 		try {
 			brCourses = new BufferedReader(new FileReader(courses));
-			brSections = new BufferedReader(new FileReader(sections));
-			brActivities = new BufferedReader(new FileReader(activities));
 
 			String courseLine = "init";
-			String sectionLine = "init";
-			String activityLine = "init";
 
 			while ((courseLine = brCourses.readLine()) != null) {
 				String[] courseInfo = courseLine.split(",", 2);
@@ -42,116 +36,135 @@ public class TextParser {
 				Course aCourse = new Course(courseInfo[0] + " - " + courseInfo[1], courseInfo[0]);
 				lstCourses.add(aCourse);
 
-				if (sectionLine == "init") {
-					sectionLine = brSections.readLine();
-				}
+        try (BufferedReader brSections = new BufferedReader(new FileReader(sections))) {
+            String sectionLine;
+            while ((sectionLine = brSections.readLine()) != null) {
+               if (sectionLine.contains(courseInfo[0])) {
 
-				while (sectionLine.contains(courseInfo[0])) {
-					String[] sectionInfo = sectionLine.split(",");
-					Section aSection = new Section(sectionInfo[0], sectionInfo[2], Integer.parseInt(sectionInfo[3]), Integer.parseInt(sectionInfo[4]), Integer.parseInt(sectionInfo[5]), true, aCourse);
-					aCourse.addSection(aSection);
-					sectionLine = brSections.readLine();
-					if (sectionLine==null) {
-						break;
-					}
+       					String[] sectionInfo = sectionLine.split(",");
+       					Section aSection = new Section(sectionInfo[0], sectionInfo[2], Integer.parseInt(sectionInfo[3]), Integer.parseInt(sectionInfo[4]), Integer.parseInt(sectionInfo[5]), true, aCourse);
+       					aCourse.addSection(aSection);
+       					sectionLine = brSections.readLine();
+       					if (sectionLine==null) {
+       						break;
+       					}
+                
+                try (BufferedReader brActivities = new BufferedReader(new FileReader(activities))) {
+                    String activityLine;
+                    while ((activityLine = brActivities.readLine()) != null) {
+                      if (activityLine.contains(","+sectionInfo[0]+",") && activityLine.contains(sectionInfo[2])) {
+                        
 
-					if (activityLine == "init") {
-						activityLine = brActivities.readLine();
-					}
+             						String[] activityInfo = activityLine.split(",");
 
-					while (activityLine.contains(","+sectionInfo[0]+",") && activityLine.contains(sectionInfo[2])) {
-						String[] activityInfo = activityLine.split(",");
-
-						//Process new ACTIVITY:
-						String aType = new String(activityInfo[0]);
+             						//Process new ACTIVITY:
+             						String aType = new String(activityInfo[0]);
 						
-						if (aType.equals("Lecture")) {
-							aType="LEC";
-						} else if (aType.equals("Seminar")) {
-						    aType="SEM";
-						} else if (aType.startsWith("Discussion")) {
-						    aType="DGD";
-						} else if (aType.equals("Tutorial")) {
-						    aType="TUT";
-						} else if (aType.equals("Laboratory")) {
-						    aType="LAB";
-						} else if (aType.startsWith("Videoconference")) {
-						    aType="VID";
-						} else if (aType.startsWith("Work")) {
-						    aType="WRK";
-						} else if (aType.equals("Research")) {
-						    aType="RSH";
-						} else if (aType.startsWith("Theory")) {
-						    aType="THR";
-						} else if (aType.startsWith("Audioconference")) {
-						    aType="AUD";
-						} else if (aType.startsWith("Course")) {
-							if (aType.contains("Internet")) {
-								aType="WEB";
-							} else if (aType.contains("activities")) {
-								aType="WOC";
-							}
-						} else {
-							System.out.println("Unknown activity found! " + aType);
-							System.exit(0);
-						}
+             						if (aType.equals("Lecture")) {
+             							aType="LEC";
+             						} else if (aType.equals("Seminar")) {
+             						    aType="SEM";
+             						} else if (aType.startsWith("Discussion")) {
+             						    aType="DGD";
+             						} else if (aType.equals("Tutorial")) {
+             						    aType="TUT";
+             						} else if (aType.equals("Laboratory")) {
+             						    aType="LAB";
+             						} else if (aType.startsWith("Videoconference")) {
+             						    aType="VID";
+             						} else if (aType.startsWith("Work")) {
+             						    aType="WRK";
+             						} else if (aType.equals("Research")) {
+             						    aType="RSH";
+             						} else if (aType.startsWith("Theory")) {
+             						    aType="THR";
+             						} else if (aType.startsWith("Audioconference")) {
+             						    aType="AUD";
+             						} else if (aType.startsWith("Course")) {
+             							if (aType.contains("Internet")) {
+             								aType="WEB";
+             							} else if (aType.contains("activities")) {
+             								aType="WOC";
+             							}
+             						} else {
+             							System.out.println("Unknown activity found! " + aType);
+             							System.exit(0);
+             						}
 						
-						int aNum = Integer.parseInt(activityInfo[1]);
-						int dayOfWeek;
-						switch(activityInfo[4]) {
-						case "Sunday": dayOfWeek = 1;
-						break;
+             						int aNum = Integer.parseInt(activityInfo[1]);
+             						int dayOfWeek;
+             						switch(activityInfo[4]) {
+             						case "Sunday": dayOfWeek = 1;
+             						break;
 
-						case "Monday":dayOfWeek = 2;
-						break;
+             						case "Monday":dayOfWeek = 2;
+             						break;
 
-						case "Tuesday":dayOfWeek = 3;
-						break;
+             						case "Tuesday":dayOfWeek = 3;
+             						break;
 
-						case "Wednesday":dayOfWeek = 4;
-						break;
+             						case "Wednesday":dayOfWeek = 4;
+             						break;
 
-						case "Thursday":dayOfWeek = 5;
-						break;
+             						case "Thursday":dayOfWeek = 5;
+             						break;
 
-						case "Friday":dayOfWeek = 6;
-						break;
+             						case "Friday":dayOfWeek = 6;
+             						break;
 
-						case "Saturday":dayOfWeek = 7;
-						break;
-						default: dayOfWeek = 0;
-						break;
-						}
-						Date startTime, endTime;
-						SimpleDateFormat df = new SimpleDateFormat("HH:mm");
-						try {
-							startTime = df.parse(activityInfo[5]);
-							endTime = df.parse(activityInfo[6]);
-						} catch (ParseException e) {
-							startTime = new Date(0);
-							endTime = new Date(0);
-						}
+             						case "Saturday":dayOfWeek = 7;
+             						break;
+             						default: dayOfWeek = 0;
+             						break;
+             						}
+             						Date startTime, endTime;
+             						SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+             						try {
+             							startTime = df.parse(activityInfo[5]);
+             							endTime = df.parse(activityInfo[6]);
+             						} catch (ParseException e) {
+             							startTime = new Date(0);
+             							endTime = new Date(0);
+             						}
 
-						String place = activityInfo[7];
-						String prof = null;
-						if (activityInfo.length >= 9) {
-							prof = activityInfo[8];
-						} else {
-							prof = "Not available";
+             						String place = activityInfo[7];
+             						String prof = null;
+             						if (activityInfo.length >= 9) {
+             							prof = activityInfo[8];
+             						} else {
+             							prof = "Not available";
 
-						}
-						//Create activity. The activity is automatically added to the active section.
-						Activity anActivity = new Activity(aType, aNum, dayOfWeek, startTime, endTime, place, prof, true, aSection);
-						activityLine = brActivities.readLine();
-						if (activityLine==null) {
-							break;
-						}
-					}
-				}
+             						}
+             						//Create activity. The activity is automatically added to the active section.
+             						Activity anActivity = new Activity(aType, aNum, dayOfWeek, startTime, endTime, place, prof, true, aSection);
+             						activityLine = brActivities.readLine();
+             						if (activityLine==null) {
+             							break;
+             						}
+       					
+                        
+                        
+                      }
+                    }
+                
+                brActivities.close();
+                
+                }
+                
+                
+                
+                
+                
+
+               }
+            }
+        
+        brSections.close();
+        
+        }
+        
 			}
 			brCourses.close();
-			brSections.close();
-			brActivities.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
