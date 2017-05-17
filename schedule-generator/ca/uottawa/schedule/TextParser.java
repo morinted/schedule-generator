@@ -137,10 +137,6 @@ public class TextParser {
              						}
              						//Create activity. The activity is automatically added to the active section.
              						Activity anActivity = new Activity(aType, aNum, dayOfWeek, startTime, endTime, place, prof, true, aSection);
-             						activityLine = brActivities.readLine();
-             						if (activityLine==null) {
-             							break;
-             						}
        					
                         
                         
