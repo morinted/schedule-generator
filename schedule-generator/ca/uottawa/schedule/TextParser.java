@@ -44,10 +44,6 @@ public class TextParser {
        					String[] sectionInfo = sectionLine.split(",");
        					Section aSection = new Section(sectionInfo[0], sectionInfo[2], Integer.parseInt(sectionInfo[3]), Integer.parseInt(sectionInfo[4]), Integer.parseInt(sectionInfo[5]), true, aCourse);
        					aCourse.addSection(aSection);
-       					sectionLine = brSections.readLine();
-       					if (sectionLine==null) {
-       						break;
-       					}
                 
                 try (BufferedReader brActivities = new BufferedReader(new FileReader(activities))) {
                     String activityLine;
