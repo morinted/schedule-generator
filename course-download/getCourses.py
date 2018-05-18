@@ -13,6 +13,8 @@ base_url = "https://web30.uottawa.ca/v3/SITS/timetable/Search.aspx"
 
 def main(debug=False):
     # Open in Chrome
+    # Note: it may be necessary to specify the path to the chromedriver file, e.g. 
+    # browser = webdriver.Chrome("/home/david/Downloads/chromedriver")
     browser = webdriver.Chrome()
     browser.get(base_url)
 
