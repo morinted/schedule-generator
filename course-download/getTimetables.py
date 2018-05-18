@@ -112,17 +112,13 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                 # Get all semesters
                 sections = False
                 for semester in content.find('div', id='schedule').find_all('div', class_='schedule'):
-                    # Get semester integer
-                    semester_id = semester.get('id')
 
-                    # Semester integer is no longer the id of the semester div...
                     semester_id = re.search(r'Course schedule for the term:\s*([0-9]{4}\s+[A-Za-z]+)', semester.parent.get_text())
                     if semester_id is None:
                         print("Error: could not get semester_id for {0}".format(course))
                         break
                     else:
                         semester_id = semester_id.group(1).replace(' Winter', '1').replace(' Fall', '9').replace(' Spring/Summer', '5').replace(' Spring', '5')
-
 
                     one_dgd = 0
                     one_lab = 0
@@ -164,12 +160,12 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                                     activity_type = activity_type.group(1).strip().replace('LEC', 'Lecture').replace('DGD', 'Discussion Group').replace('LAB', 'Laboratory').replace('TUT', 'Tutorial').replace('SEM', 'Seminar')
                             
                             # 1, 2, etc.
-                            activity_num = re.search(r'[^ ]+ .{1}(\d+)', activity.previous_sibling.get_text())
+                            activity_num = re.search(r'[A-Z0-9]{,7} [A-Z]+(\d+)', _section_title)
                             if activity_num is None:
                                 print("Error: could not get activity_num for {0}".format(course))
                                 break
                             else:
-                                activity_num = activity_num.group(1).strip()
+                                activity_num = activity_num.group(1)
 
                             # Day
                             _day = activity.next_sibling
@@ -294,7 +290,6 @@ def main(course_file='courses.txt', clear_db=True):
                                     args=(work_queue, skipped_queue, db_queue, db_lock))
         process_list.append(p)
         p.start()
-
 
     work_queue.join()
     work_queue.close()
