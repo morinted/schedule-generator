@@ -1,5 +1,13 @@
 #!/usr/bin/env python
 
+# 
+# As of 2018-05, the uOttawa timetables site only allows
+# access using TLS 1.0 with insecure ciphers that aren't
+# supported in modern Linux distributions. This script has
+# been tested using Python 2.7.6 on Ubuntu 14.04 and may
+# require some work to run on newer systems.
+#
+
 from __future__ import print_function
 from __future__ import unicode_literals
 import argparse
@@ -37,9 +45,14 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
             while retry:
                 html = ''
                 try:
-                    context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
-                    site = urllib2.urlopen(
-                        'https://web30.uottawa.ca/v3/SITS/timetable/Course.aspx?id={0}'.format(course), context=context)
+                    #
+                    #  context is set for Python 2.7.9 and higher
+                    #context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+                    #site = urllib2.urlopen(
+                    #    'https://web30.uottawa.ca/v3/SITS/timetable/Course.aspx?id={0}'.format(course), context=context)
+                    #
+
+                    site = urllib2.urlopen('https://web30.uottawa.ca/v3/SITS/timetable/Course.aspx?id={0}'.format(course))
                     html = site.read()
                 except urllib2.HTTPError as e:
                     print('Server error: {0}.'.format(e.reason))
@@ -54,6 +67,8 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                         break
                 except urllib2.URLError as e:
                     print('Internet problem: {0}.'.format(e.reason))
+                    print('This may occur if the cipher required by the uOttawa site is not supported by your system')
+                    print('Trying to access: '+'https://web30.uottawa.ca/v3/SITS/timetable/Course.aspx?id={0}'.format(course))
                     if retry:
                         print('Waiting 5 seconds...')
                         time.sleep(5)
