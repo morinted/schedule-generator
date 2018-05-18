@@ -315,42 +315,47 @@ def main(course_file='courses.txt', clear_db=True):
                 f.write(u'{0}\n'.format(to_file).encode('utf8'))
         print()
 
-    db_courses = Queue(0)
-    db_sections = Queue(0)
-    db_activities = Queue(0)
+    courses_list = []
+    sections_list = []
+    activities_list = []
 
     while not db_queue.empty():
         course = db_queue.get()
         # course name
-        db_courses.put(course[0])
+        courses_list.append(course[0])
         # sections
         for section in course[1]:
-            db_sections.put(section)
+            sections_list.append(section)
         # activities
         for activity in course[2]:
-            db_activities.put(activity)
+            activities_list.append(activity)
 
+    db_queue.close()
+    db_queue.join_thread()
 
 
     # Print total count of all items
-    print('Courses: {0}'.format(db_courses.qsize()))
-    print('Sections: {0}'.format(db_sections.qsize()))
-    print('Activities: {0}'.format(db_activities.qsize()))
+    print('Courses: {0}'.format(len(courses_list)))
+    print('Sections: {0}'.format(len(sections_list)))
+    print('Activities: {0}'.format(len(activities_list)))
 
     # Write courses to files
     with open('db_courses.csv', 'w' if clear_db else 'a') as f:
-        while not db_courses.empty():
-            f.write(u'{0}\n'.format(db_courses.get()).encode('utf8'))
+        for course in courses_list:
+            writeline = u'{0}\n'.format(course).encode('utf8')
+            f.write(writeline)
 
     # Write sections to files
     with open('db_sections.csv', 'w' if clear_db else 'a') as f:
-        while not db_sections.empty():
-            f.write(u'{0}\n'.format(db_sections.get()).encode('utf8'))
+        for section in sections_list:
+            writeline = u'{0}\n'.format(section).encode('utf8')
+            f.write(writeline)
 
     # Write activities to files
     with open('db_activities.csv', 'w' if clear_db else 'a') as f:
-        while not db_activities.empty():
-            f.write(u'{0}\n'.format(db_activities.get()).encode('utf8'))
+        for activity in activities_list:
+            writeline = u'{0}\n'.format(activity).encode('utf8')
+            f.write(writeline)
 
 
 if __name__ == '__main__':
