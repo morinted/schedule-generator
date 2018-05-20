@@ -15,8 +15,16 @@ def main(debug=False):
     # Open in Chrome
     # Note: it may be necessary to specify the path to the chromedriver file, e.g. 
     # browser = webdriver.Chrome("/home/david/Downloads/chromedriver")
+    #
+    # On macOS, you can also use the built-in Safari webdriver. Change 'Chrome()'
+    # to 'Safari()', then enable remote automation from the Safari developer menu,
+    # and run '/usr/bin/safaridriver --enable' as an administrator in a Terminal.
+    #
     browser = webdriver.Chrome()
     browser.get(base_url)
+    
+    # May be required on slower macOS systems
+    # time.sleep(5)
 
     # Click search button
     search_button = browser.find_element_by_id('ctl00_MainContentPlaceHolder_Basic_Button')
@@ -45,6 +53,8 @@ def main(debug=False):
             codes += [''.join(t) for t in current_codes]
             if debug:
                 print(current_codes)
+            # May be required on slower macOS systems
+            # time.sleep(2)
             next_link = browser.find_element_by_xpath('/html/body/form/div[3]/div[2]/div/div[3]/div[4]/span[2]/a')
             next_link.click()
         except NoSuchElementException:
