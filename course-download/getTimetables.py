@@ -7,6 +7,10 @@
 # been tested using Python 2.7.6 on Ubuntu 14.04 and may
 # require some work to run on newer systems.
 #
+# Note that on macOS hosts, you must set the
+# OBJC_DISABLE_INITIALIZE_FORK_SAFETY environment variable
+# to 'YES'
+#
 
 from __future__ import print_function
 from __future__ import unicode_literals
@@ -295,7 +299,11 @@ def main(course_file='courses.txt', clear_db=True):
     work_queue.close()
 
     db_lock.acquire()
-    print('Done work. Got {0} courses, skipped {1}'.format(db_queue.qsize(), skipped_queue.qsize()))
+    try:
+        print('Done work. Got {0} courses, skipped {1}'.format(db_queue.qsize(), skipped_queue.qsize()))
+    # qsize is broken on macOS
+    except:
+        print('\nDone work, writing course database to files')
     db_lock.release()
 
     print()
