@@ -90,6 +90,10 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
 
                 soup = BeautifulSoup(html, "lxml")
                 content = soup.find('div', id='main-content')
+                
+                if content is None:
+                    print("Error: page is empty for {0}".format(course))
+                    break
 
                 # Get course code
                 try:
@@ -103,6 +107,9 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                 except AttributeError:
                     print("Error: could not get course code for {0}".format(oldcourse))
                     break
+                except:
+                    print("Error: could not determine course code for {0}".format(oldcourse))
+                    break
 
                 # Get course title
                 title = re.search(r'(.*)'.format(course), content.find('h1').get_text()).group(0)
@@ -113,11 +120,15 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                 if ',' in title:
                     title = u'"{0}"'.format(title)
 
-                # Get all semesters
+                # Get each section on the course's semester page
                 sections = False
-                for semester in content.find('div', id='schedule').find_all('div', class_='schedule'):
+                for section in content.find('div', id='schedule').find_all('div', class_='schedule'):
+                    
+                    if section is None:
+                        print("Error: section is empty for {0}".format(course))
+                        break
 
-                    semester_id = re.search(r'Course schedule for the term:\s*([0-9]{4}\s+[A-Za-z]+)', semester.parent.get_text())
+                    semester_id = re.search(r'Course schedule for the term:\s*([0-9]{4}\s+[A-Za-z]+)', section.parent.get_text())
                     if semester_id is None:
                         print("Error: could not get semester_id for {0}".format(course))
                         break
@@ -128,118 +139,127 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                     one_lab = 0
                     one_tut = 0
 
-                    for section in semester.find_all('table'):
-                        _section_title = section.find('td', class_='Section').contents[0]
-                        section_id = re.search(r'{0} (.{{1}})'.format(course), _section_title)
-                        if section_id is not None:
-                            section_id = section_id.group(1).strip()
-                        else:
-                            print("Error: could not get section_id for {0}".format(course))
+                    if section.find('table') is None:
+                        print("Error: no section table for {0}".format(course))
+                        break
+                    _section_title = section.find('table').find('td', class_='Section').contents[0]
+                    if _section_title is None:
+                        print("Error: section title is empty for {0}".format(course))
+                        break
+                    section_id = re.search(r'{0} (.{{1}})'.format(course), _section_title)
+                    if section_id is not None:
+                        section_id = section_id.group(1).strip()
+                    else:
+                        print("Error: could not get section_id for {0}".format(course))
+                        break
+
+                    activities = False
+                    for activity in section.find_all('td', class_='Activity'):
+                        if activity is None:
+                            print("Error: activity is empty for {0}".format(course))
                             break
-
-                        activities = False
-                        for activity in section.find_all('td', class_='Activity'):
-                            # Lecture, Lab, etc.
-                            activity_type = re.search(r'([a-zA-Z ]+)', activity.get_text())
-                            if activity_type is None:
-                                print("Error: could not get activity_type for {0}".format(course))
-                                break
-                            else:
-                                if 'STG' in activity_type.group(1):
-                                    print("Error: activity_type is internship for {0}".format(course))
-                                    break
-                                elif 'REC' in activity_type.group(1):
-                                    print("Error: activity_type is research project for {0}".format(course))
-                                    break
-                                elif 'TLB' in activity_type.group(1):
-                                    print("Error: activity_type is research project for {0}".format(course))
-                                    break
-                                else:
-                                    if 'DGD' in activity_type.group(1):
-                                        one_dgd = 1
-                                    if 'LAB' in activity_type.group(1):
-                                        one_lab = 1
-                                    if 'TUT' in activity_type.group(1):
-                                        one_tut = 1
-                                    activity_type = activity_type.group(1).strip().replace('LEC', 'Lecture').replace('DGD', 'Discussion Group').replace('LAB', 'Laboratory').replace('TUT', 'Tutorial').replace('SEM', 'Seminar')
                             
-                            # 1, 2, etc.
-                            activity_num = re.search(r'[A-Z0-9]{,7} [A-Z]+(\d+)', _section_title)
-                            if activity_num is None:
-                                print("Error: could not get activity_num for {0}".format(course))
+                        # Lecture, Lab, etc.
+                        activity_type = re.search(r'([a-zA-Z ]+)', activity.get_text())
+                        if activity_type is None:
+                            print("Error: could not get activity_type for {0}".format(course))
+                            break
+                        else:
+                            if 'STG' in activity_type.group(1):
+                                print("Error: activity_type is internship for {0}".format(course))
+                                break
+                            elif 'REC' in activity_type.group(1):
+                                print("Error: activity_type is research project for {0}".format(course))
+                                break
+                            elif 'TLB' in activity_type.group(1):
+                                print("Error: activity_type is research project for {0}".format(course))
                                 break
                             else:
-                                activity_num = activity_num.group(1)
+                                if 'DGD' in activity_type.group(1):
+                                    one_dgd = 1
+                                if 'LAB' in activity_type.group(1):
+                                    one_lab = 1
+                                if 'TUT' in activity_type.group(1):
+                                    one_tut = 1
+                                activity_type = activity_type.group(1).strip().replace('LEC', 'Lecture').replace('DGD', 'Discussion Group').replace('LAB', 'Laboratory').replace('TUT', 'Tutorial').replace('SEM', 'Seminar')
+                        
+                        # 1, 2, etc.
+                        activity_num = re.search(r'[A-Z0-9]{,7} [A-Z]+(\d+)', _section_title)
+                        if activity_num is None:
+                            print("Error: could not get activity_num for {0}".format(course))
+                            break
+                        else:
+                            activity_num = activity_num.group(1)
 
-                            # Day
-                            _day = activity.next_sibling
+                        # Day
+                        _day = activity.next_sibling
 
-                            # Sunday - Saturday
-                            activity_day = re.search(r'([a-zA-Z ]+)', _day.get_text())
-                            if activity_day is None:
-                                activity_day = u'N/A'
-                            else:
-                                activity_day = activity_day.group(1).strip()
+                        # Sunday - Saturday
+                        activity_day = re.search(r'([a-zA-Z ]+)', _day.get_text())
+                        if activity_day is None:
+                            activity_day = u'N/A'
+                        else:
+                            activity_day = activity_day.group(1).strip()
 
-                            # 8:30 - 22:00
-                            activity_time_start = re.search(r'(\d{1,2}:\d{2}) -', _day.get_text())
-                            if activity_time_start is None:
-                                activity_time_start = u'N/A'
-                            else:
-                                activity_time_start = activity_time_start.group(1).strip()
+                        # 8:30 - 22:00
+                        activity_time_start = re.search(r'(\d{1,2}:\d{2}) -', _day.get_text())
+                        if activity_time_start is None:
+                            activity_time_start = u'N/A'
+                        else:
+                            activity_time_start = activity_time_start.group(1).strip()
 
-                            activity_time_end = re.search(r'- (\d{1,2}:\d{2})', _day.get_text())
-                            if activity_time_end is None:
-                                activity_time_end = u'N/A'
-                            else:
-                                activity_time_end = activity_time_end.group(1).strip()
+                        activity_time_end = re.search(r'- (\d{1,2}:\d{2})', _day.get_text())
+                        if activity_time_end is None:
+                            activity_time_end = u'N/A'
+                        else:
+                            activity_time_end = activity_time_end.group(1).strip()
 
-                            # Place
-                            _place = _day.next_sibling
+                        # Place
+                        _place = _day.next_sibling
 
-                            # eg: SMD 224
-                            activity_place = _place.get_text().strip()
-                            if u'available' in activity_place:
-                                activity_place = u'N/A'
+                        # eg: SMD 224
+                        activity_place = _place.get_text().strip()
+                        if u'available' in activity_place:
+                            activity_place = u'N/A'
 
-                            # Professor
-                            _professor = _place.next_sibling
+                        # Professor
+                        _professor = _place.next_sibling
 
-                            # eg: John Smith
-                            activity_prof = _professor.get_text().strip()
+                        # eg: John Smith
+                        activity_prof = _professor.get_text().strip()
 
-                            if activity_prof == u'&nbsp;' or u'available' in activity_prof:
-                                activity_prof = u'N/A'
+                        if activity_prof == u'&nbsp;' or u'available' in activity_prof:
+                            activity_prof = u'N/A'
 
-                            # Add activity to list
-                            if section_id is None:
-                                string = u'{0},{1},{2},{4},{5},{6},{7},{8},{9}'
-                            else:
-                                string = u'{0},{1},{2}{3},{4},{5},{6},{7},{8},{9}'
+                        # Add activity to list
+                        if section_id is None:
+                            string = u'{0},{1},{2},{4},{5},{6},{7},{8},{9}'
+                        else:
+                            string = u'{0},{1},{2}{3},{4},{5},{6},{7},{8},{9}'
 
-                            activity_list.append(
-                                string.format(
-                                    activity_type, activity_num, course, section_id, semester_id, activity_day,
-                                    activity_time_start, activity_time_end, activity_place, activity_prof
-                                )
+                        activity_list.append(
+                            string.format(
+                                activity_type, activity_num, course, section_id, semester_id, activity_day,
+                                activity_time_start, activity_time_end, activity_place, activity_prof
                             )
-                            activities = True
+                        )
+                        activities = True
 
-                        if activities:
-                            # If there was at least one activity, add the section to the sections list.
-                            if section_id is None:
-                                string = u'{0},{0},{2},{3},{4},{5}'
-                            else:
-                                string = u'{0}{1},{0},{2},{3},{4},{5}'
+                    if activities:
+                        # If there was at least one activity, add the section to the sections list.
+                        if section_id is None:
+                            string = u'{0},{0},{2},{3},{4},{5}'
+                        else:
+                            string = u'{0}{1},{0},{2},{3},{4},{5}'
 
-                            newstring = string.format(course, section_id, semester_id, str(one_dgd), str(one_tut), str(one_lab))
+                        newstring = string.format(course, section_id, semester_id, str(one_dgd), str(one_tut), str(one_lab))
+                        
+                        if not any(newstring[:22] in s for s in section_list):
+                            section_list.append(newstring)
+                        else:
+                            section_list = [newstring if newstring[:22] in s else s for s in section_list]
                             
-                            if not any(newstring[:22] in s for s in section_list):
-                                section_list.append(newstring)
-                            else:
-                                section_list = [newstring if newstring[:22] in s else s for s in section_list]
-                                
-                            sections = True
+                        sections = True
 
                 if sections:
                     # If there was at least one section, add the course to the courses list.
@@ -336,6 +356,8 @@ def main(course_file='courses.txt', clear_db=True):
     db_queue.close()
     db_queue.join_thread()
 
+    # Remove any duplicate courses
+    courses_list = list(set(courses_list))
 
     # Print total count of all items
     print('Courses: {0}'.format(len(courses_list)))
