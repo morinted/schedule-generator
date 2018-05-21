@@ -184,7 +184,7 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                                 activity_type = activity_type.group(1).strip().replace('LEC', 'Lecture').replace('DGD', 'Discussion Group').replace('LAB', 'Laboratory').replace('TUT', 'Tutorial').replace('SEM', 'Seminar')
                         
                         # 1, 2, etc.
-                        activity_num = re.search(r'[A-Z0-9]{,7} [A-Z]+(\d+)', _section_title)
+                        activity_num = re.search(r'[A-Z0-9]{,7}\s+[A-Z]+(\d+)', activity.previous_sibling.get_text())
                         if activity_num is None:
                             print("Error: could not get activity_num for {0}".format(course))
                             break
