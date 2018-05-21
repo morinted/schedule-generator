@@ -146,7 +146,7 @@ def process_data(main_q, skipped_q, db_queue, db_lock):
                     if _section_title is None:
                         print("Error: section title is empty for {0}".format(course))
                         break
-                    section_id = re.search(r'{0} (.{{1}})'.format(course), _section_title)
+                    section_id = re.search(r'{0} ([A-Z]+)'.format(course), _section_title)
                     if section_id is not None:
                         section_id = section_id.group(1).strip()
                     else:
