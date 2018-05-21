@@ -356,8 +356,10 @@ def main(course_file='courses.txt', clear_db=True):
     db_queue.close()
     db_queue.join_thread()
 
-    # Remove any duplicate courses
+    # Remove any duplicates
     courses_list = list(set(courses_list))
+    sections_list = list(set(sections_list))
+    activities_list = list(set(activities_list))
 
     # Print total count of all items
     print('Courses: {0}'.format(len(courses_list)))
