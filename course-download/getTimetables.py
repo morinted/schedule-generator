@@ -360,6 +360,17 @@ def main(course_file='courses.txt', clear_db=True):
     courses_list = list(set(courses_list))
     sections_list = list(set(sections_list))
     activities_list = list(set(activities_list))
+    
+    # Change hh:20 to hh:30, hh:50 to (hh+1):00
+    # (Somewhat misleading compared to the real schedule times,
+    # but gives correctly-sized blocks in all clients without
+    # requiring any clients to update)
+    activities_list = [a.replace(':20,', ':30,') for a in activities_list]
+    activities_list = [a.replace('9:50,', '10:00,') for a in activities_list]
+    activities_list = [a.replace('12:50,', '13:00,') for a in activities_list]
+    activities_list = [a.replace('15:50,', '16:00,') for a in activities_list]
+    activities_list = [a.replace('18:50,', '19:00,') for a in activities_list]
+    activities_list = [a.replace('21:50,', '22:00,') for a in activities_list]
 
     # Print total count of all items
     print('Courses: {0}'.format(len(courses_list)))
