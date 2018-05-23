@@ -136,26 +136,13 @@ for course in courses:
 			activity = activity.split()
 			type = activity[0]
 
-			if type=="Lecture":
-				type="LEC"
-			elif type=="Seminar":
-				type="SEM"
-			elif type=="Discussion":
-				type="DGD"
-			elif type=="Tutorial":
-				type="TUT"
-			elif type=="Laboratory":
-				type="LAB"
-			elif type=="Videoconference":
-				type="VID"
-			elif type=="Work":
-				type="WRK"
-			elif type=="Research":
-				type="RSH"
-			elif type=="Theory":
-				type="THR"
-			elif type=="Audioconference":
-				type="AUD"
+			# Store possible types in a dictionary
+			types = {"Lecture":"LEC", "Seminar":"SEM", "Discussion":"DGD", "Tutorial":"TUT",
+					 "Laboratory":"LAB", "Videoconference":"VID", "Work":"WRK", "Research":"RSH",
+					 "Theory":"THR", "Audioconference":"AUD"}
+			
+			if type in types:
+				type=types[type]
 			elif type=="Course" and len(activity) >= 4:
 				if activity[3] == "Internet":
 					type="WEB"
@@ -165,6 +152,7 @@ for course in courses:
 					print("Unknown activity found in: " + course)
 			else:
 				print("Unknown activity found in: " + course)
+			
 			#Now we have the activity, time to get the number
 			num = activity[len(activity)-1]
 
@@ -180,23 +168,13 @@ for course in courses:
 				schedule = row.split("td class=\"Day\">", 2)[1]
 				schedule = schedule.split("<", 1)[0]
 				schedule = schedule.split()
-				day = schedule[0]
-				if day=="Monday":
-					day="M"
-				elif day=="Tuesday":
-					day="T"
-				elif day=="Wednesday":
-					day="W"
-				elif day=="Thursday":
-					day="R"
-				elif day=="Friday":
-					day="F"
-				elif day=="Saturday":
-					day="S"
-				elif day=="Sunday":
-					day="U"
-				else:
-					day="N/A"
+				
+				# Store alias for day in dict
+				days = {"Monday":"M", "Tuesday":"T", "Wednesday":"W", "Thursday":"R",
+						"Friday":"F", "Saturday":"S", "Sunday":"U"}
+				# Get the alias, make default value N/A
+				day = days.get(schedule[0], "N/A")
+				
 				if day!="N/A":
 					startTime = schedule[1]
 					#schedule[2] is a dash
