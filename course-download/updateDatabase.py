@@ -56,7 +56,8 @@ def getSubjects(b):
     return codes
     
 def convertActivityCode(code):
-    # Types from TextParser.java in ScheduleGeneratorServer
+    # Full text types from TextParser.java in ScheduleGeneratorServer,
+    # abbreviations as seen in the wild
     if "LEC" in code: return "Lecture"
     if "SEM" in code: return "Seminar"
     if "DGD" in code: return "Discussion Group"
@@ -64,8 +65,10 @@ def convertActivityCode(code):
     if "LAB" in code: return "Laboratory"
     if "VID" in code: return "Videoconference"
     if "WRK" in code: return "Work"
+    if "STG" in code: return "Work"
     if "RSH" in code: return "Research"
     if "REC" in code: return "Research"
+    if "TLB" in code: return "Research"
     if "THR" in code: return "Theory"
     if "AUD" in code: return "Audioconference"
     if "WEB" in code: return "Course Internet"
@@ -212,10 +215,13 @@ def main():
                     for activity in activitiesTables:
                         activityRow = activity.find_element_by_xpath(".//tr[@valign='center']")
                         sectionField = activityRow.find_element_by_css_selector("[id^=MTG_CLASSNAME]").text
-                        sectionNumber = sectionField[:1]
+                        sectionNumberRegex = re.search('^([A-Z]+)([0-9]+)-([A-Z][A-Z][A-Z])', sectionField)
+                        if not sectionNumberRegex : continue
+                        if not len(sectionNumberRegex.groups()) is 3 : continue
+                        sectionNumber = sectionNumberRegex.group(1)
                         sectionNumbers.append(sectionNumber)
-                        activityNumber = sectionField[1:3]
-                        activityType = sectionField[4:7]
+                        activityNumber = sectionNumberRegex.group(2)
+                        activityType = sectionNumberRegex.group(3)
                         activityTypes.append(activityType)
                         dayTimeRows = activityRow.find_element_by_css_selector("[id^=MTG_DAYTIME]").text.split('\n')
                         locationRows = activityRow.find_element_by_css_selector("[id^=MTG_ROOM]").text.split('\n')
@@ -233,6 +239,7 @@ def main():
                             timeRegex = ur"\d+:\d+"
                             times = re.findall(timeRegex, day)
                             if len(times) is not 2 : continue
+                            if times[0] == times[1] : continue # an activity with a zero duration
                             activities.append(
                                 convertActivityCode(activityType) + "," +
                                 str(activityNumber)  + "," +
@@ -258,8 +265,8 @@ def main():
                             courseCode.replace(" ", "") + "," +
                             semesterCode + "," +
                             hasDGD + "," +
-                            hasLAB + "," +
-                            hasTUT
+                            hasTUT + "," +
+                            hasLAB
                             )
 
                     
