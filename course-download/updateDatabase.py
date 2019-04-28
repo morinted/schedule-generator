@@ -88,11 +88,11 @@ def writeFiles(codes, activities, sections, complete):
             pass
     
     with open('db_courses.csv', 'wb') as f:
-        f.writelines((u'{0}\n'.format(c).encode('utf8') for c in list(set(codes)).sort())) # (remove any duplicates too)
+        f.writelines((u'{0}\n'.format(c).encode('utf8') for c in sorted( list(set(codes)) ) )) # (remove any duplicates too)
     with open('db_activities.csv', 'wb') as f:
-        f.writelines((u'{0}\n'.format(c).encode('utf8') for c in list(set(activities)).sort()))
+        f.writelines((u'{0}\n'.format(c).encode('utf8') for c in sorted( list(set(activities)) ) ))
     with open('db_sections.csv', 'wb') as f:
-        f.writelines((u'{0}\n'.format(c).encode('utf8') for c in list(set(sections)).sort()))
+        f.writelines((u'{0}\n'.format(c).encode('utf8') for c in sorted( list(set(sections)) ) ))
 
 
 # https://stackoverflow.com/a/41918201/3380815
