@@ -88,11 +88,11 @@ def writeFiles(codes, activities, sections, complete):
             pass
     
     with open('db_courses.csv', 'wb') as f:
-        f.writelines((u'{0}\n'.format(c).encode('utf8') for c in list(set(codes)))) # (remove any duplicates too)
+        f.writelines((u'{0}\n'.format(c).encode('utf8') for c in list(set(codes)).sort())) # (remove any duplicates too)
     with open('db_activities.csv', 'wb') as f:
-        f.writelines((u'{0}\n'.format(c).encode('utf8') for c in list(set(activities))))
+        f.writelines((u'{0}\n'.format(c).encode('utf8') for c in list(set(activities)).sort()))
     with open('db_sections.csv', 'wb') as f:
-        f.writelines((u'{0}\n'.format(c).encode('utf8') for c in list(set(sections))))
+        f.writelines((u'{0}\n'.format(c).encode('utf8') for c in list(set(sections)).sort()))
 
 
 # https://stackoverflow.com/a/41918201/3380815
@@ -194,9 +194,8 @@ def main():
                         continue
                 except:
                     if args.verbose: print("No error message, continuing")
-                # If there are results, iterate through each listed course until none are left
                 i = 0
-                while True:
+                while True:  # If there are results, iterate through each listed course until none are left
                     try:
                         courseCodeAndNameAnchor = b.find_element_by_id("win0divSSR_CLSRSLT_WRK_GROUPBOX2GP$"+str(i))
                     except:
@@ -212,6 +211,9 @@ def main():
                     
                     courseTable = courseCodeAndNameAnchor.find_element_by_xpath('../../../..')
                     activitiesTables = courseTable.find_elements_by_class_name('PSLEVEL1GRIDNBONBO')
+                    
+                    if args.verbose: print(courseCode, courseName)
+                    
                     for activity in activitiesTables:
                         activityRow = activity.find_element_by_xpath(".//tr[@valign='center']")
                         sectionField = activityRow.find_element_by_css_selector("[id^=MTG_CLASSNAME]").text
@@ -222,7 +224,6 @@ def main():
                         sectionNumbers.append(sectionNumber)
                         activityNumber = sectionNumberRegex.group(2)
                         activityType = sectionNumberRegex.group(3)
-                        activityTypes.append(activityType)
                         dayTimeRows = activityRow.find_element_by_css_selector("[id^=MTG_DAYTIME]").text.split('\n')
                         locationRows = activityRow.find_element_by_css_selector("[id^=MTG_ROOM]").text.split('\n')
                         professorRows = activityRow.find_element_by_css_selector("[id^=MTG_INSTR]").text.split('\n')
@@ -240,6 +241,9 @@ def main():
                             times = re.findall(timeRegex, day)
                             if len(times) is not 2 : continue
                             if times[0] == times[1] : continue # an activity with a zero duration
+                            activityTypes.append(activityType)
+                            
+                            if args.verbose: print("  ", sectionNumber, activityType, str(activityNumber), fullDay, times[0], times[1])
                             activities.append(
                                 convertActivityCode(activityType) + "," +
                                 str(activityNumber)  + "," +
@@ -253,6 +257,10 @@ def main():
                                 )
                             j += 1
                     
+                    if len(activityTypes) == 0 : # if no activities, don't add the course
+                        if args.verbose: print("  ", "Skipping, no activities")
+                        i+=1
+                        continue
                     hasDGD = "0"
                     hasLAB = "0"
                     hasTUT = "0"
@@ -269,8 +277,6 @@ def main():
                             hasLAB
                             )
 
-                    
-                    if args.verbose: print(courseCode, courseName, sectionNumber, activityNumber, activityType)
                     # Append to CSV-destined lists
                     codes.append(courseCode.replace(" ", "")+","+courseName.replace(",", ""))
                     i+=1
