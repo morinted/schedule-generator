@@ -698,7 +698,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		} else if (sender.equals(btnCourseSequences)) {
 			 if (Desktop.isDesktopSupported()) {
 			      try {
-			        Desktop.getDesktop().browse(new URI("http://www.course-sequence.uottawa.ca"));
+			        Desktop.getDesktop().browse(new URI("https://www.uottawa.ca/course-enrolment/course-sequences"));
 			      } catch (IOException | URISyntaxException ex) { 
 			    	  ex.printStackTrace();
 			    	  /* TODO: error handling */ }
