@@ -87,6 +87,17 @@ def writeFiles(codes, activities, sections, complete):
         except:
             pass
     
+    # Change hh:20 to hh:30, hh:50 to (hh+1):00
+    # (Somewhat misleading compared to the real schedule times,
+    # but gives correctly-sized blocks in all clients without
+    # requiring any clients to update)
+    activities = [a.replace(':20,', ':30,') for a in activities]
+    activities = [a.replace('09:50,', '10:00,') for a in activities]
+    activities = [a.replace('12:50,', '13:00,') for a in activities]
+    activities = [a.replace('15:50,', '16:00,') for a in activities]
+    activities = [a.replace('18:50,', '19:00,') for a in activities]
+    activities = [a.replace('21:50,', '22:00,') for a in activities]
+    
     with open('db_courses.csv', 'wb') as f:
         f.writelines((u'{0}\n'.format(c).encode('utf8') for c in sorted( list(set(codes)) ) )) # (remove any duplicates too)
     with open('db_activities.csv', 'wb') as f:
