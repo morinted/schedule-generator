@@ -76,7 +76,9 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	BufferedImage biSchedule;
 	JLabel lblDisplay; //to hold the BI
 	Color bg = Color.WHITE; //default background color.
-	RenderingHints renderingHints; 
+	RenderingHints renderingHints = new RenderingHints(
+            RenderingHints.KEY_TEXT_ANTIALIASING,
+            RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 	Font fntMain;
 	Font fntActivity;
 	Color labColor;
@@ -89,7 +91,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		JFrame frame = new JFrame(title);
 		paneContent = frame.getContentPane();
 		//frame.setSize(new Dimension(WIDTH, HEIGHT));
-		k = 0; //We start by chosing 0 of 0 optional courses
+		k = 0; //We start by choosing 0 of 0 optional courses
 		n = 0;
 		createComponents();
 		addListeners();
@@ -525,6 +527,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 	public void clear() {
 		//Clears the canvas
 		Graphics2D g = biSchedule.createGraphics();
+		g.setRenderingHints(renderingHints);
 		g.setFont(fntMain);
 		g.setBackground(new Color(255,255,255,0));
 		g.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -956,6 +959,7 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 		//Draws the current schedule!
 		Schedule toDraw = currSchedules.get(currSchedule-1);
 		Graphics2D g = biSchedule.createGraphics();
+		g.setRenderingHints(renderingHints);
 		g.setFont(fntActivity);
 		
 		for (CourseSelection cs : toDraw.getCourseSelections()) {
