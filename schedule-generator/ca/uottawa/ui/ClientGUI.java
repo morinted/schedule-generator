@@ -984,8 +984,6 @@ public class ClientGUI implements ClientIF, ActionListener, DocumentListener, It
 				String actType = a.getType();
 				String strAct = actType + " " + a.getNumber();
 				String strLoc = a.getPlace();
-
-				strLoc = strLoc.replaceAll("^[^(]+\\(", "(").replaceAll("[()]", "");
 				
 				//We should find out what color this activity will be drawn in.
 				switch (actType) {

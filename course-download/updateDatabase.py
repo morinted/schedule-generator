@@ -254,6 +254,9 @@ def main():
                             if times[0] == times[1] : continue # an activity with a zero duration
                             activityTypes.append(activityType)
                             
+                            locationRows[j] = re.sub("^[^(]+\\(", "(", locationRows[j])
+                            locationRows[j] = re.sub("[()]", "", locationRows[j])
+                            
                             if args.verbose: print("  ", sectionNumber, activityType, str(activityNumber), fullDay, times[0], times[1])
                             activities.append(
                                 convertActivityCode(activityType) + "," +
