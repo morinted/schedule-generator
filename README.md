@@ -1,18 +1,23 @@
 # uOttawa Schedule Generator
 
-A schedule generator for the University of Ottawa written in Java, using OCSF. It is a tool to help register for courses, as the University-supplied program, "Rabaska", does a terribly poor job at helping students find conflict-free schedules.
+A schedule generator for the University of Ottawa written in Java, using OCSF. It is a tool to help register for courses, as the University-supplied program, uOCampus, does a terribly poor job at helping students find optimized, conflict-free schedules. The schedule generator finds all possible combinations of sections for the chosen courses, and sorts them based on criteria like "Earliest Start", "Shortest Days", etc.
 
 ## Introduction
 
-This project was created by Ted Morin & Daniel Murdoch as assignment 5 & 7 for the course SEG2105A at the University of Ottawa. The program is now maintained by David Schlachter.
+This project was created by Ted Morin & Daniel Murdoch as assignment 5 & 7 for the course SEG2105A at the University of Ottawa in 2013. The program is now maintained by David Schlachter.
 We created this program based on one simple problem line:
 University of Ottawa students have no easy way to generate a conflict-free, optimized schedule.
 
-Now that that class is done, we are continuing development on the project, as it is a useful utility when working with uOttawa's Rabaska course-registration system.
+## Screenshot
 
-## [Download](https://github.com/morinted/schedule-generator/releases/download/v1.1.1/uOttawa-Schedule-Generator-v1.1.1.jar)
+### The main UI, with a sample schedule already generated:
 
-If you just want to get started generating schedules right away, then [download the program for Windows, Mac, and Linux](https://github.com/morinted/schedule-generator/releases/download/v1.1.1/uOttawa-Schedule-Generator-v1.1.1.jar). Note that you need Java to run the .jar file. Check out the user's guide below if you get confused while using the program.
+![The main UI, with a sample schedule already generated.](https://github.com/morinted/schedule-generator/raw/master/Documentation/Screenshots/mainui.png)
+
+
+## [Download](https://github.com/morinted/schedule-generator/releases/download/v1.2/uOttawa-Schedule-Generator-v1.2.jar)
+
+If you just want to get started generating schedules right away, then [download the program for Windows, Mac, and Linux](https://github.com/morinted/schedule-generator/releases/download/v1.2/uOttawa-Schedule-Generator-v1.2.jar). Note that you need Java to run the .jar file. Check out the user's guide below if you get confused while using the program.
 
 ## Features
 
@@ -38,11 +43,11 @@ These are problems that exist or features that are to be implemented. Consider t
 
 ### Getting Started
 
-1. To start, it is recommended to download the program's front-end. This can be found in the releases section under the name [uOttawa-Schedule-Generator-v1.1.1.jar](https://github.com/morinted/schedule-generator/releases/download/v1.1.1/uOttawa-Schedule-Generator-v1.1.1.jar).
+1. To start, it is recommended to download the program's front-end. This can be found in the releases section under the name [uOttawa-Schedule-Generator-v1.2.jar](https://github.com/morinted/schedule-generator/releases/download/v1.2/uOttawa-Schedule-Generator-v1.2.jar).
 
 2. Run the .jar.
 
-	Simply double-click the .jar file to run. If you don't have Java installed, you can get it from [Sun's website](http://java.com/en/download/index.jsp) or by running [Ninite](http://ninite.com) (my preferred choice, as there is no chance of the silly "Ask Toolbar"). Note that on macOS you may need to open the program by right-clicking it and selecting Open, depending on your Gatekeeper settings.
+	Simply double-click the .jar file to run. If you don't have Java installed, you can get it from [Sun's website](http://java.com/en/download/index.jsp). Note that on macOS you may need to open the program by right-clicking it and selecting Open, depending on your Gatekeeper settings.
 
 3. Wait for the server to connect, then select a semester from the drop down.
 
@@ -56,11 +61,11 @@ These are problems that exist or features that are to be implemented. Consider t
 
 7. After selecting your courses, you may choose to omit certain sections or activities (like DGDs) based on their location, professor, or if they're full. To do this, double-click your course or click the course and select "Edit". You can use the check-boxes in the pop-up window to change your selection.
 
-8. Select a sort order: Earliest start, shortest days, least days per week, whatever. You choose what matters most to you. By default, all other sort orders have a secondary sort of least days per week. Meaning that if two schedules have the same average starting time, the one with the least days will be favored.
+8. Select a sort order: Earliest start, shortest days, least days per week, whatever. You choose what matters most to you. By default, all other sort orders have a secondary sort of least days per week. Meaning that if two schedules have the same average starting time, the one with the least days will be favoured.
 
 9. Click generate! You will receive the schedules on the calendar, which you can browse through.
 
-10. You can view the text-formatted schedule (for easy entry into Rabaska) or export an .ICS file (for import into Google Calendar)
+10. You can view the text-formatted schedule (for easy entry into uOCampus) or export an .ICS file (for import into Google Calendar)
 
 ### Google Calendar Import
 
@@ -104,35 +109,18 @@ Port lets you specify the port to connect on, the default, if omitted, is 5555.
 
 ### Updating Course Database
 
-The timetables are stored in a .CSV, and follow a specific format. Given a list of course codes, the script should download the timetables off the [uOttawa website](http://www.timetable.uottawa.ca). The output .CSV is appropriately formatted to be read by the schedule generator server.
+The timetables are stored in a CSV file, and follow a specific format. The `updateDatabase.py` script should download the timetables off the [uOttawa website](http://www.timetable.uottawa.ca). The output CSV is appropriately formatted to be read by the schedule generator server.
 
-Originally, the script was a macro-enabled Excel spreadsheet using VBA to download the pages, but it was slow and the error messages were vague and difficult to pinpoint. Sometimes the script would freeze, too, with no indication of what was happening.
+Originally, the script was a macro-enabled Excel spreadsheet using VBA to download the pages, but it was slow and the error messages were vague and difficult to pinpoint. Sometimes the script would freeze, too, with no indication of what was happening. The next iteration used a set of Python scripts, one that got all the course names using Selenium webdriver, and the other that updated all the timetables based on those courses. Currently a single Python script uses webdriver to get all the data.
 
-Now we use a set of Python scripts. One gets all the course names using Selenium webdriver, and the other updates all the timetables based on those courses.
+In order to run these scripts, make sure to have Selenium and Chrome/Chromium installed.
 
-In order to run these scripts, make sure to have Selenium and Chromium installed.
+To update timetables, use: `python updateDatabase.py`
 
-To update courses, use: `py .\getCourses.py`
-
-After the script finishes (watch the console output), run the timetable script.
-
-To update timetables, use: `py .\getTimetables.py`
-
-Depending on your connection, these scripts take ~10-20 minutes combined to run for the full ~4000 courses. In contrast, the Excel script took roughly 3 hours.
+Depending on your connection, the script takes about 1 - 2 hours to run for the full ~4000 courses.
 
 **Remember to use Python 2.7+ and not 3.**
 
-(Tip: On a headless server, you can use `xvfb` to run Chromium without a graphical session, e.g. `xvfb-run ./getCourses.py`)
-
-## Screenshots
-
-### The main UI, with a sample schedule already generated:
-
-![The main UI, with a sample schedule already generated.](https://github.com/morinted/schedule-generator/raw/master/Documentation/Screenshots/mainui.png)
-
-### The schedule above after being exported to an .ICS and imported into Google Calendar:
-
-![The schedule above after being exported to an .ICS and imported into Google Calendar.](https://github.com/morinted/schedule-generator/raw/master/Documentation/Screenshots/googlecalendar.png)
 
 ## Dependencies
 
