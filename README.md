@@ -33,11 +33,6 @@ Some features currently present:
 - Sorting by various attributes, including start time, days off, and length of day.
 - Can ignore discussion groups and tutorials when sorting (eg. A day with only a discussion group would be considered a day off)
 
-### Future Plans
-
-These are problems that exist or features that are to be implemented. Consider this a bug list:
-
-- GUI: When connecting to server, the message box can get caught behind the main window.
 
 ## User's Guide
 
