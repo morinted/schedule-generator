@@ -48,7 +48,7 @@ def getSubjects(b):
         sleep(1)
         b.find_element_by_id('SSR_CLSRCH_WRK2_SSR_ALPHANUM_' + index).click()
         html = b.page_source
-        current_codes = re.findall('<span class="PSEDITBOX_DISPONLY" id="SSR_CLSRCH_SUBJ_SUBJECT\$\d">([A-Z][A-Z][A-Z])</span>', html)
+        current_codes = re.findall('<span class="PSEDITBOX_DISPONLY" id="SSR_CLSRCH_SUBJ_SUBJECT\$\d+">([A-Z][A-Z][A-Z])</span>', html)
         #print(current_codes)
         codes += [''.join(t) for t in current_codes]
     
