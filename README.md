@@ -2,11 +2,9 @@
 
 A schedule generator for the University of Ottawa written in Java, using OCSF. It is a tool to help register for courses, as the University-supplied program, uOCampus, does a terribly poor job at helping students find optimized, conflict-free schedules. The schedule generator finds all possible combinations of sections for the chosen courses, and sorts them based on criteria like "Earliest Start", "Shortest Days", etc.
 
-## Introduction
+## [Download](https://github.com/morinted/schedule-generator/releases/download/v1.2/uOttawa-Schedule-Generator-v1.2.jar)
 
-This project was created by Ted Morin & Daniel Murdoch as assignment 5 & 7 for the course SEG2105A at the University of Ottawa in 2013. The program is now maintained by David Schlachter.
-We created this program based on one simple problem line:
-University of Ottawa students have no easy way to generate a conflict-free, optimized schedule.
+If you just want to get started generating schedules right away, then [download the program for Windows, Mac, and Linux](https://github.com/morinted/schedule-generator/releases/download/v1.2/uOttawa-Schedule-Generator-v1.2.jar). Note that you [need Java](https://www.java.com/download/) to run the .jar file.
 
 ## Screenshot
 
@@ -14,10 +12,11 @@ University of Ottawa students have no easy way to generate a conflict-free, opti
 
 ![The main UI, with a sample schedule already generated.](https://github.com/morinted/schedule-generator/raw/master/Documentation/Screenshots/mainui.png)
 
+## Introduction
 
-## [Download](https://github.com/morinted/schedule-generator/releases/download/v1.2/uOttawa-Schedule-Generator-v1.2.jar)
-
-If you just want to get started generating schedules right away, then [download the program for Windows, Mac, and Linux](https://github.com/morinted/schedule-generator/releases/download/v1.2/uOttawa-Schedule-Generator-v1.2.jar). Note that you need Java to run the .jar file. Check out the user's guide below if you get confused while using the program.
+This project was created by Ted Morin & Daniel Murdoch as assignment 5 & 7 for the course SEG2105A at the University of Ottawa in 2013. The program is now maintained by David Schlachter.
+We created this program based on one simple problem line:
+University of Ottawa students have no easy way to generate a conflict-free, optimized schedule.
 
 ## Features
 
