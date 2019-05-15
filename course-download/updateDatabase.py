@@ -58,21 +58,21 @@ def getSubjects(b):
 def convertActivityCode(code):
     # Full text types from TextParser.java in ScheduleGeneratorServer,
     # abbreviations as seen in the wild
-    if "LEC" in code: return "Lecture"
-    if "SEM" in code: return "Seminar"
-    if "DGD" in code: return "Discussion Group"
-    if "TUT" in code: return "Tutorial"
-    if "LAB" in code: return "Laboratory"
-    if "VID" in code: return "Videoconference"
-    if "WRK" in code: return "Work"
-    if "STG" in code: return "Work"
-    if "RSH" in code: return "Research"
-    if "REC" in code: return "Research"
-    if "TLB" in code: return "Research"
-    if "THR" in code: return "Theory"
-    if "AUD" in code: return "Audioconference"
-    if "WEB" in code: return "Course Internet"
-    if "WOC" in code: return "Course activities"
+    if "LEC" in code: return u"Lecture"
+    if "SEM" in code: return u"Seminar"
+    if "DGD" in code: return u"Discussion Group"
+    if "TUT" in code: return u"Tutorial"
+    if "LAB" in code: return u"Laboratory"
+    if "VID" in code: return u"Videoconference"
+    if "WRK" in code: return u"Work"
+    if "STG" in code: return u"Work"
+    if "RSH" in code: return u"Research"
+    if "REC" in code: return u"Research"
+    if "TLB" in code: return u"Research"
+    if "THR" in code: return u"Theory"
+    if "AUD" in code: return u"Audioconference"
+    if "WEB" in code: return u"Course Internet"
+    if "WOC" in code: return u"Course activities"
 
     return code
 
@@ -220,6 +220,9 @@ def main():
                     sectionNumbers = []
                     activityTypes = []
                     
+                    sectionTemp  = []
+                    activityTemp = []
+                    
                     courseTable = courseCodeAndNameAnchor.find_element_by_xpath('../../../..')
                     activitiesTables = courseTable.find_elements_by_class_name('PSLEVEL1GRIDNBONBO')
                     
@@ -241,13 +244,13 @@ def main():
                         if len(dayTimeRows) != len(locationRows) != len(professorRows) : continue
                         j = 0
                         for day in dayTimeRows:
-                            if "Mo " in day : fullDay = "Monday"
-                            if "Tu " in day : fullDay = "Tuesday"
-                            if "We " in day : fullDay = "Wednesday"
-                            if "Th " in day : fullDay = "Thursday"
-                            if "Fr " in day : fullDay = "Friday"
-                            if "Sa " in day : fullDay = "Saturday"
-                            if "Su " in day : fullDay = "Sunday"
+                            if "Mo " in day : fullDay = u"Monday"
+                            if "Tu " in day : fullDay = u"Tuesday"
+                            if "We " in day : fullDay = u"Wednesday"
+                            if "Th " in day : fullDay = u"Thursday"
+                            if "Fr " in day : fullDay = u"Friday"
+                            if "Sa " in day : fullDay = u"Saturday"
+                            if "Su " in day : fullDay = u"Sunday"
                             timeRegex = ur"\d+:\d+"
                             times = re.findall(timeRegex, day)
                             if len(times) is not 2 : continue
@@ -258,17 +261,17 @@ def main():
                             locationRows[j] = re.sub("[()]", "", locationRows[j])
                             
                             if args.verbose: print("  ", sectionNumber, activityType, str(activityNumber), fullDay, times[0], times[1])
-                            activities.append(
-                                convertActivityCode(activityType) + "," +
-                                str(activityNumber)  + "," +
-                                courseCode.replace(" ", "") + sectionNumber + "," +
-                                semesterCode + "," +
-                                fullDay + "," +
-                                times[0] + "," +
-                                times[1] + "," +
-                                locationRows[j].replace(",", "") + "," +
+                            activityTemp.append([
+                                convertActivityCode(activityType),
+                                unicode(str(activityNumber), "utf-8"),
+                                courseCode.replace(" ", "") + sectionNumber,
+                                semesterCode,
+                                fullDay,
+                                times[0],
+                                times[1],
+                                locationRows[j].replace(",", ""),
                                 professorRows[j].replace(",", "")
-                                )
+                                ])
                             j += 1
                     
                     if len(activityTypes) == 0 : # if no activities, don't add the course
@@ -282,15 +285,44 @@ def main():
                     if "LAB" in activityTypes : hasLAB = "1"
                     if "TUT" in activityTypes : hasTUT = "1"
                     for sectionNumber in list(set(sectionNumbers)):
-                        sections.append(
-                            courseCode.replace(" ", "") + sectionNumber + "," +
-                            courseCode.replace(" ", "") + "," +
-                            semesterCode + "," +
-                            hasDGD + "," +
-                            hasTUT + "," +
+                        sectionTemp.append([
+                            courseCode.replace(" ", "") + sectionNumber,
+                            courseCode.replace(" ", ""),
+                            semesterCode,
+                            hasDGD,
+                            hasTUT,
                             hasLAB
-                            )
+                            ])
+                        
+                    # Fix for courses where not all sections have the same activity types, particularly labs.
+                    # Anything in a 'Z' section should be present in all other sections
+                    corrected = False
+                    zactivities = []
+                    activityTempTemp = []
+                    for activity in activityTemp:
+                        if activity[2].endswith('Z'):
+                            zactivities.append(list(activity))
+                        else:
+                            activityTempTemp.append(list(activity))
+                    activityTemp = list(activityTempTemp)
+                    for zactivity in zactivities:
+                        for section in sectionTemp:
+                            if not section[0].endswith('Z'):
+                                zactivity[2] = section[0]
+                                activityTemp.append(list(zactivity))
+                                corrected = True
+                    if corrected: # remove now-orphaned Z-section
+                        sectionTempTemp = []
+                        for section in sectionTemp:
+                            if not section[0].endswith('Z'):
+                                sectionTempTemp.append(list(section))
+                        sectionTemp = list(sectionTempTemp)               
 
+                    # Append to the general lists
+                    for a in activityTemp:
+                        activities.append(a[0] + "," + a[1] + "," + a[2] + "," + a[3] + "," + a[4] + "," + a[5] + "," + a[6] + "," + a[7] + "," + a[8])
+                    for s in sectionTemp:
+                        sections.append(s[0] + "," + s[1] + "," + s[2] + "," + s[3] + "," + s[4] + "," + s[5])
                     # Append to CSV-destined lists
                     codes.append(courseCode.replace(" ", "")+","+courseName.replace(",", ""))
                     i+=1
