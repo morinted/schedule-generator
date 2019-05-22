@@ -1,7 +1,10 @@
 *.pyc
-skippedCourses.txt
-courses.txt
+# Course database files
 db_courses.csv
 db_sections.csv
 courseCodes.csv
 db_activities.csv
+# Eclipse project files
+bin/
+.project
+.classpath
