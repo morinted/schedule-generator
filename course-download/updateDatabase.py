@@ -143,7 +143,9 @@ def main():
     if args.verbose: print(subjects)
     
     # List of 'year of study' checkbox ids
-    yearsOfStudy = ['UO_PUB_SRCH_WRK_SSR_RPTCK_OPT_01$0', 'UO_PUB_SRCH_WRK_SSR_RPTCK_OPT_02$0', 'UO_PUB_SRCH_WRK_SSR_RPTCK_OPT_03$0', 'UO_PUB_SRCH_WRK_SSR_RPTCK_OPT_04$0', 'UO_PUB_SRCH_WRK_GRADUATED_TBL_CD$0']
+    yearsOfStudy = [u'UO_PUB_SRCH_WRK_SSR_RPTCK_OPT_01$0', u'UO_PUB_SRCH_WRK_SSR_RPTCK_OPT_02$0', u'UO_PUB_SRCH_WRK_SSR_RPTCK_OPT_03$0', u'UO_PUB_SRCH_WRK_SSR_RPTCK_OPT_04$0', u'UO_PUB_SRCH_WRK_GRADUATED_TBL_CD$0']
+    # checkbox ids for languages (en, fr, bilingual, other)
+    languages = [u'UO_PUB_SRCH_WRK_UO_LNG_FR$0', u'UO_PUB_SRCH_WRK_UO_LNG_EN$0', u'UO_PUB_SRCH_WRK_UO_LNG_OT$0', u'UO_PUB_SRCH_WRK_UO_LNG_BI$0']
     
     # Lists for the CSV files
     codes = []
@@ -159,174 +161,180 @@ def main():
         semesterCode = semester[:4] + semesterAddOn
         for subject in subjects:
             for year in yearsOfStudy:
-                if args.verbose: print("Finding courses and sections for: "+semester+", "+subject+", year "+year[31:32])
-                timeoutCounter = 0
-                while True:
+                for language in languages:
+                    if args.verbose: print("Finding courses and sections for: "+semester+", "+subject+", year "+year[31:32]+", language "+language[23:25])
+                    timeoutCounter = 0
+                    while True:
+                        try:
+                            b.get(base_url)
+                            break
+                        except TimeoutException as e:
+                            print("Timeout: couldn't load main search URL. This is attempt number "+str(timeoutCounter)+".")
+                            if timeoutCounter > 10 :
+                                print("Timeout: couldn't load base_url after four retries")
+                                writeFiles(codes, activities, sections, False)
+                                exit(1)
+                            timeoutCounter += 1
+                            continue
                     try:
-                        b.get(base_url)
-                        break
+                        WebDriverWait(b, 10).until(EC.presence_of_element_located((By.ID, "CLASS_SRCH_WRK2_SSR_PB_CLASS_SRCH")))
                     except TimeoutException as e:
-                        print("Timeout: couldn't load main search URL. This is attempt number "+str(timeoutCounter)+".")
-                        if timeoutCounter > 10 :
-                            print("Timeout: couldn't load base_url after four retries")
-                            writeFiles(codes, activities, sections, False)
-                            exit(1)
-                        timeoutCounter += 1
+                        print("Timeout: couldn't find the search button")
                         continue
-                try:
-                    WebDriverWait(b, 10).until(EC.presence_of_element_located((By.ID, "CLASS_SRCH_WRK2_SSR_PB_CLASS_SRCH")))
-                except TimeoutException as e:
-                    print("Timeout: couldn't find the search button")
-                    continue
-                Select(b.find_element_by_xpath("//select[@id='"+semesterSelectId+"']")).select_by_visible_text(semester)
-                sleep(0.2)
-                b.find_element_by_id('SSR_CLSRCH_WRK_SUBJECT$0').send_keys(subject)
-                sleep(0.2)
-                b.find_element_by_id(year).click()
-                try: # sometimes the submit button doesn't work the first time, just try twice by default
+                    Select(b.find_element_by_xpath("//select[@id='"+semesterSelectId+"']")).select_by_visible_text(semester)
                     sleep(0.2)
-                    b.find_element_by_id('CLASS_SRCH_WRK2_SSR_PB_CLASS_SRCH').click()
+                    b.find_element_by_id('SSR_CLSRCH_WRK_SUBJECT$0').send_keys(subject)
                     sleep(0.2)
-                    b.find_element_by_id('CLASS_SRCH_WRK2_SSR_PB_CLASS_SRCH').click()
-                except:
-                    pass
-                sleep(0.2)
-                try:  # Wait up to 20 seconds for either results or an error
-                    cond = lambda args: any_element_in_parent(*args)
-                    WebDriverWait((b, "#DERIVED_CLSMSG_ERROR_TEXT", "#win0divSSR_CLSRSLT_WRK_GROUPBOX1"), 20).until(cond)
-                except TimeoutException as e:
-                        print("Timeout: no results returned for course search")
-                        continue
-                # If there are no results, go the the next iteration
-                try:
-                    errorMessage = b.find_element_by_id('DERIVED_CLSMSG_ERROR_TEXT').text
-                    if "No classes found" in errorMessage:
-                        if args.verbose: print("No classes found")
-                        continue
-                except:
-                    if args.verbose: print("No error message, continuing")
-                i = 0
-                while True:  # If there are results, iterate through each listed course until none are left
-                    try:
-                        courseCodeAndNameAnchor = b.find_element_by_id("win0divSSR_CLSRSLT_WRK_GROUPBOX2GP$"+str(i))
+                    b.find_element_by_id(year).click()
+                    sleep(0.2)
+                    b.find_element_by_id(language).click()
+                    try: # sometimes the submit button doesn't work the first time, just try twice by default
+                        sleep(0.2)
+                        b.find_element_by_id('CLASS_SRCH_WRK2_SSR_PB_CLASS_SRCH').click()
+                        sleep(0.2)
+                        b.find_element_by_id('CLASS_SRCH_WRK2_SSR_PB_CLASS_SRCH').click()
                     except:
-                        if args.verbose: print("Done with this page")
-                        break
-                    courseCodeAndName = courseCodeAndNameAnchor.text.strip().split(' - ')
-                    courseCode = courseCodeAndName[0]
-                    courseCodeAndName.pop(0)
-                    courseName = "".join(courseCodeAndName)
+                        pass
+                    sleep(0.2)
+                    try:  # Wait up to 20 seconds for either results or an error
+                        cond = lambda args: any_element_in_parent(*args)
+                        WebDriverWait((b, "#DERIVED_CLSMSG_ERROR_TEXT", "#win0divSSR_CLSRSLT_WRK_GROUPBOX1"), 20).until(cond)
+                    except TimeoutException as e:
+                            print("Timeout: no results returned for course search")
+                            continue
+                    # If there are no results, go the the next iteration
+                    try:
+                        errorMessage = b.find_element_by_id('DERIVED_CLSMSG_ERROR_TEXT').text
+                        if "No classes found" in errorMessage:
+                            if args.verbose: print("No classes found")
+                            continue
+                        elif "will exceed the maximum limit" in errorMessage:
+                            print("ERROR: Exceeded max results for "+semester+", "+subject+", year "+year[31:32]+". No results returned!")
+                            continue
+                    except:
+                        if args.verbose: print("No error message, continuing")
+                    i = 0
+                    while True:  # If there are results, iterate through each listed course until none are left
+                        try:
+                            courseCodeAndNameAnchor = b.find_element_by_id("win0divSSR_CLSRSLT_WRK_GROUPBOX2GP$"+str(i))
+                        except:
+                            if args.verbose: print("Done with this page")
+                            break
+                        courseCodeAndName = courseCodeAndNameAnchor.text.strip().split(' - ')
+                        courseCode = courseCodeAndName[0]
+                        courseCodeAndName.pop(0)
+                        courseName = "".join(courseCodeAndName)
                     
-                    sectionNumbers = []
-                    activityTypes = []
+                        sectionNumbers = []
+                        activityTypes = []
                     
-                    sectionTemp  = []
-                    activityTemp = []
+                        sectionTemp  = []
+                        activityTemp = []
                     
-                    courseTable = courseCodeAndNameAnchor.find_element_by_xpath('../../../..')
-                    activitiesTables = courseTable.find_elements_by_class_name('PSLEVEL1GRIDNBONBO')
+                        courseTable = courseCodeAndNameAnchor.find_element_by_xpath('../../../..')
+                        activitiesTables = courseTable.find_elements_by_class_name('PSLEVEL1GRIDNBONBO')
                     
-                    if args.verbose: print(courseCode, courseName)
+                        if args.verbose: print(courseCode, courseName)
                     
-                    for activity in activitiesTables:
-                        activityRow = activity.find_element_by_xpath(".//tr[@valign='center']")
-                        sectionField = activityRow.find_element_by_css_selector("[id^=MTG_CLASSNAME]").text
-                        sectionNumberRegex = re.search('^([A-Z]+)([0-9]+)-([A-Z][A-Z][A-Z])', sectionField)
-                        if not sectionNumberRegex : continue
-                        if not len(sectionNumberRegex.groups()) is 3 : continue
-                        sectionNumber = sectionNumberRegex.group(1)
-                        sectionNumbers.append(sectionNumber)
-                        activityNumber = sectionNumberRegex.group(2)
-                        activityType = sectionNumberRegex.group(3)
-                        dayTimeRows = activityRow.find_element_by_css_selector("[id^=MTG_DAYTIME]").text.split('\n')
-                        locationRows = activityRow.find_element_by_css_selector("[id^=MTG_ROOM]").text.split('\n')
-                        professorRows = activityRow.find_element_by_css_selector("[id^=MTG_INSTR]").text.split('\n')
-                        if len(dayTimeRows) != len(locationRows) != len(professorRows) : continue
-                        j = 0
-                        for day in dayTimeRows:
-                            if "Mo " in day : fullDay = u"Monday"
-                            if "Tu " in day : fullDay = u"Tuesday"
-                            if "We " in day : fullDay = u"Wednesday"
-                            if "Th " in day : fullDay = u"Thursday"
-                            if "Fr " in day : fullDay = u"Friday"
-                            if "Sa " in day : fullDay = u"Saturday"
-                            if "Su " in day : fullDay = u"Sunday"
-                            timeRegex = ur"\d+:\d+"
-                            times = re.findall(timeRegex, day)
-                            if len(times) is not 2 : continue
-                            if times[0] == times[1] : continue # an activity with a zero duration
-                            activityTypes.append(activityType)
+                        for activity in activitiesTables:
+                            activityRow = activity.find_element_by_xpath(".//tr[@valign='center']")
+                            sectionField = activityRow.find_element_by_css_selector("[id^=MTG_CLASSNAME]").text
+                            sectionNumberRegex = re.search('^([A-Z]+)([0-9]+)-([A-Z][A-Z][A-Z])', sectionField)
+                            if not sectionNumberRegex : continue
+                            if not len(sectionNumberRegex.groups()) is 3 : continue
+                            sectionNumber = sectionNumberRegex.group(1)
+                            sectionNumbers.append(sectionNumber)
+                            activityNumber = sectionNumberRegex.group(2)
+                            activityType = sectionNumberRegex.group(3)
+                            dayTimeRows = activityRow.find_element_by_css_selector("[id^=MTG_DAYTIME]").text.split('\n')
+                            locationRows = activityRow.find_element_by_css_selector("[id^=MTG_ROOM]").text.split('\n')
+                            professorRows = activityRow.find_element_by_css_selector("[id^=MTG_INSTR]").text.split('\n')
+                            if len(dayTimeRows) != len(locationRows) != len(professorRows) : continue
+                            j = 0
+                            for day in dayTimeRows:
+                                if "Mo " in day : fullDay = u"Monday"
+                                if "Tu " in day : fullDay = u"Tuesday"
+                                if "We " in day : fullDay = u"Wednesday"
+                                if "Th " in day : fullDay = u"Thursday"
+                                if "Fr " in day : fullDay = u"Friday"
+                                if "Sa " in day : fullDay = u"Saturday"
+                                if "Su " in day : fullDay = u"Sunday"
+                                timeRegex = ur"\d+:\d+"
+                                times = re.findall(timeRegex, day)
+                                if len(times) is not 2 : continue
+                                if times[0] == times[1] : continue # an activity with a zero duration
+                                activityTypes.append(activityType)
                             
-                            locationRows[j] = re.sub("^[^(]+\\(", "(", locationRows[j])
-                            locationRows[j] = re.sub("[()]", "", locationRows[j])
+                                locationRows[j] = re.sub("^[^(]+\\(", "(", locationRows[j])
+                                locationRows[j] = re.sub("[()]", "", locationRows[j])
                             
-                            if args.verbose: print("  ", sectionNumber, activityType, str(activityNumber), fullDay, times[0], times[1])
-                            activityTemp.append([
-                                convertActivityCode(activityType),
-                                unicode(str(activityNumber), "utf-8"),
+                                if args.verbose: print("  ", sectionNumber, activityType, str(activityNumber), fullDay, times[0], times[1])
+                                activityTemp.append([
+                                    convertActivityCode(activityType),
+                                    unicode(str(activityNumber), "utf-8"),
+                                    courseCode.replace(" ", "") + sectionNumber,
+                                    semesterCode,
+                                    fullDay,
+                                    times[0],
+                                    times[1],
+                                    locationRows[j].replace(",", ""),
+                                    professorRows[j].replace(",", "")
+                                    ])
+                                j += 1
+                    
+                        if len(activityTypes) == 0 : # if no activities, don't add the course
+                            if args.verbose: print("  ", "Skipping, no activities")
+                            i+=1
+                            continue
+                        hasDGD = "0"
+                        hasLAB = "0"
+                        hasTUT = "0"
+                        if "DGD" in activityTypes : hasDGD = "1"
+                        if "LAB" in activityTypes : hasLAB = "1"
+                        if "TUT" in activityTypes : hasTUT = "1"
+                        for sectionNumber in list(set(sectionNumbers)):
+                            sectionTemp.append([
                                 courseCode.replace(" ", "") + sectionNumber,
+                                courseCode.replace(" ", ""),
                                 semesterCode,
-                                fullDay,
-                                times[0],
-                                times[1],
-                                locationRows[j].replace(",", ""),
-                                professorRows[j].replace(",", "")
+                                hasDGD,
+                                hasTUT,
+                                hasLAB
                                 ])
-                            j += 1
-                    
-                    if len(activityTypes) == 0 : # if no activities, don't add the course
-                        if args.verbose: print("  ", "Skipping, no activities")
-                        i+=1
-                        continue
-                    hasDGD = "0"
-                    hasLAB = "0"
-                    hasTUT = "0"
-                    if "DGD" in activityTypes : hasDGD = "1"
-                    if "LAB" in activityTypes : hasLAB = "1"
-                    if "TUT" in activityTypes : hasTUT = "1"
-                    for sectionNumber in list(set(sectionNumbers)):
-                        sectionTemp.append([
-                            courseCode.replace(" ", "") + sectionNumber,
-                            courseCode.replace(" ", ""),
-                            semesterCode,
-                            hasDGD,
-                            hasTUT,
-                            hasLAB
-                            ])
                         
-                    # Fix for courses where not all sections have the same activity types, particularly labs.
-                    # Anything in a 'Z' section should be present in all other sections
-                    corrected = False
-                    zactivities = []
-                    activityTempTemp = []
-                    for activity in activityTemp:
-                        if activity[2].endswith('Z'):
-                            zactivities.append(list(activity))
-                        else:
-                            activityTempTemp.append(list(activity))
-                    activityTemp = list(activityTempTemp)
-                    for zactivity in zactivities:
-                        for section in sectionTemp:
-                            if not section[0].endswith('Z'):
-                                zactivity[2] = section[0]
-                                activityTemp.append(list(zactivity))
-                                corrected = True
-                    if corrected: # remove now-orphaned Z-section
-                        sectionTempTemp = []
-                        for section in sectionTemp:
-                            if not section[0].endswith('Z'):
-                                sectionTempTemp.append(list(section))
-                        sectionTemp = list(sectionTempTemp)               
+                        # Fix for courses where not all sections have the same activity types, particularly labs.
+                        # Anything in a 'Z' section should be present in all other sections
+                        # Also seems to be the case for sections X (tutorials) and Y (DGDs) (e.g. in PHY 1731)
+                        corrected = False
+                        zactivities = []
+                        activityTempTemp = []
+                        for activity in activityTemp:
+                            if activity[2].endswith('Z') or activity[2].endswith('Y') or activity[2].endswith('X'):
+                                zactivities.append(list(activity))
+                            else:
+                                activityTempTemp.append(list(activity))
+                        activityTemp = list(activityTempTemp)
+                        for zactivity in zactivities:
+                            for section in sectionTemp:
+                                if not section[0].endswith('Z') and not section[0].endswith('Y') and not section[0].endswith('X'):
+                                    zactivity[2] = section[0]
+                                    activityTemp.append(list(zactivity))
+                                    corrected = True
+                        if corrected: # remove now-orphaned Z-section
+                            sectionTempTemp = []
+                            for section in sectionTemp:
+                                if not section[0].endswith('Z') and not section[0].endswith('Y') and not section[0].endswith('X'):
+                                    sectionTempTemp.append(list(section))
+                            sectionTemp = list(sectionTempTemp)               
 
-                    # Append to the general lists
-                    for a in activityTemp:
-                        activities.append(a[0] + "," + a[1] + "," + a[2] + "," + a[3] + "," + a[4] + "," + a[5] + "," + a[6] + "," + a[7] + "," + a[8])
-                    for s in sectionTemp:
-                        sections.append(s[0] + "," + s[1] + "," + s[2] + "," + s[3] + "," + s[4] + "," + s[5])
-                    # Append to CSV-destined lists
-                    codes.append(courseCode.replace(" ", "")+","+courseName.replace(",", ""))
-                    i+=1
-                
+                        # Append to the general lists
+                        for a in activityTemp:
+                            activities.append(a[0] + "," + a[1] + "," + a[2] + "," + a[3] + "," + a[4] + "," + a[5] + "," + a[6] + "," + a[7] + "," + a[8])
+                        for s in sectionTemp:
+                            sections.append(s[0] + "," + s[1] + "," + s[2] + "," + s[3] + "," + s[4] + "," + s[5])
+                        # Append to CSV-destined lists
+                        codes.append(courseCode.replace(" ", "")+","+courseName.replace(",", ""))
+                        i+=1
     
     
     # Write courses to db_courses.csv
