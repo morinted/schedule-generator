@@ -12,6 +12,7 @@ import os
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -123,6 +124,14 @@ def any_element_in_parent(parent, *selectors):
     # If list was exhausted
     return False
 
+def bypassmodal(b):
+    # Sometimes an error window obscures the search interface
+    try:
+        b.find_element_by_id("#ICOK").click()
+        sleep(0.2)
+        print("Got rid of a modal")
+    except:
+        pass
 
 def main():
     # Open in Chrome
@@ -181,13 +190,21 @@ def main():
                     except TimeoutException as e:
                         print("Timeout: couldn't find the search button")
                         continue
-                    Select(b.find_element_by_xpath("//select[@id='"+semesterSelectId+"']")).select_by_visible_text(semester)
-                    sleep(0.2)
-                    b.find_element_by_id('SSR_CLSRCH_WRK_SUBJECT$0').send_keys(subject)
-                    sleep(0.2)
-                    b.find_element_by_id(year).click()
-                    sleep(0.2)
-                    b.find_element_by_id(language).click()
+                    try:
+                        bypassmodal(b)
+                        Select(b.find_element_by_xpath("//select[@id='"+semesterSelectId+"']")).select_by_visible_text(semester)
+                        sleep(0.2)
+                        bypassmodal(b)
+                        b.find_element_by_id('SSR_CLSRCH_WRK_SUBJECT$0').send_keys(subject)
+                        sleep(0.2)
+                        bypassmodal(b)
+                        b.find_element_by_id(year).click()
+                        sleep(0.2)
+                        bypassmodal(b)
+                        b.find_element_by_id(language).click()
+                    except ElementClickInterceptedException as e:
+                        print("Error: modal prevented scraping of "+semester+", "+subject+", "+year+", "+language)
+                        continue # go to next iteration
                     try: # sometimes the submit button doesn't work the first time, just try twice by default
                         sleep(0.2)
                         b.find_element_by_id('CLASS_SRCH_WRK2_SSR_PB_CLASS_SRCH').click()
