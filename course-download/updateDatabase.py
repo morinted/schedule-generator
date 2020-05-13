@@ -237,120 +237,128 @@ def main():
                         except:
                             if args.verbose: print("Done with this page")
                             break
-                        courseCodeAndName = courseCodeAndNameAnchor.text.strip().split(' - ')
-                        courseCode = courseCodeAndName[0]
-                        courseCodeAndName.pop(0)
-                        courseName = "".join(courseCodeAndName)
-                    
-                        sectionNumbers = []
-                        activityTypes = []
-                    
-                        sectionTemp  = []
-                        activityTemp = []
-                    
-                        courseTable = courseCodeAndNameAnchor.find_element_by_xpath('../../../..')
-                        activitiesTables = courseTable.find_elements_by_class_name('PSLEVEL1GRIDNBONBO')
+                        try:
+                            courseCodeAndName = courseCodeAndNameAnchor.text.strip().split(' - ')
+                            courseCode = courseCodeAndName[0]
+                            courseCodeAndName.pop(0)
+                            courseName = "".join(courseCodeAndName)
+                        
+                            sectionNumbers = []
+                            activityTypes = []
+                        
+                            sectionTemp  = []
+                            activityTemp = []
+                        
+                            courseTable = courseCodeAndNameAnchor.find_element_by_xpath('../../../..')
+                            activitiesTables = courseTable.find_elements_by_class_name('PSLEVEL1GRIDNBONBO')
+                        except:
+                            i+=1
+                            continue # try the next courseCodeAndNameAnchor
                     
                         if args.verbose: print(courseCode, courseName)
                     
-                        for activity in activitiesTables:
-                            activityRow = activity.find_element_by_xpath(".//tr[@valign='center']")
-                            sectionField = activityRow.find_element_by_css_selector("[id^=MTG_CLASSNAME]").text
-                            sectionNumberRegex = re.search('^([A-Z]+)([0-9]+)-([A-Z][A-Z][A-Z])', sectionField)
-                            if not sectionNumberRegex : continue
-                            if not len(sectionNumberRegex.groups()) is 3 : continue
-                            sectionNumber = sectionNumberRegex.group(1)
-                            sectionNumbers.append(sectionNumber)
-                            activityNumber = sectionNumberRegex.group(2)
-                            activityType = sectionNumberRegex.group(3)
-                            dayTimeRows = activityRow.find_element_by_css_selector("[id^=MTG_DAYTIME]").text.split('\n')
-                            locationRows = activityRow.find_element_by_css_selector("[id^=MTG_ROOM]").text.split('\n')
-                            professorRows = activityRow.find_element_by_css_selector("[id^=MTG_INSTR]").text.split('\n')
-                            if len(dayTimeRows) != len(locationRows) != len(professorRows) : continue
-                            j = 0
-                            for day in dayTimeRows:
-                                if "Mo " in day : fullDay = u"Monday"
-                                if "Tu " in day : fullDay = u"Tuesday"
-                                if "We " in day : fullDay = u"Wednesday"
-                                if "Th " in day : fullDay = u"Thursday"
-                                if "Fr " in day : fullDay = u"Friday"
-                                if "Sa " in day : fullDay = u"Saturday"
-                                if "Su " in day : fullDay = u"Sunday"
-                                timeRegex = ur"\d+:\d+"
-                                times = re.findall(timeRegex, day)
-                                if len(times) is not 2 : continue
-                                if times[0] == times[1] : continue # an activity with a zero duration
-                                activityTypes.append(activityType)
-                            
-                                locationRows[j] = re.sub("^[^(]+\\(", "(", locationRows[j])
-                                locationRows[j] = re.sub("[()]", "", locationRows[j])
-                            
-                                if args.verbose: print("  ", sectionNumber, activityType, str(activityNumber), fullDay, times[0], times[1])
-                                activityTemp.append([
-                                    convertActivityCode(activityType),
-                                    unicode(str(activityNumber), "utf-8"),
+                        try:
+                            for activity in activitiesTables:
+                                activityRow = activity.find_element_by_xpath(".//tr[@valign='center']")
+                                sectionField = activityRow.find_element_by_css_selector("[id^=MTG_CLASSNAME]").text
+                                sectionNumberRegex = re.search('^([A-Z]+)([0-9]+)-([A-Z][A-Z][A-Z])', sectionField)
+                                if not sectionNumberRegex : continue
+                                if not len(sectionNumberRegex.groups()) is 3 : continue
+                                sectionNumber = sectionNumberRegex.group(1)
+                                sectionNumbers.append(sectionNumber)
+                                activityNumber = sectionNumberRegex.group(2)
+                                activityType = sectionNumberRegex.group(3)
+                                dayTimeRows = activityRow.find_element_by_css_selector("[id^=MTG_DAYTIME]").text.split('\n')
+                                locationRows = activityRow.find_element_by_css_selector("[id^=MTG_ROOM]").text.split('\n')
+                                professorRows = activityRow.find_element_by_css_selector("[id^=MTG_INSTR]").text.split('\n')
+                                if len(dayTimeRows) != len(locationRows) != len(professorRows) : continue
+                                j = 0
+                                for day in dayTimeRows:
+                                    if "Mo " in day : fullDay = u"Monday"
+                                    if "Tu " in day : fullDay = u"Tuesday"
+                                    if "We " in day : fullDay = u"Wednesday"
+                                    if "Th " in day : fullDay = u"Thursday"
+                                    if "Fr " in day : fullDay = u"Friday"
+                                    if "Sa " in day : fullDay = u"Saturday"
+                                    if "Su " in day : fullDay = u"Sunday"
+                                    timeRegex = ur"\d+:\d+"
+                                    times = re.findall(timeRegex, day)
+                                    if len(times) is not 2 : continue
+                                    if times[0] == times[1] : continue # an activity with a zero duration
+                                    activityTypes.append(activityType)
+                                
+                                    locationRows[j] = re.sub("^[^(]+\\(", "(", locationRows[j])
+                                    locationRows[j] = re.sub("[()]", "", locationRows[j])
+                                
+                                    if args.verbose: print("  ", sectionNumber, activityType, str(activityNumber), fullDay, times[0], times[1])
+                                    activityTemp.append([
+                                        convertActivityCode(activityType),
+                                        unicode(str(activityNumber), "utf-8"),
+                                        courseCode.replace(" ", "") + sectionNumber,
+                                        semesterCode,
+                                        fullDay,
+                                        times[0],
+                                        times[1],
+                                        locationRows[j].replace(",", ""),
+                                        professorRows[j].replace(",", "")
+                                        ])
+                                    j += 1
+                        
+                            if len(activityTypes) == 0 : # if no activities, don't add the course
+                                if args.verbose: print("  ", "Skipping, no activities")
+                                i+=1
+                                continue
+                            hasDGD = "0"
+                            hasLAB = "0"
+                            hasTUT = "0"
+                            if "DGD" in activityTypes : hasDGD = "1"
+                            if "LAB" in activityTypes : hasLAB = "1"
+                            if "TUT" in activityTypes : hasTUT = "1"
+                            for sectionNumber in list(set(sectionNumbers)):
+                                sectionTemp.append([
                                     courseCode.replace(" ", "") + sectionNumber,
+                                    courseCode.replace(" ", ""),
                                     semesterCode,
-                                    fullDay,
-                                    times[0],
-                                    times[1],
-                                    locationRows[j].replace(",", ""),
-                                    professorRows[j].replace(",", "")
+                                    hasDGD,
+                                    hasTUT,
+                                    hasLAB
                                     ])
-                                j += 1
-                    
-                        if len(activityTypes) == 0 : # if no activities, don't add the course
-                            if args.verbose: print("  ", "Skipping, no activities")
+                            
+                            # Fix for courses where not all sections have the same activity types, particularly labs.
+                            # Anything in a 'Z' section should be present in all other sections
+                            # Also seems to be the case for sections X (tutorials) and Y (DGDs) (e.g. in PHY 1731)
+                            corrected = False
+                            zactivities = []
+                            activityTempTemp = []
+                            for activity in activityTemp:
+                                if activity[2].endswith('Z') or activity[2].endswith('Y') or activity[2].endswith('X'):
+                                    zactivities.append(list(activity))
+                                else:
+                                    activityTempTemp.append(list(activity))
+                            activityTemp = list(activityTempTemp)
+                            for zactivity in zactivities:
+                                for section in sectionTemp:
+                                    if not section[0].endswith('Z') and not section[0].endswith('Y') and not section[0].endswith('X'):
+                                        zactivity[2] = section[0]
+                                        activityTemp.append(list(zactivity))
+                                        corrected = True
+                            if corrected: # remove now-orphaned Z-section
+                                sectionTempTemp = []
+                                for section in sectionTemp:
+                                    if not section[0].endswith('Z') and not section[0].endswith('Y') and not section[0].endswith('X'):
+                                        sectionTempTemp.append(list(section))
+                                sectionTemp = list(sectionTempTemp)               
+
+                            # Append to the general lists
+                            for a in activityTemp:
+                                activities.append(a[0] + "," + a[1] + "," + a[2] + "," + a[3] + "," + a[4] + "," + a[5] + "," + a[6] + "," + a[7] + "," + a[8])
+                            for s in sectionTemp:
+                                sections.append(s[0] + "," + s[1] + "," + s[2] + "," + s[3] + "," + s[4] + "," + s[5])
+                            # Append to CSV-destined lists
+                            codes.append(courseCode.replace(" ", "")+","+courseName.replace(",", ""))
+                        except:
                             i+=1
                             continue
-                        hasDGD = "0"
-                        hasLAB = "0"
-                        hasTUT = "0"
-                        if "DGD" in activityTypes : hasDGD = "1"
-                        if "LAB" in activityTypes : hasLAB = "1"
-                        if "TUT" in activityTypes : hasTUT = "1"
-                        for sectionNumber in list(set(sectionNumbers)):
-                            sectionTemp.append([
-                                courseCode.replace(" ", "") + sectionNumber,
-                                courseCode.replace(" ", ""),
-                                semesterCode,
-                                hasDGD,
-                                hasTUT,
-                                hasLAB
-                                ])
-                        
-                        # Fix for courses where not all sections have the same activity types, particularly labs.
-                        # Anything in a 'Z' section should be present in all other sections
-                        # Also seems to be the case for sections X (tutorials) and Y (DGDs) (e.g. in PHY 1731)
-                        corrected = False
-                        zactivities = []
-                        activityTempTemp = []
-                        for activity in activityTemp:
-                            if activity[2].endswith('Z') or activity[2].endswith('Y') or activity[2].endswith('X'):
-                                zactivities.append(list(activity))
-                            else:
-                                activityTempTemp.append(list(activity))
-                        activityTemp = list(activityTempTemp)
-                        for zactivity in zactivities:
-                            for section in sectionTemp:
-                                if not section[0].endswith('Z') and not section[0].endswith('Y') and not section[0].endswith('X'):
-                                    zactivity[2] = section[0]
-                                    activityTemp.append(list(zactivity))
-                                    corrected = True
-                        if corrected: # remove now-orphaned Z-section
-                            sectionTempTemp = []
-                            for section in sectionTemp:
-                                if not section[0].endswith('Z') and not section[0].endswith('Y') and not section[0].endswith('X'):
-                                    sectionTempTemp.append(list(section))
-                            sectionTemp = list(sectionTempTemp)               
-
-                        # Append to the general lists
-                        for a in activityTemp:
-                            activities.append(a[0] + "," + a[1] + "," + a[2] + "," + a[3] + "," + a[4] + "," + a[5] + "," + a[6] + "," + a[7] + "," + a[8])
-                        for s in sectionTemp:
-                            sections.append(s[0] + "," + s[1] + "," + s[2] + "," + s[3] + "," + s[4] + "," + s[5])
-                        # Append to CSV-destined lists
-                        codes.append(courseCode.replace(" ", "")+","+courseName.replace(",", ""))
                         i+=1
     
     
