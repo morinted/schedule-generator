@@ -512,10 +512,15 @@ public class Schedule implements Serializable
             avgStartingTime = new Date(totalStartTime / (7 - numOfDaysOff));
             avgEndingTime = new Date(totalEndTime / (7 - numOfDaysOff));
             avgLengthOfDay = new Date(totalLengthOfDay / (7 - numOfDaysOff));
-
-            ignoreExtrasAvgStartingTime = new Date(ieTotalStartTime / (7 - ignoreExtrasNumOfDaysOff));
-            ignoreExtrasAvgEndingTime = new Date(ieTotalEndTime / (7 - ignoreExtrasNumOfDaysOff));
-            ignoreExtrasAvgLengthOfDay = new Date(ieTotalLengthOfDay / (7 - ignoreExtrasNumOfDaysOff));
+            if (ieTotalStartTime == 0) {
+            	ignoreExtrasAvgStartingTime = avgStartingTime;
+            	ignoreExtrasAvgEndingTime = avgEndingTime;
+            	ignoreExtrasAvgLengthOfDay = avgLengthOfDay;
+            } else {
+            	ignoreExtrasAvgStartingTime = new Date(ieTotalStartTime / (7 - ignoreExtrasNumOfDaysOff));
+                ignoreExtrasAvgEndingTime = new Date(ieTotalEndTime / (7 - ignoreExtrasNumOfDaysOff));
+                ignoreExtrasAvgLengthOfDay = new Date(ieTotalLengthOfDay / (7 - ignoreExtrasNumOfDaysOff));
+            }
         }
     }
 
