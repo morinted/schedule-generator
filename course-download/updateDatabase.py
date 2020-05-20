@@ -251,7 +251,7 @@ def main():
                         
                             courseTable = courseCodeAndNameAnchor.find_element_by_xpath('../../../..')
                             activitiesTables = courseTable.find_elements_by_class_name('PSLEVEL1GRIDNBONBO')
-                        except:
+                        except Exception as e:
                             i+=1
                             continue # try the next courseCodeAndNameAnchor
                     
@@ -271,7 +271,6 @@ def main():
                                 dayTimeRows = activityRow.find_element_by_css_selector("[id^=MTG_DAYTIME]").text.split('\n')
                                 locationRows = activityRow.find_element_by_css_selector("[id^=MTG_ROOM]").text.split('\n')
                                 professorRows = activityRow.find_element_by_css_selector("[id^=MTG_INSTR]").text.split('\n')
-                                if len(dayTimeRows) != len(locationRows) != len(professorRows) : continue
                                 j = 0
                                 for day in dayTimeRows:
                                     if "Mo " in day : fullDay = u"Monday"
@@ -286,9 +285,21 @@ def main():
                                     if len(times) is not 2 : continue
                                     if times[0] == times[1] : continue # an activity with a zero duration
                                     activityTypes.append(activityType)
-                                
-                                    locationRows[j] = re.sub("^[^(]+\\(", "(", locationRows[j])
-                                    locationRows[j] = re.sub("[()]", "", locationRows[j])
+
+                                    location_filtered = ""
+                                    professor_filtered = ""
+                                    if len(locationRows) < (j + 1):
+                                        locationRows[0] = re.sub("^[^(]+\\(", "(", locationRows[0])
+                                        locationRows[0] = re.sub("[()]", "", locationRows[0])
+                                        location_filtered = locationRows[0].replace(",", "")
+                                    else:
+                                        locationRows[j] = re.sub("^[^(]+\\(", "(", locationRows[j])
+                                        locationRows[j] = re.sub("[()]", "", locationRows[j])
+                                        location_filtered = locationRows[j].replace(",", "")
+                                    if len(professorRows) < (j + 1):
+                                        professor_filtered = professorRows[0].replace(",", "")
+                                    else:
+                                        professor_filtered = professorRows[j].replace(",", "")
                                 
                                     if args.verbose: print("  ", sectionNumber, activityType, str(activityNumber), fullDay, times[0], times[1])
                                     activityTemp.append([
@@ -299,8 +310,8 @@ def main():
                                         fullDay,
                                         times[0],
                                         times[1],
-                                        locationRows[j].replace(",", ""),
-                                        professorRows[j].replace(",", "")
+                                        location_filtered,
+                                        professor_filtered
                                         ])
                                     j += 1
                         
@@ -356,7 +367,7 @@ def main():
                                 sections.append(s[0] + "," + s[1] + "," + s[2] + "," + s[3] + "," + s[4] + "," + s[5])
                             # Append to CSV-destined lists
                             codes.append(courseCode.replace(" ", "")+","+courseName.replace(",", ""))
-                        except:
+                        except Exception as e:
                             i+=1
                             continue
                         i+=1
