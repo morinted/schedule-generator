@@ -1,4 +1,8 @@
-# uOttawa Schedule Generator
+# uOttawa Schedule Generator - Unmaintained
+
+> **Hi friends. It's been a pleasure helping you generate schedules over the years. This project is now unmaintained and we'll point you to another modern option: https://uschedule.me/**
+>
+> **Thank you for using it over the years 🫂**
 
 A schedule generator for the University of Ottawa written in Java, using OCSF. It is a tool to help register for courses, as the University-supplied program, uOCampus, does a terribly poor job at helping students find optimized, conflict-free schedules. The schedule generator finds all possible combinations of sections for the chosen courses, and sorts them based on criteria like "Earliest Start", "Shortest Days", etc.
 
